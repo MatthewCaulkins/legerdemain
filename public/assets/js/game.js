@@ -1,49 +1,72 @@
+var isMobile = navigator.userAgent.indexOf('Mobile');
+if (isMobile == -1) {
+    isMobile = navigator.userAgent.indexOf('Tablet');
+}
+
+var width = isMobile ? window.innerWidth : 800;
+var height = isMobile ? window.innerHeight : 600;
+
 var config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 200 }
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create
-    }
+    width: width,
+    height: height,
+    scene: [SceneGame]
+    // physics: {
+    //     default: 'arcade',
+    //     arcade: {
+    //         gravity: { y: 200 }
+    //     }
+    // },
+    // scene: {
+    //     preload: preload,
+    //     create: create
+    // }
 };
+
+var alignmentConfig = {
+    scene: this,
+    rows: 10,
+    columns: 10,
+    height: height,
+    width: width
+}
 
 var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.setBaseURL('http://labs.phaser.io');
-
-    this.load.image('sky', 'assets/skies/space3.png');
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-    this.load.image('red', 'assets/particles/red.png');
+    this.load.image('tilemap', 'assets/img/tilemap.png');
 }
 
 function create ()
 {
-    this.add.image(400, 300, 'sky');
+    // this.add.sprite(150, 150, 'tilemap');
+    // var graphics = this.add.graphics();
 
-    var particles = this.add.particles('red');
+    // graphics.lineStyle(2, 0xff0000);
 
-    var emitter = particles.createEmitter({
-        speed: 100,
-        scale: { start: 1, end: 0 },
-        blendMode: 'ADD'
-    });
+    // for (let i = 0; i < alignmentConfig.width; i += (alignmentConfig.width / alignmentConfig.columns)) {
+    //     graphics.moveTo(i, 0);
+    //     graphics.lineTo(i, alignmentConfig.height);
+    // }
+    // graphics.strokePath();
+    // this.grid = new AlignmentGrid(alignmentConfig);
+    // this.grid.draw();
+    // var particles = this.add.particles('red');
 
-    var logo = this.physics.add.image(400, 100, 'logo');
+    // var emitter = particles.createEmitter({
+    //     speed: 100,
+    //     scale: { start: 1, end: 0 },
+    //     blendMode: 'ADD'
+    // });
 
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
+    // var logo = this.physics.add.image(400, 100, 'logo');
 
-    emitter.startFollow(logo);
+    // logo.setVelocity(100, 200);
+    // logo.setBounce(1, 1);
+    // logo.setCollideWorldBounds(true);
+
+    // emitter.startFollow(logo);
 }
 
 // $.ajax({

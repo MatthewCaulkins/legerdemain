@@ -6,15 +6,19 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const routes = require('./routes/main');
-const secureRoutes = require('./routes/secure');
+const passwordRoutes = require('./routes/password');
+// const secureRoutes = require('./routes/secure');
 
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 
 // setup mongo connection
-const uri = 'mongodb+srv://doadmin:7Xjan048zt1293gO@dbaas-db-4024796-ea5a6b4b.mongo.ondigitalocean.com/admin?replicaSet=dbaas-db-4024796&tls=true&authSource=admin';//process.env.MONGO_CONNECTION_URL;
+const uri = process.env.MONGO_CONNECTION_URL;
 
-mongoose.connect(uri, { useNewUrlParser : true });
+mongoose.connect(uri, { 
+    useNewUrlParser : true,
+    dbName: 'Legerdemain' 
+});
 mongoose.connection.on('error', (error) => {
     console.log(error);
     process.exit(1);
@@ -46,7 +50,8 @@ app.get('/', function (req, res) {
 
 // main routes
 app.use('/', routes);
-app.use('/', passport.authenticate('jwt', { session : false }), secureRoutes);
+app.use('/', passwordRoutes);
+// app.use('/', passport.authenticate('jwt', { session : false }), secureRoutes);
 
 
 // catch all other routes

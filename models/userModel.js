@@ -15,6 +15,12 @@ const UserSchema = new Schema({
     name : {
         type: String,
         required: true
+    },
+    resetToken: {
+        type: String
+      },
+    resetTokenExp: {
+        type: Date
     }
 });
 
