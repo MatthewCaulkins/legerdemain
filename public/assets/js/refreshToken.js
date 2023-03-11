@@ -19,7 +19,8 @@ setInterval(function() {
         type: 'POST',
         url: '/token',
         data: {
-            refreshToken: getCookie('refreshJwt')
+            refreshToken: getCookie('refreshJwt'),
+            // email: getCookie('email')
         },
         success: function(data) {},
         error: function(xhr) {

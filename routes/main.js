@@ -30,6 +30,7 @@ router.post('/login', async (req, res, next) => {
         // store tokens in cookie
         res.cookie('jwt', token);
         res.cookie('refreshJwt', refreshToken);
+        // res.cookie('email', user.email);
         // store tokens in memory
         tokenList[refreshToken] = {
           token,
@@ -47,10 +48,9 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post('/token', (req, res) => {
-  const { refreshToken } = req.body;
-  const email = 'matt.caulkins@gmail.com';  // This is not getting passed
-  if ((refreshToken in tokenList) && (tokenList[refreshToken].email === email)) {
-    const body = { email: email, _id: tokenList[refreshToken]._id };
+  const { refreshToken } = req.body; // email, 
+  if ((refreshToken in tokenList)) { //} && (tokenList[refreshToken].email === email)) {
+    const body = { email: tokenList[refreshToken].email, _id: tokenList[refreshToken]._id };
     const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: 300 });
     // update jwt
     res.cookie('jwt', token);

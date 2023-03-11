@@ -1,4 +1,4 @@
-class AlignmentGrid {
+class AlignmentUtil {
     constructor(config) {
         this.config = config;
 
