@@ -10,7 +10,7 @@ var config = {
     type: Phaser.AUTO,
     width: width,
     height: height,
-    scene: [SceneGame]
+    scene: [TitleScene]
     // physics: {
     //     default: 'arcade',
     //     arcade: {
@@ -51,7 +51,7 @@ function create ()
     // }
     // graphics.strokePath();
     // this.grid = new AlignmentGrid(alignmentConfig);
-    // this.grid.draw();
+    // this.grid.drawGrid();
     // var particles = this.add.particles('red');
 
     // var emitter = particles.createEmitter({
