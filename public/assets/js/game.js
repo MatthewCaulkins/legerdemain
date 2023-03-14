@@ -1,16 +1,20 @@
+// import IsoPlugin from "phaser3-plugin-isometric";
+
+// import PlayScene from './scenes/playScene.js';
+
 var isMobile = navigator.userAgent.indexOf('Mobile');
 if (isMobile == -1) {
     isMobile = navigator.userAgent.indexOf('Tablet');
 }
 
-var width = isMobile ? window.innerWidth : 800;
-var height = isMobile ? window.innerHeight : 600;
+var gameWidth = isMobile >= 0 ? window.innerWidth : 1200;
+var gameHeight = isMobile >= 0 ? window.innerHeight : 900;
 
 var config = {
     type: Phaser.AUTO,
-    width: width,
-    height: height,
-    scene: [TitleScene]
+    height: gameHeight,
+    width: gameWidth,
+    scene: [ArmySelectScene, TitleScene], // , boardTest ArmySelectScene
     // physics: {
     //     default: 'arcade',
     //     arcade: {
@@ -21,14 +25,18 @@ var config = {
     //     preload: preload,
     //     create: create
     // }
+    // scale: {
+    //     mode: Phaser.Scale.FIT,
+    //     autoCenter: Phaser.Scale.CENTER_BOTH
+    // }
 };
 
 var alignmentConfig = {
     scene: this,
     rows: 10,
     columns: 10,
-    height: height,
-    width: width
+    height: gameHeight,
+    width: gameWidth
 }
 
 var game = new Phaser.Game(config);
