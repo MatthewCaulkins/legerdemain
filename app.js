@@ -30,8 +30,8 @@ mongoose.connection.on('connected', function () {
 
 // create an instance of an express app
 const app = express();
-// const server = require('http').Server(app);
-// const io = require('socket.io')(8081);
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
@@ -69,21 +69,20 @@ app.use((err, req, res, next) => {
 });
 
 // have the server start listening on the provided port
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server started on port ${process.env.PORT || 3000}`);
+// app.listen(process.env.PORT || 3000, () => {
+//     console.log(`Server started on port ${process.env.PORT || 3000}`);
+// });
+
+io.on('connection', function (socket) {
+    console.log('a user connected');
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
 });
 
-// io.listen(8081, function() {
-//     console.log(`Listening on ${server.address().port}`);
-// });
-
-// io.on('connection', function (socket) {
-//     console.log('a user connected');
-//     socket.on('disconnect', function () {
-//         console.log('user disconnected');
-//     });
-// });
-
+server.listen(8081, function() {
+    console.log(`Listening on ${server.address().port}`);
+});
 
 // import { MongoClient } from 'mongodb'
 
