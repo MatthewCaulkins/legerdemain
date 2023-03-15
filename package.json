@@ -5,6 +5,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.0.1",
     "mongoose": "^6.10.0",
@@ -14,6 +15,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "phaser": "^3.55.2",
-    "phaser3-plugin-isometric": "^0.0.7"
+    "phaser3-plugin-isometric": "^0.0.7",
+    "socket.io": "^4.6.1"
   }
 }

@@ -15,6 +15,8 @@ var config = {
     height: gameHeight,
     width: gameWidth,
     scene: [ArmySelectScene, TitleScene], // , boardTest ArmySelectScene
+    //parent: 'game-container',
+    
     // physics: {
     //     default: 'arcade',
     //     arcade: {
@@ -23,7 +25,7 @@ var config = {
     // },
     // scene: {
     //     preload: preload,
-    //     create: create
+    //     create: create  // This will use these ones on this file instead of the ones in the scene file
     // }
     // scale: {
     //     mode: Phaser.Scale.FIT,
