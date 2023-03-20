@@ -50,6 +50,7 @@ function preload ()
 
 function create ()
 {
+    this.socket = io();
     // this.add.sprite(150, 150, 'tilemap');
     // var graphics = this.add.graphics();
 
