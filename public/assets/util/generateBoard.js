@@ -55,7 +55,7 @@ class GenerateBoard {
                 tile.on('pointerdown', this.onPointerdown.bind(tile));
 
                 tile.depth = x + y; // ty
-                tile.setOrigin(0.5, 0.5);
+               // tile.setOrigin(0.5, 0.5);
                 tile.setRotation(this.ROTATION_IN_RADIANS);
 
                 this.tileContainer.add(tile);

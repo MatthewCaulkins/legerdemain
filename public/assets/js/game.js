@@ -14,7 +14,7 @@ var config = {
     type: Phaser.AUTO,
     height: gameHeight,
     width: gameWidth,
-    scene: [ArmySelectScene, TitleScene], // , boardTest ArmySelectScene
+    scene: [HomeScene, SetupScene, PlayScene], // , boardTest ArmySelectScene
     //parent: 'game-container',
     
     // physics: {
@@ -43,13 +43,13 @@ var alignmentConfig = {
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
-    this.load.image('tilemap', 'assets/img/tilemap.png');
-}
+// function preload ()
+// {
+//     this.load.image('tilemap', 'assets/img/tilemap.png');
+// }
 
-function create ()
-{
+// function create ()
+// {
     // console.log('create function');
     // const self = this;
     // this.socket = io();
@@ -90,7 +90,7 @@ function create ()
     // logo.setCollideWorldBounds(true);
 
     // emitter.startFollow(logo);
-}
+// }
 
 // function addPlayer(self, playerInfo) {
 //     // self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(53, 40);

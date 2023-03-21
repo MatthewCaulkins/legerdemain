@@ -1,6 +1,6 @@
-class ArmySelectScene extends Phaser.Scene {
+class PlayScene extends Phaser.Scene {
     constructor() {
-        super('ArmySelectScene');
+        super('PlayScene');
     }
 
     preload() {
@@ -16,7 +16,7 @@ class ArmySelectScene extends Phaser.Scene {
         const boardConfig = {
             tileWidth: 75,
             tileHeight: 75,
-            mapRows: 3,
+            mapRows: 11,
             mapColumns: 11,
             scale: .75,
             scene: this
@@ -50,11 +50,11 @@ class ArmySelectScene extends Phaser.Scene {
         // this.rotateTile(this.tileContainer);
     }
 
-    rotateTile(tile) {
-        const rotation = tile.rotation;
+    // rotateTile(tile) {
+    //     const rotation = tile.rotation;
 
-        tile.setRotation(rotation + .01);
-    }
+    //     tile.setRotation(rotation + .01);
+    // }
 
     // buildMap() {
     //     const tileWidth = 75;
