@@ -23,6 +23,21 @@ class ArmySelectScene extends Phaser.Scene {
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);
+
+        console.log('create function');
+        const self = this;
+        this.socket = io();
+        this.socket.on('currentPlayers', function(players) {
+            console.log('Current players called');
+            console.log(players);
+            Object.keys(players).forEach(id => {
+                if (players[id].playerId === self.socket.io) {
+
+                    console.log('add player');
+                    // addPlayer(self, players[id]);
+                };
+            });
+        });
         // Add a container for the tiles and make sure they can be interacted with
         // this.tileContainer = this.add.container(0, 0);
         // this.tileContainer.setInteractive();
