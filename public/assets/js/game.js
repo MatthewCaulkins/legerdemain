@@ -50,7 +50,18 @@ function preload ()
 
 function create ()
 {
+    const self = this;
     this.socket = io();
+    this.socket.on('currentPlayers', function(players) {
+        console.log('Current players called');
+        console.log(players);
+        Object.keys(players).forEach(id => {
+            if (players[id].playerId === self.socket.io) {
+                addPlayer(self, players[id]);
+            };
+        });
+    });
+
     // this.add.sprite(150, 150, 'tilemap');
     // var graphics = this.add.graphics();
 
@@ -78,6 +89,20 @@ function create ()
     // logo.setCollideWorldBounds(true);
 
     // emitter.startFollow(logo);
+}
+
+function addPlayer(self, playerInfo) {
+    // self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    // if (playerInfo.team === 'blue') {
+    //   self.ship.setTint(0x0000ff);
+    // } else {
+    //   self.ship.setTint(0xff0000);
+    // }
+    // self.ship.setDrag(100);
+    // self.ship.setAngularDrag(100);
+    // self.ship.setMaxVelocity(200);
+    console.log(`Add Player ${self}`);
+    console.log(playerInfo);
 }
 
 // $.ajax({

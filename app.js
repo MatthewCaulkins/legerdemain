@@ -33,6 +33,9 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+// Will want to store this to the database later
+let players = {};
+
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
@@ -75,8 +78,28 @@ app.use((err, req, res, next) => {
 
 io.on('connection', function (socket) {
     console.log('a user connected');
+    // This is weird but should be able to rewrite this later to 
+    players[socket.id] = {
+        rotation: 0,
+        x: Math.floor(Math.random() * 700) + 50,
+        y: Math.floor(Math.random() * 500) + 50,
+        playerId: socket.id,
+        team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
+    };
+
+    // send players object to new player  - only to this new socket
+    socket.emit('currentPlayers', players);
+    // update all other players of the new player  - sends to all sockets
+    socket.broadcast.emit('newPlayer', players[socket.id]);
+
     socket.on('disconnect', function () {
         console.log('user disconnected');
+
+        // remove this player from our players object
+        delete players[socket.id];
+
+        // emit a message to all players to remove this player
+        io.emit('disconnect', socket.id);
     });
 });
 
