@@ -6,9 +6,12 @@ class SetupScene extends Phaser.Scene {
     preload() {
         this.load.image('tile', 'assets/img/tile.png');
         this.load.image('character', 'assets/img/characterHolder.png');
+        this.load.image('tint', 'assets/img/characterTint.png');
     }
 
     create() {
+        model.currentScene = this;
+        
         // Setup the alignment grid for testing purposes
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
@@ -24,20 +27,20 @@ class SetupScene extends Phaser.Scene {
 
         this.generateBoard = new GenerateBoard(boardConfig);
 
-        console.log('create function');
-        const self = this;
-        this.socket = io();
-        this.socket.on('currentPlayers', function(players) {
-            console.log('Current players called');
-            console.log(players);
-            Object.keys(players).forEach(id => {
-                if (players[id].playerId === self.socket.io) {
+        // console.log('create function');
+        // const self = this;
+        // this.socket = io();
+        // this.socket.on('currentPlayers', function(players) {
+        //     console.log('Current players called');
+        //     console.log(players);
+        //     Object.keys(players).forEach(id => {
+        //         if (players[id].playerId === self.socket.io) {
 
-                    console.log('add player');
-                    // addPlayer(self, players[id]);
-                };
-            });
-        });
+        //             console.log('add player');
+        //             // addPlayer(self, players[id]);
+        //         };
+        //     });
+        // });
         // Add a container for the tiles and make sure they can be interacted with
         // this.tileContainer = this.add.container(0, 0);
         // this.tileContainer.setInteractive();
@@ -46,8 +49,8 @@ class SetupScene extends Phaser.Scene {
     }
 
     update() {
-        // this.tileContainer.iterate(this.rotateTile);
-        // this.rotateTile(this.tileContainer);
+        // This will let me iterate over all items inside this container
+        // this.generateBoard.tileContainer.iterate(this.rotateTile);
     }
 
     // rotateTile(tile) {

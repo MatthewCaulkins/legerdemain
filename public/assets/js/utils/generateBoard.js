@@ -4,14 +4,17 @@ class GenerateBoard {
         this.ROTATION_IN_RADIANS = 0.785398;
         this.config.scale = this.config.scale ? this.config.scale : 1;
 
-        this.tileContainer = this.config.scene.add.container(0, 0);
-        this.tileContainer.setInteractive();
+        this._tileContainer = this.config.scene.add.container(0, 0);
+        this._tileContainer.setInteractive();
 
         this.createBoard();
     }
 
+    get tileContainer() {
+        return this._tileContainer;
+    }
+
     createBoard() {
-        
         const tileWidth = this.config.tileWidth ? this.config.scale * this.config.tileWidth : 75;
         const tileHeight = this.config.tileHeight ? this.config.scale * this.config.tileHeight : 75; // data.tileheight;
         
@@ -58,7 +61,7 @@ class GenerateBoard {
                // tile.setOrigin(0.5, 0.5);
                 tile.setRotation(this.ROTATION_IN_RADIANS);
 
-                this.tileContainer.add(tile);
+                this._tileContainer.add(tile);
                 i++;
             }
         }
@@ -79,9 +82,11 @@ class GenerateBoard {
         const x = this.x;
         const y = this.y;
 
+        const tint = this.scene.add.existing(new Unit(this.scene, x, y, 'tint'));
         const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
-        character.setOrigin(.5, .85);
+        character.setOrigin(.5, .5);
 
+        tint.setTint(0xff2200);
         // character.y = this.y;
     }
 }

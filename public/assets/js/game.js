@@ -10,11 +10,11 @@ if (isMobile == -1) {
 var gameWidth = isMobile >= 0 ? window.innerWidth : 1200;
 var gameHeight = isMobile >= 0 ? window.innerHeight : 900;
 
-var config = {
+var gameConfig = {
     type: Phaser.AUTO,
     height: gameHeight,
     width: gameWidth,
-    scene: [HomeScene, SetupScene, PlayScene], // , boardTest ArmySelectScene
+    scene: [ SetupScene, PlayScene], // HomeScene
     //parent: 'game-container',
     
     // physics: {
@@ -33,6 +33,10 @@ var config = {
     // }
 };
 
+// var modelConfig = {
+//     isMobile: isMobile
+// }
+
 var alignmentConfig = {
     scene: this,
     rows: 10,
@@ -41,7 +45,12 @@ var alignmentConfig = {
     width: gameWidth
 }
 
-var game = new Phaser.Game(config);
+var CONSTANTS = new Constants();
+var emitter = new Phaser.Events.EventEmitter();
+var controller = new Controller();
+var model = new Model(); //modelConfig);
+var game = new Phaser.Game(gameConfig);
+
 
 // function preload ()
 // {

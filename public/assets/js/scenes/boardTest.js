@@ -62,7 +62,7 @@ class boardTest extends Phaser.Scene {
                 tile.on('pointerout', this.onPointerout.bind(tile));
 
                 tile.depth = centerY + ty;
-                tile.setOrigin(0.5, 0.15);
+                // tile.setOrigin(0.5, 0.15);
                 // tile.setRotation();
 
                 i++;
