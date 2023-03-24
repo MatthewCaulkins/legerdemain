@@ -1,6 +1,7 @@
 class SetupScene extends Phaser.Scene {
     constructor() {
         super('SetupScene');
+        this.ROTATION_IN_RADIANS = 0.785398;
     }
 
     preload() {
@@ -16,17 +17,23 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
+        // Create the container for the board and units
+        this.boardContainer = this.add.container(0, 0);
+        this.boardContainer.setInteractive();
+
         const boardConfig = {
             tileWidth: 75,
             tileHeight: 75,
             mapRows: 3,
             mapColumns: 11,
             scale: .75,
-            scene: this
+            scene: this,
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);
 
+        
+        this.boardContainer.iterate(this.addInteractionToTile);
         // console.log('create function');
         // const self = this;
         // this.socket = io();
@@ -50,14 +57,45 @@ class SetupScene extends Phaser.Scene {
 
     update() {
         // This will let me iterate over all items inside this container
-        // this.generateBoard.tileContainer.iterate(this.rotateTile);
+        this.boardContainer.iterate(this.rollTile);
     }
 
-    // rotateTile(tile) {
-    //     const rotation = tile.rotation;
+    
+    // Tile Logic
+    addInteractionToTile(tile) {
+        tile.setInteractive();
+        tile.setRotation(tile.scene.ROTATION_IN_RADIANS);
 
-    //     tile.setRotation(rotation + .01);
-    // }
+        tile.on('pointerover', tile.scene.onPointerover.bind(tile));
+        tile.on('pointerout', tile.scene.onPointerout.bind(tile));
+        tile.on('pointerdown', tile.scene.onPointerdown.bind(tile));
+    }
+
+    rollTile(tile) {
+        const rotation = tile.rotation;
+        tile.setRotation(rotation + .01);
+    }
+
+    onPointerover() {
+        this.setTint(0x86bfda);
+        // this.y -= 3;
+    } 
+
+    onPointerout() {
+        this.clearTint();
+        // this.y += 3;
+    }
+
+    onPointerdown() {
+        // const x = this.x;
+        // const y = this.y;
+
+        const unit = this.scene.add.existing(new Unit(this.scene, 'red', this, 'tint', 'character'));
+        // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
+        // character.setOrigin(.5, .5);
+
+        // character.y = this.y;
+    }
 
     // buildMap() {
     //     const tileWidth = 75;

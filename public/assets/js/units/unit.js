@@ -1,8 +1,44 @@
 // GameObject Unit base class
-class Unit extends Phaser.GameObjects.Image {
-    constructor(scene, x, y, texture) { //}, motion, direction, distance) {
-        super(scene, x, y, texture); //, direction.offset);
+class Unit extends Phaser.GameObjects.Container {
+    constructor(scene, player, tile, tintTexture, characterTexture) { //}, motion, direction, distance) {
+        // Create image game objects for this container
+        const tint = scene.add.image(0, 0, tintTexture);
+        const character = scene.add.image(0, 0, characterTexture);
 
+        const width = character.displayWidth;
+        const height = character.displayHeight;
+        // const x = tile.x;
+        // const y = tile.y;
+
+        super(scene, 0, 0, [tint, character]);
+
+        this.tint = tint;
+        this.character = character;
+
+        //this.scene.boardContainer.add(this.tint);
+        //this.scene.boardContainer.add(this.character);
+
+
+        // Set the size of the container
+
+        this.depth = tile.depth;
+
+        this.tint.setDepth(this.depth);
+        this.character.setDepth(this.depth);
+
+        // Move this container to the tile it is on
+        this.tile = tile;
+        this.setSize(width, height);
+        this.x = tile.x;
+        this.y = tile.y;
+
+        console.log('The dimensions of this container are ');
+        console.log(width);
+        console.log(height);
+        console.log('The position of this container is');
+        console.log(this.x);
+        console.log(this.y);
+        // TODO: Change these to sprites eventually
         // this.startX = x;
         // this.startY = y;
         // this.distance = distance;
@@ -13,6 +49,23 @@ class Unit extends Phaser.GameObjects.Image {
         // this.speed = 0.15;
         // this.f = this.anim.startFrame;
 
+        // Universal attributes
+        this.scene = scene;
+        this.player = player;
+
+        this.health;
+        this.defense;
+        this.offense;
+        this.range;
+        this.movement;
+        this.dodge;
+        this.block;
+        this.cooldown;
+
+        this.orientation;
+
+
+        this.scene.boardContainer.add(this);
         // this.depth = y + 64;
 
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
