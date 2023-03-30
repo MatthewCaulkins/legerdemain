@@ -1,18 +1,54 @@
 class HomeScene extends Phaser.Scene {
     constructor() {
-        super('HomeScene');
+        super({key: 'HomeScene'});
     }
 
     preload() {
-    
+        this.load.image('tile', 'assets/img/tile.png');
     }
 
     create() {
         model.currentScene = this;
+        this.scene = this;
         
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
+        // Add navigation buttons
+        this.playSceneButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Play',
+            textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
+            event: 'LoadPlayScene',
+            x: 100,
+            y: 100
+        });
+        emitter.on('LoadPlayScene', () => {
+            this.scene.start('PlayScene');
+        });
+
+        this.playSceneButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Setup',
+            textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
+            event: 'LoadSetupScene',
+            x: 200,
+            y: 100
+        });
+        emitter.on('LoadSetupScene', () => {
+            this.scene.start('SetupScene');
+        });
+    }
+
+    // loadPlayScene(scene) {
+    //     scene.start('PlayScene');
+    // }
+
+    // loadSetupScene(scene) {
+    //     scene.start('SetupScene');
+    // }
         // create the game Controller
         // controller = new Controller();
 
@@ -33,7 +69,6 @@ class HomeScene extends Phaser.Scene {
 
 
         // List all players not in a game
-    }
 
     update() {
         

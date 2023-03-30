@@ -14,7 +14,7 @@ var gameConfig = {
     type: Phaser.AUTO,
     height: gameHeight,
     width: gameWidth,
-    scene: [ SetupScene, PlayScene], // HomeScene
+    scene: [HomeScene, SetupScene, PlayScene], // HomeScene
     //parent: 'game-container',
     
     // physics: {
@@ -54,7 +54,8 @@ var game = new Phaser.Game(gameConfig);
 
 // function preload ()
 // {
-//     this.load.image('tilemap', 'assets/img/tilemap.png');
+//     console.log("TEST");
+// //     this.load.image('tilemap', 'assets/img/tilemap.png');
 // }
 
 // function create ()

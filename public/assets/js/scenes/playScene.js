@@ -1,6 +1,6 @@
 class PlayScene extends Phaser.Scene {
     constructor() {
-        super('PlayScene');
+        super({key: 'PlayScene'});
     }
 
     preload() {

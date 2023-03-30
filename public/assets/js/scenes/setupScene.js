@@ -1,13 +1,14 @@
 class SetupScene extends Phaser.Scene {
     constructor() {
-        super('SetupScene');
-        this.ROTATION_IN_RADIANS = 0.785398;
+        super({key: 'SetupScene'});
+        this.ROTATION_IN_RADIANS = 0.785398;        
     }
 
     preload() {
         this.load.image('tile', 'assets/img/tile.png');
-        this.load.image('character', 'assets/img/characterHolder.png');
-        this.load.image('tint', 'assets/img/characterTint.png');
+        
+        this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
+        this.load.image('lanceTint', 'assets/img/characterTint.png');
     }
 
     create() {
@@ -54,6 +55,7 @@ class SetupScene extends Phaser.Scene {
 
         // this.buildMap();
     }
+    
 
     update() {
         // This will let me iterate over all items inside this container
@@ -73,16 +75,28 @@ class SetupScene extends Phaser.Scene {
 
     rollTile(tile) {
         const rotation = tile.rotation;
-        tile.setRotation(rotation + .01);
+      //  tile.setRotation(rotation + .01);
     }
 
     onPointerover() {
-        this.setTint(0x86bfda);
+        this.setTint(CONSTANTS.BLUE_TINT);
+
+        // Show the healthbar
+        
+        if (this.unit) {
+            this.unit.healthBar.container.setVisible(true);
+            this.unit.healthBar.bar.setVisible(true);
+        }
         // this.y -= 3;
     } 
 
     onPointerout() {
         this.clearTint();
+
+        if (this.unit) {
+            this.unit.healthBar.container.setVisible(false);
+            this.unit.healthBar.bar.setVisible(false);
+        }
         // this.y += 3;
     }
 
@@ -90,7 +104,18 @@ class SetupScene extends Phaser.Scene {
         // const x = this.x;
         // const y = this.y;
 
-        const unit = this.scene.add.existing(new Unit(this.scene, 'red', this, 'tint', 'character'));
+        // Only allow one unit on each tile
+        if (!this.unit) {
+            console.log('Add unit');
+            this.unit = this.scene.add.existing(new Lance({
+                scene: this.scene, 
+                player: 1,
+                tile: this,
+                tintTexture: 'lanceTint',
+                characterTexture: 'lanceCharacter'
+            }));
+            // this.unit = this.scene.add.existing(new Unit({this.scene, 0, 0, this, ['lanceTint', 'lanceCharacter']}));
+        }
         // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
         // character.setOrigin(.5, .5);
 

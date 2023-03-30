@@ -1,16 +1,14 @@
 // GameObject Unit base class
 class Unit extends Phaser.GameObjects.Container {
-    constructor(scene, player, tile, tintTexture, characterTexture) { //}, motion, direction, distance) {
+    constructor(config) { //}, motion, direction, distance) {
         // Create image game objects for this container
-        const tint = scene.add.image(0, 0, tintTexture);
-        const character = scene.add.image(0, 0, characterTexture);
+        const tint = config.scene.add.image(0, 0, config.tintTexture);
+        const character = config.scene.add.image(0, 0, config.characterTexture);
 
-        const width = character.displayWidth;
-        const height = character.displayHeight;
         // const x = tile.x;
         // const y = tile.y;
 
-        super(scene, 0, 0, [tint, character]);
+        super(config.scene, 0, 0, [tint, character]);
 
         this.tint = tint;
         this.character = character;
@@ -19,18 +17,24 @@ class Unit extends Phaser.GameObjects.Container {
         //this.scene.boardContainer.add(this.character);
 
 
+        this.scene = config.scene;
+        this.player = config.player;
+        this.tile = config.tile;
+        this.tintTexture = config.tintTexture;
+        this.characterTexture = config.characterTexture;
         // Set the size of the container
 
-        this.depth = tile.depth;
+        this.depth = this.tile.depth;
 
         this.tint.setDepth(this.depth);
         this.character.setDepth(this.depth);
 
+        const width = character.displayWidth;
+        const height = character.displayHeight;
         // Move this container to the tile it is on
-        this.tile = tile;
         this.setSize(width, height);
-        this.x = tile.x;
-        this.y = tile.y;
+        this.x = this.tile.x;
+        this.y = this.tile.y;
 
         console.log('The dimensions of this container are ');
         console.log(width);
@@ -50,9 +54,6 @@ class Unit extends Phaser.GameObjects.Container {
         // this.f = this.anim.startFrame;
 
         // Universal attributes
-        this.scene = scene;
-        this.player = player;
-
         this.health;
         this.defense;
         this.offense;
@@ -65,7 +66,21 @@ class Unit extends Phaser.GameObjects.Container {
         this.orientation;
 
 
+        // Add the healthbar for this unit
+        this.healthBar = new HealthBar({
+            scene: this.scene,
+            width: 100,
+            height: 10,
+            x: this.x,
+            y: this.y - (.6 * height)
+        });
+        this.healthBar.setPercent(1);
+
         this.scene.boardContainer.add(this);
+        this.healthBar.setDepth(this.depth);
+
+        this.healthBar.container.setVisible(false);
+        this.healthBar.bar.setVisible(false);
         // this.depth = y + 64;
 
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
