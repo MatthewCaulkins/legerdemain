@@ -16,9 +16,10 @@ router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
     try {
       if (err || !user) {
-        const error = new Error('An Error occured');
+        // TODO: Can set the login errors here?
+        const error = new Error(`An Error occured ${err}`);
         return next(error);
-      }
+      } 
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
         const body = {
@@ -67,6 +68,7 @@ router.post('/logout', (req, res) => {
     if (refreshToken in tokenList) delete tokenList[refreshToken]
     res.clearCookie('refreshJwt');
     res.clearCookie('jwt');
+    // res.clearCookie('email');
   }
   res.status(200).json({ message: 'logged out' });
 });

@@ -9,7 +9,8 @@
             crossorigin="anonymous">
         <link href="assets/css/main.css" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="assets/js/server/signin_signup.js"></script>
+        <script src="assets/js/server/signinSignup.js"></script>
+        <script src="assets/js/server/validationRefresh.js"></script>
     </head>
     <body class="text-center">
         <form class="form-signin">
@@ -17,6 +18,7 @@
 
             <label for="email" class="sr-only">Email address</label>
             <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
+            <span class="email-validation validation"></span>
             <label for="password" class="sr-only">Password</label>
             <input type="password" id="password" class="form-control" placeholder="Password" required>
             <label for="name" class="sr-only">Name</label>

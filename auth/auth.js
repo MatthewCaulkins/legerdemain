@@ -11,7 +11,9 @@ passport.use('signup', new localStrategy({
 }, async (req, email, password, done) => {
     try {
         const { name } = req.body;
-        const user = await UserModel.create({ email, password, name});
+        
+        // Can add value here
+        const user = await UserModel.create({email, password, name});
         return done(null, user);
     } catch (error) {
         done(error);
@@ -50,6 +52,6 @@ passport.use(new JWTstrategy({
     try {
         return done(null, token.user);
     } catch (error) {
-        done(error);
+        return done(error);
     }
 }));

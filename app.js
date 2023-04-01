@@ -76,9 +76,11 @@ app.use((err, req, res, next) => {
 //     console.log(`Server started on port ${process.env.PORT || 3000}`);
 // });
 
-io.on('connection', function (socket) {
+
+io.on('connection', async function (socket) {
     console.log('a user connected');
-    // This is weird but should be able to rewrite this later to 
+
+    // TODO: Get the mongo response here!
     players[socket.id] = {
         rotation: 0,
         x: Math.floor(Math.random() * 700) + 50,

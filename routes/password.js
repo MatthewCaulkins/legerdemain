@@ -4,7 +4,6 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const crypto = require('crypto');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
-const UserModel = require('../models/userModel');
 
 const email = process.env.EMAIL;
 const pass = process.env.PASSWORD;
@@ -26,7 +25,7 @@ const handlebarsOptions = {
 smtpTransport.use('compile', hbs(handlebarsOptions));
 const router = express.Router();
 
-router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
+router.post('/forgotPassword', asyncMiddleware(async (req, res, next) => {
     const { email } = req.body;
     const user = await UserModel.findOne({ email });
     if (!user) {
@@ -42,10 +41,10 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
     const data = {
         to: user.email,
         from: email,
-        template: 'forgot-password',
+        template: 'forgotPassword',
         subject: 'Legerdemain Password Reset',
         context: {
-            url: `http://localhost:${process.env.PORT || 3000}/reset-password.html?token=${token}`,
+            url: `http://localhost:${process.env.PORT || 3000}/resetPassword.html?token=${token}`,
             name: user.name
         }
     };
@@ -53,7 +52,7 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
     res.status(200).json({ message: 'An email has been sent to your email. Password reset link is only valid for 10 minutes.' });
 }));
 
-router.post('/reset-password', asyncMiddleware(async (req, res, next) => {
+router.post('/resetPassword', asyncMiddleware(async (req, res, next) => {
     const user = await UserModel.findOne({ resetToken: req.body.token, resetTokenExp: { $gt: Date.now() } });
     if (!user) {
         res.status(400).json({ 'message': 'invalid token' });
@@ -73,7 +72,7 @@ router.post('/reset-password', asyncMiddleware(async (req, res, next) => {
     const data = {
         to: user.email,
         from: email,
-        template: 'reset-password',
+        template: 'resetPassword',
         subject: 'Phaser Leaderboard Password Reset Confirmation',
         context: {
             name: user.name

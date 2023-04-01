@@ -2,7 +2,7 @@ function signUp() {
     var data = {
         email: document.forms[0].elements[0].value,
         password: document.forms[0].elements[1].value,
-        name: document.forms[0].elements[2].value
+        name: document.forms[0].elements[2].value,
     };
 
     $.ajax({
@@ -10,13 +10,18 @@ function signUp() {
         url: '/signup',
         data,
         success: function (data) {
-        //    window.alert('user created successfully');
+            // console.log(data);
+            window.alert('user created successfully');
             window.location.replace('/index.html');
         },
         error: function (response) {
             // Switch this stuff around to use console and not reload
 
-            window.alert(JSON.stringify(response));
+            // TODO: Make this a validation field that alerts you
+            const validation = document.querySelector('.email-validation');
+            validation.innerHTML = 'Sorry, that email already exists.';
+            validation.classList.add('active');
+            
             console.log(JSON.stringify(response));
         //    window.location.replace('/signup.html');
         }
@@ -51,7 +56,7 @@ function forgotPassword() {
 
     $.ajax({
         type: 'POST',
-        url: '/forgot-password',
+        url: '/forgotPassword',
         data,
         success: function (data) {
             // window.alert(data.message);
@@ -61,7 +66,7 @@ function forgotPassword() {
             // Make this use validation field instead of alert
             window.alert(JSON.stringify(response));
             console.log(JSON.stringify(response));
-            // window.location.replace('/forgot-password.html');
+            // window.location.replace('/forgotPassword.html');
         }
     });
 }
@@ -82,7 +87,7 @@ function resetPassword() {
         
         $.ajax({
             type: 'POST',
-            url: '/reset-password',
+            url: '/resetPassword',
             data,
             success: function (data) {
                 // window.alert(data.message);
@@ -91,7 +96,7 @@ function resetPassword() {
             error: function (response) {
                 window.alert(JSON.stringify(response));
                 console.log(JSON.stringify(response));
-                // window.location.replace('/reset-password.html');
+                // window.location.replace('/resetPassword.html');
             }
         });
     }

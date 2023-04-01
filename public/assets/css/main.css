@@ -49,3 +49,14 @@ body {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+
+.validation {
+    display: none;
+    color: #ff2200;
+    font-weight: 600;    
+    margin-bottom: 10px;
+}
+
+.validation.active {
+    display: block;
+}
