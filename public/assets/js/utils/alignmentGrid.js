@@ -1,6 +1,5 @@
 class AlignmentGrid {
     constructor(config) {
-        this.config = config;
 
         if (!config.scene) return;
 
@@ -17,6 +16,7 @@ class AlignmentGrid {
             config.width = game.config.width;
         }
 
+        this.config = config;
         this.scene = config.scene;
 
         // set cell sizes
@@ -43,8 +43,8 @@ class AlignmentGrid {
 
     // Position an object at x, y position
     positionItemAt(x, y, obj) {
-        var posX = this.cellWidth * x + this.cellWidth / 2;
-        var posY = this.cellHeight * y + this.cellHeight / 2;
+        var posX = (this.cellWidth * x) + (this.cellWidth / 2);
+        var posY = (this.cellHeight * y) + (this.cellHeight / 2);
 
         obj.x = posX;
         obj.y = posY;
@@ -54,7 +54,7 @@ class AlignmentGrid {
     positionItemAtIndex(index, obj) {
         var posY = Math.floor(index / this.config.columns);
         var posX = index - (posY * this.config.columns);
-
+        
         this.positionItemAt(posX, posY, obj);
     }
 

@@ -7,8 +7,8 @@ if (isMobile == -1) {
     isMobile = navigator.userAgent.indexOf('Tablet');
 }
 
-var gameWidth = isMobile >= 0 ? window.innerWidth : 1200;
-var gameHeight = isMobile >= 0 ? window.innerHeight : 900;
+var gameWidth = isMobile >= 0 ? window.innerWidth : (window.innerWidth > 1200 ? 1200 : window.innerWidth);
+var gameHeight = isMobile >= 0 ? window.innerHeight : (window.innerHeight > 900 ? 900 : window.innerHeight);
 
 var gameConfig = {
     type: Phaser.AUTO,
@@ -37,20 +37,20 @@ var gameConfig = {
 //     isMobile: isMobile
 // }
 
-var alignmentConfig = {
-    scene: this,
-    rows: 10,
-    columns: 10,
-    height: gameHeight,
-    width: gameWidth
-}
+// var alignmentConfig = {
+//     scene: this,
+//     rows: 10,
+//     columns: 10,
+//     height: gameHeight,
+//     width: gameWidth
+// }
 
-var CONSTANTS = new Constants();
-var emitter = new Phaser.Events.EventEmitter();
-var controller = new Controller();
-var model = new Model(); //modelConfig);
-var game = new Phaser.Game(gameConfig);
-
+const CONSTANTS = new Constants();
+const emitter = new Phaser.Events.EventEmitter();
+const controller = new Controller();
+const model = new Model(); //modelConfig);
+const game = new Phaser.Game(gameConfig);
+// const alignmentGrid = new AlignmentGrid(alignmentConfig);
 
 // function preload ()
 // {
@@ -83,7 +83,6 @@ var game = new Phaser.Game(gameConfig);
     //     graphics.lineTo(i, alignmentConfig.height);
     // }
     // graphics.strokePath();
-    // this.grid = new AlignmentGrid(alignmentConfig);
     // this.grid.drawGrid();
     // var particles = this.add.particles('red');
 

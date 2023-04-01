@@ -15,13 +15,19 @@ class PlayScene extends Phaser.Scene {
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
+        // Create the container for the board and units
+        this.boardContainer = this.add.container(0, 0);
+        this.boardContainer.setInteractive();
+
         const boardConfig = {
             tileWidth: 75,
             tileHeight: 75,
             mapRows: 11,
             mapColumns: 11,
-            scale: .75,
-            scene: this
+            scale: .70,
+            scene: this,
+            container: this.boardContainer,
+            orientation: CONSTANTS.BOARD_ORIENTATION
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);

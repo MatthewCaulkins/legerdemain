@@ -1,8 +1,11 @@
 class SetupScene extends Phaser.Scene {
     constructor() {
-        super({key: 'SetupScene'});
-        this.ROTATION_IN_RADIANS = 0.785398;        
+        super({key: 'SetupScene'}); 
     }
+
+    // init(config) {
+    //     this.message = config.message;
+    // }
 
     preload() {
         this.load.image('tile', 'assets/img/tile.png');
@@ -29,12 +32,52 @@ class SetupScene extends Phaser.Scene {
             mapColumns: 11,
             scale: .75,
             scene: this,
+            container: this.boardContainer,
+            orientation: CONSTANTS.BOARD_ORIENTATION
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);
 
-        
         this.boardContainer.iterate(this.addInteractionToTile);
+
+        // Player Units container
+        this.unitsBoard = this.add.container(0, 0);
+        this.unitsBoard.setInteractive();
+
+        // Make a Unit Board class
+        const unitsBoardConfig = {
+            tileWidth: this.alignmentGrid.cellWidth,
+            tileHeight: this.alignmentGrid.cellHeight,
+            mapRows: 3,
+            mapColumns: 4,
+            scale: 1,
+            scene: this,
+            container: this.boardContainer
+        }
+
+        this.unitsBoard = new GenerateBoard(unitsBoardConfig);
+
+        // Position the units board
+        
+
+        this.playSceneButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Accept',
+            textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
+            event: 'AcceptBoardPlacement',
+            alignmentGrid: this.alignmentGrid,
+            index: 100
+        });
+        emitter.on('AcceptBoardPlacement', this.AcceptBoardPlacement);
+    }
+
+    AcceptBoardPlacement() {
+        // Save the board placements to the database
+
+        game.scene.start('HomeScene');
+        game.scene.stop('SetupScene');
+    }
         // console.log('create function');
         // const self = this;
         // this.socket = io();
@@ -53,33 +96,41 @@ class SetupScene extends Phaser.Scene {
         // this.tileContainer = this.add.container(0, 0);
         // this.tileContainer.setInteractive();
 
-        // this.buildMap();
-    }
-    
+        // this.buildMap();    
 
     update() {
         // This will let me iterate over all items inside this container
-        this.boardContainer.iterate(this.rollTile);
+        // this.boardContainer.iterate(this.rollTile);
     }
 
     
+
+
     // Tile Logic
     addInteractionToTile(tile) {
-        tile.setInteractive();
-        tile.setRotation(tile.scene.ROTATION_IN_RADIANS);
+        console.log('Add Interaction');
+        console.log(tile);
+        console.log(this);
+
+        // tile.setInteractive();
 
         tile.on('pointerover', tile.scene.onPointerover.bind(tile));
         tile.on('pointerout', tile.scene.onPointerout.bind(tile));
         tile.on('pointerdown', tile.scene.onPointerdown.bind(tile));
     }
 
-    rollTile(tile) {
-        const rotation = tile.rotation;
-      //  tile.setRotation(rotation + .01);
-    }
+    // rollTile(tile) {
+    //     const rotation = tile.rotation;
+    //     tile.setRotation(rotation + .01);
+    // }
 
     onPointerover() {
+        // console.log(tile);
+        console.log(this);
+
+        // tile.tint = CONSTANTS.BLUE_TINT;
         this.setTint(CONSTANTS.BLUE_TINT);
+        //tile.setTint(CONSTANTS.BLUE_TINT);
 
         // Show the healthbar
         
@@ -91,6 +142,8 @@ class SetupScene extends Phaser.Scene {
     } 
 
     onPointerout() {
+        // console.log(tile);
+        console.log(this);
         this.clearTint();
 
         if (this.unit) {

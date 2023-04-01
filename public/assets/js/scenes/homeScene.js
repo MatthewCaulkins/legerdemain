@@ -21,12 +21,10 @@ class HomeScene extends Phaser.Scene {
             text: 'Play',
             textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
             event: 'LoadPlayScene',
-            x: 100,
-            y: 100
+            alignmentGrid: this.alignmentGrid,
+            index: 12
         });
-        emitter.on('LoadPlayScene', () => {
-            this.scene.start('PlayScene');
-        });
+        emitter.on('LoadPlayScene', this.LoadPlayScene);
 
         this.playSceneButton = new Button({
             scene: this, 
@@ -34,12 +32,20 @@ class HomeScene extends Phaser.Scene {
             text: 'Setup',
             textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
             event: 'LoadSetupScene',
-            x: 200,
-            y: 100
+            alignmentGrid: this.alignmentGrid,
+            index: 14
         });
-        emitter.on('LoadSetupScene', () => {
-            this.scene.start('SetupScene');
-        });
+        emitter.on('LoadSetupScene', this.LoadSetupScene);
+    }
+
+    LoadPlayScene() {
+        game.scene.start('PlayScene');
+        game.scene.stop('HomeScene');
+    }
+
+    LoadSetupScene() {
+        game.scene.start('SetupScene');
+        game.scene.stop('HomeScene');
     }
 
     // loadPlayScene(scene) {

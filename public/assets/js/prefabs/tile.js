@@ -18,13 +18,29 @@ class Tile extends Phaser.GameObjects.Image {
         this.scaleX = config.scale;
         this.scaleY = config.scale;
 
+        // Save the board placement
+        this.row = x;
+        this.column = y;
+
         this.setDepth((x + y + (x * .1)) * 10); // ty
        // tile.setOrigin(0.5, 0.5);
 
-        config.scene.boardContainer.add(this);
+        config.container.add(this);
 
         this._unit;
+
+        // Make the tile interactive and oriented
+        this.setInteractive();
+        this.setRotation(config.orientation);
     }
+
+    // setTint(tint) {
+    //     this.setTint(tint);
+    // }
+
+    // clearTint() {
+    //     this.clearTint();
+    // }
 
     // Set the unit on this tile
     get unit() {
