@@ -21,7 +21,7 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
-        // Create the container for the board and units
+        // Create the container for the board and generate it
         this.boardContainer = this.add.container(0, 0);
         this.boardContainer.setInteractive();
 
@@ -38,29 +38,41 @@ class SetupScene extends Phaser.Scene {
 
         this.generateBoard = new GenerateBoard(boardConfig);
 
+        // Add interactivity to each of the tiles in the board container
         this.boardContainer.iterate(this.addInteractionToTile);
 
-        // Player Units container
-        this.unitsBoard = this.add.container(0, 0);
-        this.unitsBoard.setInteractive();
+        // Add a container for the units
+        this.boardUnitsBoard = this.add.container(0, 0);
+
+        // Player Select Units container
+        this.selectUnitsContainer = this.add.container(0, 0);
+        this.selectUnitsContainer.setInteractive();
 
         // Make a Unit Board class
-        const unitsBoardConfig = {
-            tileWidth: this.alignmentGrid.cellWidth,
-            tileHeight: this.alignmentGrid.cellHeight,
-            mapRows: 3,
-            mapColumns: 4,
-            scale: 1,
-            scene: this,
-            container: this.boardContainer
-        }
+        // const unitsBoardConfig = {
+        //     tileWidth: this.alignmentGrid.cellWidth,
+        //     tileHeight: this.alignmentGrid.cellHeight,
+        //     mapRows: 3,
+        //     mapColumns: 4,
+        //     scale: 1,
+        //     scene: this,
+        //     container: this.boardContainer
+        // }
 
-        this.unitsBoard = new GenerateBoard(unitsBoardConfig);
+        // this.unitsBoard = new GenerateBoard(unitsBoardConfig);
 
         // Position the units board
+        const selectGridConfig = {
+            scene: this,
+            alignmentGrid: this.alignmentGrid,
+            mapRows: 3,
+            mapColumns: 4,
+        }
+
+        this.selectGrid = new SelectUnitsGrid(selectGridConfig);
         
 
-        this.playSceneButton = new Button({
+        this.acceptButton = new Button({
             scene: this, 
             key: 'tile',
             text: 'Accept',
@@ -162,13 +174,17 @@ class SetupScene extends Phaser.Scene {
             console.log('Add unit');
             this.unit = this.scene.add.existing(new Lance({
                 scene: this.scene, 
-                player: 1,
+                player: game.player,
                 tile: this,
-                tintTexture: 'lanceTint',
-                characterTexture: 'lanceCharacter'
+                container: this.scene.boardUnitsBoard
+                // tintTexture: 'lanceTint',
+                // characterTexture: 'lanceCharacter'
             }));
             // this.unit = this.scene.add.existing(new Unit({this.scene, 0, 0, this, ['lanceTint', 'lanceCharacter']}));
-        }
+        }  // DO THE STUFF TO MOVE THEM OR REMOVE THEM FROM THE BOARD
+        // else {
+
+        // }
         // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
         // character.setOrigin(.5, .5);
 

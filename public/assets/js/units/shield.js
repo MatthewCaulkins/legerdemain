@@ -1,5 +1,8 @@
 class Shield extends Unit {
     constructor(config) {
+        config.tintTexture = 'lanceTint';
+        config.characterTexture = 'lanceCharacter';
+        
         super(config);
 
         this.health = 40;
@@ -10,5 +13,8 @@ class Shield extends Unit {
         this.dodge = .05;
         this.block = .4;
         this.cooldown = 2;
+
+        // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
+        super.setTint(CONSTANTS.BLUE_TINT);
     }
 }

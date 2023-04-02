@@ -1,5 +1,8 @@
 class Dagger extends Unit {
     constructor(config) {
+        config.tintTexture = 'lanceTint';
+        config.characterTexture = 'lanceCharacter';
+        
         super(config);
 
         this.health = 20;
@@ -10,5 +13,8 @@ class Dagger extends Unit {
         this.dodge = .35;
         this.block = .25;
         this.cooldown = 0;
+
+        // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
+        super.setTint(CONSTANTS.ORANGE_TINT);
     }
 }

@@ -10,8 +10,7 @@ class Unit extends Phaser.GameObjects.Container {
 
         super(config.scene, 0, 0, [tint, character]);
 
-        this.tint = tint;
-        this.character = character;
+        
 
         //this.scene.boardContainer.add(this.tint);
         //this.scene.boardContainer.add(this.character);
@@ -19,20 +18,29 @@ class Unit extends Phaser.GameObjects.Container {
 
         this.scene = config.scene;
         this.player = config.player;
+        this.tint = tint;
+        this.character = character;
         this.tile = config.tile;
         this.tintTexture = config.tintTexture;
         this.characterTexture = config.characterTexture;
-        // Set the size of the container
+        this.container = config.container;
 
+        // Set the unit's container
+        this.container.add(this);
+        // this.container.add(this.tint);
+        // this.container.add(this.character);
+
+        // Set the depth to the same as the tile the unit is on
         this.depth = this.tile.depth;
-
         this.tint.setDepth(this.depth);
         this.character.setDepth(this.depth);
 
+        // Set this units display size
         const width = character.displayWidth;
         const height = character.displayHeight;
-        // Move this container to the tile it is on
         this.setSize(width, height);
+
+        // Move this container to the tile it is on
         this.x = this.tile.x;
         this.y = this.tile.y;
 
@@ -53,7 +61,7 @@ class Unit extends Phaser.GameObjects.Container {
         // this.speed = 0.15;
         // this.f = this.anim.startFrame;
 
-        // Universal attributes
+        // Universal attributes used by sub-classes
         this.health;
         this.defense;
         this.offense;
@@ -75,8 +83,6 @@ class Unit extends Phaser.GameObjects.Container {
             y: this.y - (.6 * height)
         });
         this.healthBar.setPercent(1);
-
-        this.scene.boardContainer.add(this);
         this.healthBar.setDepth(this.depth);
 
         this.healthBar.container.setVisible(false);
@@ -84,6 +90,11 @@ class Unit extends Phaser.GameObjects.Container {
         // this.depth = y + 64;
 
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
+    }
+
+    // Set the tint for the player's army
+    setTint(tint) {
+        this.tint.setTint(tint);
     }
 
     changeFrame ()
