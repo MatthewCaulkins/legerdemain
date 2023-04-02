@@ -24,7 +24,7 @@ mongoose.connection.on('error', (error) => {
     process.exit(1);
 });
 
-mongoose.connection.on('connected', function () {
+mongoose.connection.on('connected', function (data) {
     console.log('connected to mongo');
 });
 
@@ -35,6 +35,8 @@ const io = require('socket.io')(server);
 
 // Will want to store this to the database later
 let players = {};
+let currentPlayer;
+let screen = 'home';
 
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
@@ -80,28 +82,54 @@ app.use((err, req, res, next) => {
 io.on('connection', async function (socket) {
     console.log('a user connected');
 
-    // TODO: Get the mongo response here!
-    players[socket.id] = {
-        rotation: 0,
-        x: Math.floor(Math.random() * 700) + 50,
-        y: Math.floor(Math.random() * 500) + 50,
-        playerId: socket.id,
-        team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
-    };
+    // players[socket.id] = {
+    //     rotation: 0,
+    //     x: Math.floor(Math.random() * 700) + 50,
+    //     y: Math.floor(Math.random() * 500) + 50,
+    //     playerId: socket.id,
+    //     team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
+    // };
 
+    // Gather our player data and then respond that the game can load
+    socket.on('playerData', (data) => {
+        // console.log('data from player data server');
+        // console.log(data);
+
+        currentPlayer = {
+            name: data.name,
+            units: data.units,
+            playerId: socket.id
+        };
+        players[socket.id] = currentPlayer;
+
+        screen = 'introScreen';
+        // console.log('load the game scene');
+        socket.emit('playerDataCollected');
+    });
+
+    
     // send players object to new player  - only to this new socket
-    socket.emit('currentPlayers', players);
+    socket.emit('currentPlayers', [players, currentPlayer.playerId]);
+
+    // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
+    socket.on('gameScreenReached', () => {
+        screen = 'gameScreen';
+    })
+
     // update all other players of the new player  - sends to all sockets
     socket.broadcast.emit('newPlayer', players[socket.id]);
 
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
+    socket.on('disconnect', () => {
+        // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
+        if (screen != 'introScreen') {
+            console.log('user disconnected');
 
-        // remove this player from our players object
-        delete players[socket.id];
+            // remove this player from our players object
+            delete players[socket.id];
 
-        // emit a message to all players to remove this player
-        io.emit('disconnect', socket.id);
+            // emit a message to all players to remove this player
+            io.emit('disconnect', socket.id);
+        }
     });
 });
 

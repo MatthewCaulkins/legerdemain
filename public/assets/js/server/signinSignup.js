@@ -34,12 +34,30 @@ function signIn() {
         password: document.forms[0].elements[1].value
     };
 
+    const socket = io();
+    // This happens after connect anyway
+    // socket.on('currentPlayers', players => {
+    //     console.log('Current players called');
+    // // });
+    // socket.on('connect', () => { 
+    //     socket.emit('playerData', 'hello')
+    //     console.log('server connected')
+    // });
+
+
     $.ajax({
         type: 'POST',
         url: '/login',
         data,
         success: function (data) {
-            window.location.replace('/game.html');
+            console.log('SigninOut Login Post');
+            console.log(data);
+            
+            // Send the player data to our game frontend and wait for acceptance before loading the game scene
+            socket.emit('playerData', {name: data.user.name, units: data.user.units});
+            socket.on('playerDataCollected', () => {
+                window.location.replace('/game.html');
+            })
         },
         error: function (response) {
             window.alert(JSON.stringify(response));

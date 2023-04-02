@@ -39,8 +39,8 @@ router.post('/login', async (req, res, next) => {
           email: user.email,
           _id: user._id
         };
-        //Send back the token to the user
-        return res.status(200).json({ token, refreshToken });
+        //Send back the token and the user data to the user
+        return res.status(200).json({ token, refreshToken, user });
       });
     } catch (error) {
       return next(error);

@@ -24,7 +24,7 @@ class HomeScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.on('LoadPlayScene', this.LoadPlayScene);
+        emitter.on('LoadPlayScene', this.loadPlayScene);
 
         this.playSceneButton = new Button({
             scene: this, 
@@ -35,17 +35,34 @@ class HomeScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 14
         });
-        emitter.on('LoadSetupScene', this.LoadSetupScene);
+        emitter.on('LoadSetupScene', this.loadSetupScene);
+
+        this.createHUD();
     }
 
-    LoadPlayScene() {
+    // Change scenes
+    loadPlayScene() {
         game.scene.start('PlayScene');
         game.scene.stop('HomeScene');
     }
 
-    LoadSetupScene() {
+    loadSetupScene() {
         game.scene.start('SetupScene');
         game.scene.stop('HomeScene');
+    }
+
+    // Show players
+    createHUD() {
+        this.graphics = this.add.graphics();
+        
+        this.graphics.fillStyle(0xffffff, 1);
+        this.graphics.fillRect(0, this.alignmentGrid.cellHeight * (this.alignmentGrid.rows - 2), gameWidth, gameHeight);
+
+        const text = this.add.text(0, 0, `Welcome ${game.player.name}`, {
+            color: '#000000'
+        });
+
+        this.alignmentGrid.positionItemAtIndex(100, text);
     }
 
     // loadPlayScene(scene) {

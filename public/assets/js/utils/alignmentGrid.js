@@ -16,6 +16,8 @@ class AlignmentGrid {
             config.width = game.config.width;
         }
 
+        this.rows = config.rows;
+        this.columns = config.columns;
         this.config = config;
         this.scene = config.scene;
 

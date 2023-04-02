@@ -7,6 +7,9 @@ if (isMobile == -1) {
     isMobile = navigator.userAgent.indexOf('Tablet');
 }
 
+this.otherPlayers = [];
+this.player;
+
 var gameWidth = isMobile >= 0 ? window.innerWidth : (window.innerWidth > 1200 ? 1200 : window.innerWidth);
 var gameHeight = isMobile >= 0 ? window.innerHeight : (window.innerHeight > 900 ? 900 : window.innerHeight);
 
