@@ -43,13 +43,14 @@ class Unit extends Phaser.GameObjects.Container {
         // Move this container to the tile it is on
         this.x = this.tile.x;
         this.y = this.tile.y;
+        this.tile.unit = this;
 
-        console.log('The dimensions of this container are ');
-        console.log(width);
-        console.log(height);
-        console.log('The position of this container is');
-        console.log(this.x);
-        console.log(this.y);
+        // console.log('The dimensions of this container are ');
+        // console.log(width);
+        // console.log(height);
+        // console.log('The position of this container is');
+        // console.log(this.x);
+        // console.log(this.y);
         // TODO: Change these to sprites eventually
         // this.startX = x;
         // this.startY = y;

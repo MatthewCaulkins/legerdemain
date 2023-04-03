@@ -5,6 +5,7 @@ class Dagger extends Unit {
         
         super(config);
 
+        this.type = 'dagger';
         this.health = 20;
         this.defense = .05;
         this.offense = 10;

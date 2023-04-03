@@ -59,6 +59,170 @@ class PlayScene extends Phaser.Scene {
         // this.rotateTile(this.tileContainer);
     }
 
+
+    onPointerdown() {
+        // const x = this.x;
+        // const y = this.y;
+
+        // If there is no unit on this tile
+        if (!this.unit) { 
+            // If there is no unit selected - add the selected unit to this tile
+            if (this.scene.unitSelected === false) {
+                console.log('Add unit');
+                // Try to get this automatically set somewhere
+                this.unit = this.scene.add.existing(new Lance({
+                    scene: this.scene, 
+                    player: game.player,
+                    tile: this,
+                    container: this.scene.unitsBoard
+                }));
+                this.setTint(CONSTANTS.ORANGE_TINT);
+            }
+        // If there is a unit on this tile
+        } else {
+            // if (this.active) {
+                // If this tile has a unit and it is the active unit - remove it's activity
+                if (this === this.scene.selectedTileFrom) {
+                //    this.active = false;
+                    this.scene.unitSelected = false;
+                    this.scene.selectedTileFrom = null;
+                    this.setTint(CONSTANTS.ORANGE_TINT);
+                // }
+                // If this tile has a unit and it's not the active unit
+            } else {
+                // If there is no selected tile to move from - set this unit to the selected unit
+                if (this.scene.selectedTileFrom === null) {
+                    this.scene.unitSelected = true;
+                    this.scene.selectedTileFrom = this;
+
+                    this.setTint(CONSTANTS.RED_TINT);
+                    // Highlight all tiles within unit's range
+                    this.scene.highlightTilesInRange(this);
+
+                // If this is the another unit - set them to active    
+                } else {
+                    this.scene.selectedTileFrom.clearTint();
+                    this.scene.selectedTileFrom = false;
+
+                    this.scene.selectedTileFrom = this;
+                    this.scene.unitSelected = true;
+                    this.setTint(CONSTANTS.RED_TINT);
+                }
+            }
+        }
+
+        // DO THE STUFF TO MOVE THEM OR REMOVE THEM FROM THE BOARD
+        // else {
+
+        // }
+        // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
+        // character.setOrigin(.5, .5);
+
+        // character.y = this.y;
+    }
+
+
+    // Set the highlight to all tiles in range
+    highlightTilesInRange(tile) {
+        // Get the range
+        const unit = tile.unit;
+        const movement = unit.movement;
+        const generatedBoard = tile.scene.generatedBoard;
+        // const scene = tile.scene;
+        // const number = tile.number;
+        let questionedTile;
+
+        tile.path = [];
+
+        const tilesOfInterest = [tile];
+
+        console.log(generatedBoard);
+        for (let i = 0; i < movement; i++) {
+            tilesOfInterest.forEach(tileOfInterest => {
+
+                // console.log(tileOfInterest);
+
+                console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+                if (tileOfInterest.column - 1 >= 0) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+
+                    // console.log(questionedTile);
+
+                    // Will have to take into account friendly units in the Play Scene
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            questionedTile.path = tileOfInterest.path;
+                            questionedTile.path.push('up');
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+                
+                if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            questionedTile.path = tileOfInterest.path;
+                            questionedTile.path.push('right');
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+
+                if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            questionedTile.path = tileOfInterest.path;
+                            questionedTile.path.push('down');
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+                
+                if (tileOfInterest.row - 1 >= 0) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            questionedTile.path = tileOfInterest.path;
+                            questionedTile.path.push('left');
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+            });
+        }
+
+        tilesOfInterest.forEach(tileOfInterest => {
+            if (tileOfInterest != tile) {
+                tileOfInterest.setTint(CONSTANTS.YELLOW_TINT);
+            }
+        });
+
+        // for (let i = 0; i < scene.boardContainer.mapRows; i++) {
+        //     for (let j = 0; j < scene.boardContainer.mapColumns; j++) {
+        //         const boardTile = scene.boardContainer.board[j][i];
+
+        //         if (number - range < boardTile.number < number + range) {
+        //             boardTile.inRange = true;
+        //             boardTile.setTint(CONSTANTS.YELLOW_TINT);
+        //         }
+        //     }
+        // }
+    }
+
+    // Iterate over all tiles and remove the tint
+    removeAllHighlights(tile) {
+        const scene = tile.scene;
+        const boardContainer = scene.boardContainer;
+
+        for (let i = 0; i < boardContainer.rows; i++) {
+            for (let j = 0; j < boardContainer.columns; j++) {
+                boardContainer[i][j].clearTint();
+            }
+        }
+    }
+
     // rotateTile(tile) {
     //     const rotation = tile.rotation;
 

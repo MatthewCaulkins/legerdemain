@@ -5,6 +5,7 @@ class Sorcery extends Unit {
         
         super(config);
 
+        this.type = 'sorcery';
         this.health = 20;
         this.defense = 0;
         this.offense = 15;

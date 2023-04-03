@@ -5,6 +5,7 @@ class Shield extends Unit {
         
         super(config);
 
+        this.type = 'shield';
         this.health = 40;
         this.defense = .2;
         this.offense = 8;

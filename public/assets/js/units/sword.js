@@ -5,6 +5,7 @@ class Sword extends Unit {
         
         super(config);
 
+        this.type = 'sword';
         this.health = 30;
         this.defense = .05;
         this.offense = 18;

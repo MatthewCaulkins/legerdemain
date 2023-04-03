@@ -25,9 +25,9 @@ class GenerateBoard {
 
         // const layer = data.layers[0].data;
 
-        const mapRows = this.config.mapRows ? this.config.mapRows : 3;
-        const mapColumns = this.config.mapColumns ? this.config.mapColumns : 8;
-        const segments = mapRows > mapColumns ? mapRows : mapColumns;
+        this.mapRows = this.config.mapRows ? this.config.mapRows : 3;
+        this.mapColumns = this.config.mapColumns ? this.config.mapColumns : 11;
+        const segments = this.mapRows > this.mapColumns ? this.mapRows : this.mapColumns;
 
         // const centerX = mapRows * tileWidthHalf;
         // const centerX = .5 * segments * diagonal;
@@ -39,15 +39,16 @@ class GenerateBoard {
         // Need to make this more mobile friendly.  Make the container, fill the things in it, then rotate the container.
 
         // Create a board to recall tiles and units later
-        this.board = new Array(mapRows);
-        for (let x = 0; x < mapRows; x++)
+        this.board = new Array(this.mapRows);
+        for (let x = 0; x < this.mapRows; x++)
         {
-            this.board[x] = new Array(mapColumns);
+            this.board[x] = new Array(this.mapColumns);
         }
         
-        for (let y = 0; y < mapColumns; y++)
+        let n = 0;
+        for (let y = 0; y < this.mapColumns; y++)
         {
-            for (let x = 0; x < mapRows; x++)
+            for (let x = 0; x < this.mapRows; x++)
             {
 
                 // const id = layer[i] - 1;
@@ -56,8 +57,9 @@ class GenerateBoard {
                 // const ty = (x + y) * (.5 * diagonal); // tileHeightHalf;
 
                 // if (this.config.orientation === CONSTANTS.UNITS_ORIENTATION) {
-                const tile = new Tile(this.config, x, y, segments);
+                const tile = new Tile(this.config, x, y, segments, n);
                 this.board[x][y] = tile;
+                n++;
                 // }
 
                 // if (this.config.index && this.config.alignmentGrid) {

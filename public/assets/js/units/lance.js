@@ -5,6 +5,7 @@ class Lance extends Unit {
 
         super(config);
 
+        this.type = 'lance';
         this.health = 30;
         this.defense = .1;
         this.offense = 15;

@@ -20,5 +20,9 @@ class Constants {
         this.PINK_TINT = 0xfb14bc;
         this.TEAL_TINT = 0x12eedc;
         this.BROWN_TINT = 0x9b530d;
+
+        
+        this.TEXT_STYLE = { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', color: '#ffffff' };
+        this.HUD_STYLE = { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', color: '#ffffff', fontStyle: 'strong' };
     }
 }

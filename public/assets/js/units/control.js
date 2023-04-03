@@ -5,6 +5,7 @@ class Control extends Unit {
         
         super(config);
 
+        this.type = 'control';
         this.health = 20;
         this.defense = 0;
         this.offense = 0;

@@ -5,6 +5,7 @@ class Healing extends Unit {
         
         super(config);
 
+        this.type = 'healing';
         this.health = 18;
         this.defense = 0;
         this.offense = 15;

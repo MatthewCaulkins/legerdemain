@@ -5,6 +5,7 @@ class Bow extends Unit {
         
         super(config);
 
+        this.type = 'bow';
         this.health = 25;
         this.defense = .05;
         this.offense = 15;
