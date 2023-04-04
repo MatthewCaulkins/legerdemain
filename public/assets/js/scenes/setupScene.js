@@ -117,7 +117,7 @@ class SetupScene extends Phaser.Scene {
                 this.setTint(CONSTANTS.GREEN_TINT);
             } else { // non-active tile
                 if (this.scene.unitsPlaced < 10) { 
-                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.setTint(CONSTANTS.GREEN_TINT);
                     this.unit.alpha = .5;
                 }
             }
@@ -129,7 +129,7 @@ class SetupScene extends Phaser.Scene {
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.GREEN_TINT);
                 } else { 
-                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.setTint(CONSTANTS.GREEN_TINT);
                     this.unit.alpha = .5;
                 }
             }
@@ -158,7 +158,7 @@ class SetupScene extends Phaser.Scene {
                 }
             } else {  // Has board tile counterpart
                 if (this.scene.selectGridTile === this) {  // Is this tile
-                    this.setTint(CONSTANTS.RED_TINT);
+                    this.setTint(CONSTANTS.GREEN_TINT);
                 } else {  // Is another tile with counterpart
                     this.setTint(CONSTANTS.ORANGE_TINT);
                 }
@@ -244,7 +244,7 @@ class SetupScene extends Phaser.Scene {
                     this.unitsBoardCounterpart.selectGridCounterpart = null;
                     this.unitsBoardCounterpart.clearTint();
                     
-                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.setTint(CONSTANTS.GREEN_TINT);
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
                     this.unitsBoardCounterpart = null;
@@ -257,7 +257,7 @@ class SetupScene extends Phaser.Scene {
                 //    this.boardTileSelected = false;
                 } else {    // if it doesn't - activate it, release this
                     //this.unit.alpha = 1;
-                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.setTint(CONSTANTS.GREEN_TINT);
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
                     
@@ -302,7 +302,7 @@ class SetupScene extends Phaser.Scene {
             } else {
                 if (!this.scene.boardTile) {//Selected) {
                     if (this.scene.selectGridTile) {
-                        this.setTint(CONSTANTS.BLUE_TINT);
+                        this.setTint(CONSTANTS.GREEN_TINT);
                     } else {
 
                     }

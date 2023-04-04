@@ -31,6 +31,10 @@ class Controller {
                     if(key === playerId) {
                         game.player = value;
                         console.log('Player is found');
+                        console.log('Game Scene');
+                        console.log(game.scene);
+
+                        emitter.emit('CreateHUD');
                         return;
                     }
                     // console.log('Key');

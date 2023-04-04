@@ -37,7 +37,11 @@ class HomeScene extends Phaser.Scene {
         });
         emitter.on('LoadSetupScene', this.loadSetupScene);
 
-        this.createHUD();
+        if (game.player) {
+            this.createHUD();
+        }
+
+        emitter.on('CreateHUD', this.createHUD);
     }
 
     // Change scenes
