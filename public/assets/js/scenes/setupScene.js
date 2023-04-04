@@ -115,6 +115,7 @@ class SetupScene extends Phaser.Scene {
         if (!this.scene.selectGridTile) { // Is a previously activated tile
             if (this.unitsBoardCounterpart) {
                 this.setTint(CONSTANTS.GREEN_TINT);
+                this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
             } else { // non-active tile
                 if (this.scene.unitsPlaced < 10) { 
                     this.setTint(CONSTANTS.GREEN_TINT);
@@ -128,6 +129,7 @@ class SetupScene extends Phaser.Scene {
             } else {
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.GREEN_TINT);
+                    this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
                 } else { 
                     this.setTint(CONSTANTS.GREEN_TINT);
                     this.unit.alpha = .5;
@@ -143,9 +145,8 @@ class SetupScene extends Phaser.Scene {
                 this.unit.alpha = 1;
             } else {
                 if (this.unitsBoardCounterpart) {
-
-                // } else {
                     this.setTint(CONSTANTS.ORANGE_TINT);
+                    this.unitsBoardCounterpart.clearTint();
                 }
             }
         } else { // Someone is selected
@@ -158,9 +159,10 @@ class SetupScene extends Phaser.Scene {
                 }
             } else {  // Has board tile counterpart
                 if (this.scene.selectGridTile === this) {  // Is this tile
-                    this.setTint(CONSTANTS.GREEN_TINT);
+                    this.setTint(CONSTANTS.RED_TINT);
                 } else {  // Is another tile with counterpart
                     this.setTint(CONSTANTS.ORANGE_TINT);
+                    this.unitsBoardCounterpart.clearTint();
                 }
             }
         }
@@ -171,7 +173,7 @@ class SetupScene extends Phaser.Scene {
             if (this.scene.unitsPlaced < 10) { // If units less than 10
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.RED_TINT);
-                    this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
+                    this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
                     //this.scene.boardTileSelected = true; 
                     this.scene.boardTile = this.unitsBoardCounterpart;
                     this.scene.selectGridTile = this;
@@ -223,7 +225,7 @@ class SetupScene extends Phaser.Scene {
 
                 if (this.unitsBoardCounterpart) { // If this one has a corresponding tile
                     this.scene.boardTile = this.unitsBoardCounterpart;
-                    this.scene.boardTile.setTint(CONSTANTS.GREEN_TINT);
+                    this.scene.boardTile.setTint(CONSTANTS.RED_TINT);
                     this.scene.boardTile.unit.y -= 3;
                     this.scene.boardTile.unit.alpha = .5;    
                     
@@ -283,24 +285,21 @@ class SetupScene extends Phaser.Scene {
 
     boardPointerover() {
         if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
-            // TODO: MOVE THIS TO PLAY SCENE
-            // this.unit.healthBar.container.setVisible(true);
-            // this.unit.healthBar.bar.setVisible(true);
-
-            // If there is a unit on this tile
-            if (this.unit) {
+            
+            if (this.unit) { // If there is a unit on this tile
                 // If it is there is no selected unit or it isn't on this tile
                 if (!this.scene.boardTile) {//Selected === false) {// || this.scene.boardTile != this) {
                     this.setTint(CONSTANTS.GREEN_TINT);
                 } else {
                     if (this.scene.boardTile != this) {
                         this.setTint(CONSTANTS.GREEN_TINT);
+                        this.selectGridCounterpart.setTint(CONSTANTS.GREEN_TINT);
                     } else {
                         this.setTint(CONSTANTS.RED_TINT);
                     }
                 }
             } else {
-                if (!this.scene.boardTile) {//Selected) {
+                if (!this.scene.boardTile) {
                     if (this.scene.selectGridTile) {
                         this.setTint(CONSTANTS.GREEN_TINT);
                     } else {
@@ -318,8 +317,11 @@ class SetupScene extends Phaser.Scene {
         if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
             if (this != this.scene.boardTile) {
                 this.clearTint();
+                if (this.selectGridCounterpart) {
+                    this.selectGridCounterpart.setTint(CONSTANTS.ORANGE_TINT);
+                }
             } else {
-                this.setTint(CONSTANTS.GREEN_TINT);
+                this.setTint(CONSTANTS.RED_TINT);
                 // leave tint until they choose another tile
             }
         }
@@ -332,8 +334,6 @@ class SetupScene extends Phaser.Scene {
     }
 
     boardPointerdown() {
-        // const x = this.x;
-        // const y = this.y;
 
         // If there is no unit on this tile
         if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
@@ -347,8 +347,8 @@ class SetupScene extends Phaser.Scene {
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.updateDetailsView(this.unit);
                     }
-                } else {
-                    // switch the unit to here
+                } else { // switch the unit to here
+                    
                     this.unit = this.scene.boardTile.unit;
                     this.unit.x = this.x;
                     this.unit.y = this.y;
@@ -370,13 +370,8 @@ class SetupScene extends Phaser.Scene {
                     this.scene.boardTile = null;
                     //this.scene.boardTileSelected = false;
                 }
-            // If there is a unit on this tile
-            } else {
-                // if (this.active) {
-                    // If this tile has a unit and it is the active unit - remove it's activity
-                if (this === this.scene.boardTile) {
-                    //    this.active = false;
-                        //this.scene.boardTileSelected = false;
+            } else { // If there is a unit on this tile
+                if (this === this.scene.boardTile) { // If this tile has a unit and it is the linked to the selectGrid, remove it
                         this.scene.boardTile = null;
                         this.clearTint();
 
@@ -395,26 +390,45 @@ class SetupScene extends Phaser.Scene {
                         this.scene.unitsPlaced --;
                         this.scene.updateCounter();
                     // }
-                    // If this tile has a unit and it's not the active unit
-                } else {
+                } else { // If this tile has a unit and it's not connected to the selectGrid unit
                     // If there is no selected tile to move from - set this unit to the selected unit
                     if (this.scene.boardTile === null) {
-                        //this.scene.boardTileSelected = true;
-                        this.scene.boardTile = this;
+                        if (this.scene.selectGridTile != this.selectGridCounterpart) {
+                            if (this.scene.selectGridTile === null) {
+                                //this.scene.boardT
+                                //this.scene.boardTileSelected = true;
+                                this.scene.boardTile = this;
 
-                        this.unit.y -= 3;
-                        this.unit.alpha = .5;
+                                this.unit.y -= 3;
+                                this.unit.alpha = .5;
 
-                        this.setTint(CONSTANTS.RED_TINT);
+                                this.setTint(CONSTANTS.RED_TINT);
 
-                        this.selectGridCounterpart.setTint(CONSTANTS.RED_TINT);
-                        this.scene.selectGridTile = this.selectGridCounterpart;
-                        this.scene.updateDetailsView(this.unit);
-                        // Highlight all tiles within unit's range
-                        // this.scene.highlightTilesInRange(this);
+                                this.selectGridCounterpart.setTint(CONSTANTS.RED_TINT);
+                                this.scene.selectGridTile = this.selectGridCounterpart;
+                                this.scene.updateDetailsView(this.unit);
+                            } else {
+                                if (this.scene.selectGridTile.unitsBoardCounterpart != this) {
+                                    this.setTint(CONSTANTS.GREEN_TINT);
 
-                    // If this is the another unit - swap them  
-                    } else {
+                                    this.selectGridCounterpart.unit.alpha = 1;
+                                    this.selectGridCounterpart.clearTint();
+                                    this.selectGridCounterpart.unitsBoardCounterpart = null;
+
+                                    this.unit.destroy();
+
+                                    this.scene.selectGridTile.unitsBoardCounterpart = this;
+                                    this.scene.addUnitToBoard(this);
+
+                                    this.scene.unitsPlaced --;
+                                    this.scene.updateCounter();
+                                } 
+                            }
+                            // Highlight all tiles within unit's range
+                            // this.scene.highlightTilesInRange(this);
+                        } 
+                     
+                    } else { // If this is the another unit - swap them 
                         this.scene.boardTile.clearTint();
                         this.scene.boardTile.unit.y += 3;
                         this.scene.boardTile.unit.alpha = 1; 
@@ -426,6 +440,7 @@ class SetupScene extends Phaser.Scene {
                         this.scene.boardTile.unit.x = this.scene.boardTile.x;
                         this.scene.boardTile.unit.y = this.scene.boardTile.y;
 
+                        this.selectGridCounterpart.setTint(CONSTANTS.ORANGE_TINT);
                         this.unit = tempUnit;
                         this.unit.x = this.x;
                         this.unit.y = this.y;
@@ -443,7 +458,6 @@ class SetupScene extends Phaser.Scene {
 
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.boardTile = null;
-                        this.scene.updateDetailsView(this.unit);
                     }
                 }
             }
@@ -475,8 +489,8 @@ class SetupScene extends Phaser.Scene {
 
             // Clear the select grid tile but leave it knowing it is active
             this.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-            // this.selectGridTile.active = true;
             this.selectGridTile = null;
+            this.boardTile = null;
 
             switch(type) {
                 case 'axe':
