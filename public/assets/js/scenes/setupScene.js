@@ -3,10 +3,6 @@ class SetupScene extends Phaser.Scene {
         super({key: 'SetupScene'}); 
     }
 
-    // init(config) {
-    //     this.message = config.message;
-    // }
-
     preload() {
         this.load.image('tile', 'assets/img/tile.png');
         
@@ -17,22 +13,10 @@ class SetupScene extends Phaser.Scene {
     create() {
         model.currentScene = this;
 
-        // Flags for states of the scene
-        //this.boardTileSelected = false;
+        // Tiles currently active
         this.boardTile = null; 
-        // this.selectedTileTo = null; 
-
-        // The tile of the unit to place
         this.selectGridTile = null;
-
         this.unitsPlaced = 0;
-
-        // this.selectGridTile = new Lance({
-        //     scene: this.scene, 
-        //     player: game.player,
-        //     tile: this,
-        //     container: this.scene.unitsBoard
-        // });
         
         // Setup the alignment grid for testing purposes
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
@@ -61,7 +45,6 @@ class SetupScene extends Phaser.Scene {
         // Add a container for the units
         this.unitsBoard = this.add.container(0, 0);
 
-
         // Player Select Units container
         this.selectGridContainer = this.add.container(0, 0);
         this.selectGridContainer.setInteractive();
@@ -84,7 +67,6 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid.positionItemAtIndex(19, this.selectGridContainer);
 
         this.selectGridContainer.iterate(this.addInteractionToGridTiles);
-        
 
         // The button to get back to the home page
         this.acceptButton = new Button({
@@ -98,7 +80,6 @@ class SetupScene extends Phaser.Scene {
         });
         emitter.on('AcceptBoardPlacement', this.acceptBoardPlacement);
 
-        
         // Add placement counter
         this.counter = this.add.text(0, 0, '0 / 10');
         this.counter.setOrigin(.5, .5);
@@ -111,35 +92,14 @@ class SetupScene extends Phaser.Scene {
 
     acceptBoardPlacement() {
         // Save the board placements to the database
-
         game.scene.start('HomeScene');
         game.scene.stop('SetupScene');
     }
-        // console.log('create function');
-        // const self = this;
-        // this.socket = io();
-        // this.socket.on('currentPlayers', function(players) {
-        //     console.log('Current players called');
-        //     console.log(players);
-        //     Object.keys(players).forEach(id => {
-        //         if (players[id].playerId === self.socket.io) {
-
-        //             console.log('add player');
-        //             // addPlayer(self, players[id]);
-        //         };
-        //     });
-        // });
-        // Add a container for the tiles and make sure they can be interacted with
-        // this.tileContainer = this.add.container(0, 0);
-        // this.tileContainer.setInteractive();
-
-        // this.buildMap();    
-
+        
     update() {
         // This will let me iterate over all items inside this container
         // this.boardContainer.iterate(this.rollTile);
     }
-
 
     // Grid Tile Interaction
     addInteractionToGridTiles(tile) {
@@ -238,16 +198,25 @@ class SetupScene extends Phaser.Scene {
             }
         } else { // There is a grid tile selected
             if (this.scene.selectGridTile != this) { // Another tile was selected, switch to this one
-                if (this.scene.selectGridTile.unitsBoardCounterpart) { // If the other tile has someone on the board
+                if (this.scene.boardTile) { // If the other tile has someone on the board
                     this.scene.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-                    
                     this.scene.updateDetailsView(this.unit);
+                    this.scene.boardTile.unit.alpha = 1;
+                    this.scene.boardTile.unit.y += 3;
+                    this.scene.boardTile.clearTint();
                 } else { // If not
+                    this.scene.selectGridTile.unit.alpha = 1;
                     this.scene.selectGridTile.clearTint();
-                    
+
+                    this.scene.selectGridTile = this;
                     this.scene.updateDetailsView(this.unit);
+
+                    this.unit.alpha = .5;
+                    this.setTint(CONSTANTS.RED_TINT);
                 }
-                this.scene.boardTile = none;
+
+                this.scene.boardTile = null;
+                this.scene.selectGridTile = this;
 
                 if (this.unitsBoardCounterpart) { // If this one has a corresponding tile
                     this.scene.boardTile = this.unitsBoardCounterpart;
@@ -258,7 +227,6 @@ class SetupScene extends Phaser.Scene {
                     this.scene.updateDetailsView(this.unit);
                 } else { // If not
 
-                    
                     this.scene.updateDetailsView(this.unit);
                 }
                
@@ -470,17 +438,6 @@ class SetupScene extends Phaser.Scene {
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.boardTile = null;
                         this.scene.updateDetailsView(this.unit);
-                        //this.scene.boardTileSelected = false;
-                        // this.scene.boardTile = null;
-
-                        // this.scene.boardTile = this;
-                        // this.scene.boardTileSelected = false;
-                        
-                        // this.scene.boardTile.unit.y -= 3;
-                        // this.scene.boardTile.unit.alpha = .5;
-                        // this.setTint(CONSTANTS.GREEN_TINT);
-
-                        // Actually want to switch these two units
                     }
                 }
             }
