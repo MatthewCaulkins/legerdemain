@@ -18,7 +18,7 @@ class SetupScene extends Phaser.Scene {
         model.currentScene = this;
 
         // Flags for states of the scene
-        this.boardTileSelected = false;
+        //this.boardTileSelected = false;
         this.boardTile = null; 
         // this.selectedTileTo = null; 
 
@@ -62,71 +62,6 @@ class SetupScene extends Phaser.Scene {
         this.unitsBoard = this.add.container(0, 0);
 
 
-        // Make a Unit Board class
-        // const unitsBoardConfig = {
-        //     tileWidth: this.alignmentGrid.cellWidth,
-        //     tileHeight: this.alignmentGrid.cellHeight,
-        //     mapRows: 3,
-        //     mapColumns: 4,
-        //     scale: 1,
-        //     scene: this,
-        //     container: this.boardContainer
-        // }
-
-        // this.unitsBoard = new GenerateBoard(unitsBoardConfig);
-        // Parse units
-        this.units = [];
-        game.player.units.forEach(unit => {            
-            switch(unit.unit) {
-                case 'axe':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('axe');
-                    }
-                    break;
-                case 'bow':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('bow');
-                    }
-                    break;
-                case 'control':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('control');
-                    }
-                    break;
-                case 'dagger':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('dagger');
-                    }
-                    break;
-                case 'healing':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('healing');
-                    }
-                    break;
-                case 'lance':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('lance');
-                    }
-                    break;
-                case 'shield':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('shield');
-                    }
-                    break;
-                case 'sorcery':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('sorcery');
-                    }
-                    break;
-                case 'sword':
-                    for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('sword');
-                    }
-                    break;
-            }
-        });
-
-
         // Player Select Units container
         this.selectGridContainer = this.add.container(0, 0);
         this.selectGridContainer.setInteractive();
@@ -141,7 +76,7 @@ class SetupScene extends Phaser.Scene {
             gridColumns: 6,
             scale: 1,
             container: this.selectGridContainer,
-            units: this.units,
+            units: game.player.units,
             player: game.player
         }
         this.selectGrid = new SelectUnitsGrid(selectGridConfig);
@@ -169,6 +104,9 @@ class SetupScene extends Phaser.Scene {
         this.counter.setOrigin(.5, .5);
 
         this.alignmentGrid.positionItemAtIndex(12, this.counter);
+
+        // Add the details view
+        this.createDetailsView();
     }
 
     acceptBoardPlacement() {
@@ -211,13 +149,10 @@ class SetupScene extends Phaser.Scene {
     }
 
     gridPointerover() {
-        if (!this.scene.selectGridTile) {
-            // a previously activated tile
+        if (!this.scene.selectGridTile) { // Is a previously activated tile
             if (this.unitsBoardCounterpart) {
-
                 this.setTint(CONSTANTS.GREEN_TINT);
-            } else {
-                // non-active tile
+            } else { // non-active tile
                 if (this.scene.unitsPlaced < 10) { 
                     this.setTint(CONSTANTS.BLUE_TINT);
                     this.unit.alpha = .75;
@@ -228,7 +163,12 @@ class SetupScene extends Phaser.Scene {
                 // this is the actively selected tile
                 this.setTint(CONSTANTS.RED_TINT);
             } else {
-
+                if (this.unitsBoardCounterpart) {
+                    this.setTint(CONSTANTS.GREEN_TINT);
+                } else { 
+                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.unit.alpha = .75;
+                }
             }
         }
     }
@@ -245,31 +185,42 @@ class SetupScene extends Phaser.Scene {
                     this.setTint(CONSTANTS.ORANGE_TINT);
                 }
             }
-        } else {
-            if (!this.unitsBoardCounterpart) {
-                if (this.scene.selectGridTile === this) {
+        } else { // Someone is selected
+            if (!this.unitsBoardCounterpart) {  // Doesn't have a selected board tile
+                if (this.scene.selectGridTile === this) {  // Is this tile
                     this.setTint(CONSTANTS.GREEN_TINT);
-                } else {
-                    
+                } else {    // Is another blank tile
+                    this.clearTint()
+                    this.unit.alpha = 1;
                 }
-            } else {
-                this.setTint(CONSTANTS.RED_TINT);
+            } else {  // Has board tile counterpart
+                if (this.scene.selectGridTile === this) {  // Is this tile
+                    this.setTint(CONSTANTS.RED_TINT);
+                } else {  // Is another tile with counterpart
+                    this.setTint(CONSTANTS.ORANGE_TINT);
+                }
             }
         }
     }
 
     gridPointerdown() {
-        if (!this.scene.selectGridTile) {
-            if (this.scene.unitsPlaced < 10) {
+        if (!this.scene.selectGridTile) {  // If no grid selected
+            if (this.scene.unitsPlaced < 10) { // If units less than 10
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.RED_TINT);
-                    this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
-                    this.scene.boardTileSelected = true; 
+                    this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
+                    //this.scene.boardTileSelected = true; 
                     this.scene.boardTile = this.unitsBoardCounterpart;
                     this.scene.selectGridTile = this;
+                    this.unitsBoardCounterpart.unit.y -= 3;
+                    this.unitsBoardCounterpart.unit.alpha = .5;
+
+                    this.scene.updateDetailsView(this.unit);
                 } else {
                     this.scene.selectGridTile = this;
-                    this.setTint(CONSTANTS.GREEN_TINT);
+                    this.setTint(CONSTANTS.RED_TINT);
+
+                    this.scene.updateDetailsView(this.unit);
                 }
             } else {
                 if (this.unitsBoardCounterpart) {
@@ -278,17 +229,70 @@ class SetupScene extends Phaser.Scene {
                     this.unitsBoardCounterpart.unit.y -= 3;
                     this.unitsBoardCounterpart.unit.alpha = .5;
 
-                    this.scene.boardTileSelected = true;
+                    //this.scene.boardTileSelected = true;
                     this.scene.boardTile = this.unitsBoardCounterpart;
                     this.scene.selectGridTile = this;
+                    
+                    this.scene.updateDetailsView(this.unit);
                 }
             }
-        } else {
-            // Another tile was selected, switch to this one
+        } else { // There is a grid tile selected
+            if (this.scene.selectGridTile != this) { // Another tile was selected, switch to this one
+                if (this.scene.selectGridTile.unitsBoardCounterpart) { // If the other tile has someone on the board
+                    this.scene.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
+                    
+                    this.scene.updateDetailsView(this.unit);
+                } else { // If not
+                    this.scene.selectGridTile.clearTint();
+                    
+                    this.scene.updateDetailsView(this.unit);
+                }
+                this.scene.boardTile = none;
 
-            // if it has a counterpart - activate it and it's counterpart, release this
+                if (this.unitsBoardCounterpart) { // If this one has a corresponding tile
+                    this.scene.boardTile = this.unitsBoardCounterpart;
+                    this.scene.boardTile.setTint(CONSTANTS.RED_TINT);
+                    this.scene.boardTile.unit.y -= 3;
+                    this.scene.boardTile.unit.alpha = .5;    
+                    
+                    this.scene.updateDetailsView(this.unit);
+                } else { // If not
 
-            // if it doesn't - activate it, release this
+                    
+                    this.scene.updateDetailsView(this.unit);
+                }
+               
+               
+            } else { // Is this tile
+                if (this.unitsBoardCounterpart) {    // if it has a counterpart - activate it and it's counterpart, release this
+                    
+
+                    this.unitsBoardCounterpart.unit.destroy();
+                    this.unitsBoardCounterpart.unit = null;
+                    this.unitsBoardCounterpart.selectGridCounterpart = null;
+                    this.unitsBoardCounterpart.clearTint();
+                    
+                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.scene.boardTile = null;
+                    this.scene.selectGridTile = null;
+                    this.unitsBoardCounterpart = null;
+                    this.scene.boardTile = null;
+                    this.scene.selectGridTile = null;
+
+                    this.scene.unitsPlaced --;
+                    this.scene.updateCounter();
+                    this.scene.updateDetailsView(this.unit);
+                //    this.boardTileSelected = false;
+                } else {    // if it doesn't - activate it, release this
+                    //this.unit.alpha = 1;
+                    this.setTint(CONSTANTS.BLUE_TINT);
+                    this.scene.boardTile = null;
+                    this.scene.selectGridTile = null;
+                    
+                    this.scene.updateDetailsView(this.unit);
+                }
+            }
+            
         }
     }
 
@@ -314,16 +318,17 @@ class SetupScene extends Phaser.Scene {
             // If there is a unit on this tile
             if (this.unit) {
                 // If it is there is no selected unit or it isn't on this tile
-                if (this.scene.boardTileSelected === false) {// || this.scene.boardTile != this) {
+                if (!this.scene.boardTile) {//Selected === false) {// || this.scene.boardTile != this) {
                     this.setTint(CONSTANTS.GREEN_TINT);
                 } else {
                     if (this.scene.boardTile != this) {
-                        
+                        this.setTint(CONSTANTS.GREEN_TINT);
+                    } else {
                         this.setTint(CONSTANTS.RED_TINT);
                     }
                 }
             } else {
-                if (!this.scene.boardTileSelected) {
+                if (!this.scene.boardTile) {//Selected) {
                     if (this.scene.selectGridTile) {
                         this.setTint(CONSTANTS.BLUE_TINT);
                     } else {
@@ -339,9 +344,10 @@ class SetupScene extends Phaser.Scene {
 
     boardPointerout() {
         if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
-            if (!this.scene.boardTileSelected || this != this.scene.boardTile) {
+            if (this != this.scene.boardTile) {
                 this.clearTint();
             } else {
+                this.setTint(CONSTANTS.GREEN_TINT);
                 // leave tint until they choose another tile
             }
         }
@@ -361,11 +367,12 @@ class SetupScene extends Phaser.Scene {
         if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
             if (!this.unit) { 
                 // If there is no unit selected - add the selected unit to this tile
-                if (this.scene.boardTileSelected === false) {
+                if (!this.scene.boardTile) {// Selected === false) {
                     console.log('Add unit');
                     // Try to get this automatically set somewhere
                     this.scene.addUnitToBoard(this);
                     this.setTint(CONSTANTS.GREEN_TINT);
+                    this.scene.updateDetailsView(this.unit);
                 } else {
                     // switch the unit to here
                     this.unit = this.scene.boardTile.unit;
@@ -387,7 +394,7 @@ class SetupScene extends Phaser.Scene {
 
                     this.setTint(CONSTANTS.GREEN_TINT);
                     this.scene.boardTile = null;
-                    this.scene.boardTileSelected = false;
+                    //this.scene.boardTileSelected = false;
                 }
             // If there is a unit on this tile
             } else {
@@ -395,7 +402,7 @@ class SetupScene extends Phaser.Scene {
                     // If this tile has a unit and it is the active unit - remove it's activity
                 if (this === this.scene.boardTile) {
                     //    this.active = false;
-                        this.scene.boardTileSelected = false;
+                        //this.scene.boardTileSelected = false;
                         this.scene.boardTile = null;
                         this.clearTint();
 
@@ -418,7 +425,7 @@ class SetupScene extends Phaser.Scene {
                 } else {
                     // If there is no selected tile to move from - set this unit to the selected unit
                     if (this.scene.boardTile === null) {
-                        this.scene.boardTileSelected = true;
+                        //this.scene.boardTileSelected = true;
                         this.scene.boardTile = this;
 
                         this.unit.y -= 3;
@@ -428,6 +435,7 @@ class SetupScene extends Phaser.Scene {
 
                         this.selectGridCounterpart.setTint(CONSTANTS.RED_TINT);
                         this.scene.selectGridTile = this.selectGridCounterpart;
+                        this.scene.updateDetailsView(this.unit);
                         // Highlight all tiles within unit's range
                         // this.scene.highlightTilesInRange(this);
 
@@ -461,7 +469,8 @@ class SetupScene extends Phaser.Scene {
 
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.boardTile = null;
-                        this.scene.boardTileSelected = false;
+                        this.scene.updateDetailsView(this.unit);
+                        //this.scene.boardTileSelected = false;
                         // this.scene.boardTile = null;
 
                         // this.scene.boardTile = this;
@@ -494,95 +503,164 @@ class SetupScene extends Phaser.Scene {
     }
 
     addUnitToBoard(tile) {
-        const type = this.selectGridTile.unit.type;
+        if (this.selectGridTile) {
+            const type = this.selectGridTile.unit.type;
 
-        // Link the two tiles
-        this.selectGridTile.unitsBoardCounterpart = tile;
-        tile.selectGridCounterpart = this.selectGridTile;
+            // Link the two tiles
+            this.selectGridTile.unitsBoardCounterpart = tile;
+            tile.selectGridCounterpart = this.selectGridTile;
 
-        // Clear the select grid tile but leave it knowing it is active
-        this.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-        // this.selectGridTile.active = true;
-        this.selectGridTile = null;
+            // Clear the select grid tile but leave it knowing it is active
+            this.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
+            // this.selectGridTile.active = true;
+            this.selectGridTile = null;
 
-        switch(type) {
-            case 'axe':
-                tile.unit = this.add.existing(new Axe({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'bow':
-                tile.unit = this.add.existing(new Bow({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'control':
-                tile.unit = this.add.existing(new Control({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'dagger':
-                tile.unit = this.add.existing(new Dagger({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'healing':
-                tile.unit = this.add.existing(new Healing({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'lance':
-                tile.unit = this.add.existing(new Lance({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'shield':
-                tile.unit = this.add.existing(new Shield({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'sorcery':
-                tile.unit = this.add.existing(new Sorcery({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
-            case 'sword':
-                tile.unit = this.add.existing(new Sword({
-                    scene: this, 
-                    player: game.player,
-                    tile: tile,
-                    container: this.unitsBoard
-                }));
-            break;
+            switch(type) {
+                case 'axe':
+                    tile.unit = this.add.existing(new Axe({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'bow':
+                    tile.unit = this.add.existing(new Bow({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'control':
+                    tile.unit = this.add.existing(new Control({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'dagger':
+                    tile.unit = this.add.existing(new Dagger({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'healing':
+                    tile.unit = this.add.existing(new Healing({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'lance':
+                    tile.unit = this.add.existing(new Lance({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'shield':
+                    tile.unit = this.add.existing(new Shield({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'sorcery':
+                    tile.unit = this.add.existing(new Sorcery({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+                case 'sword':
+                    tile.unit = this.add.existing(new Sword({
+                        scene: this, 
+                        player: game.player,
+                        tile: tile,
+                        container: this.unitsBoard
+                    }));
+                break;
+            }
+
+            this.unitsPlaced ++;
+            this.updateCounter();
         }
-
-        this.unitsPlaced ++;
-        this.updateCounter();
     }
+
+
+    createDetailsView() {
+        this.type = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(91, this.type);
+
+        this.health = this.add.text(0, 0, 'Health: ');
+        this.alignmentGrid.positionItemAtIndex(102, this.health);
+        
+        this.offense = this.add.text(0, 0, 'Offense: ');
+        this.alignmentGrid.positionItemAtIndex(103, this.offense);
+        
+        this.defense = this.add.text(0, 0, 'Defense: %');
+        this.alignmentGrid.positionItemAtIndex(104, this.defense);
+
+        this.range = this.add.text(0, 0, 'Range: ');
+        this.alignmentGrid.positionItemAtIndex(105, this.range);
+        
+        this.movement = this.add.text(0, 0, 'Movement: ');
+        this.alignmentGrid.positionItemAtIndex(113, this.movement);
+        
+        this.dodge = this.add.text(0, 0, 'Dodge: %');
+        this.alignmentGrid.positionItemAtIndex(114, this.dodge);
+
+        this.block = this.add.text(0, 0, 'Block: %');
+        this.alignmentGrid.positionItemAtIndex(115, this.block);
+
+        this.cooldown = this.add.text(0, 0, 'Cooldown: ');
+        this.alignmentGrid.positionItemAtIndex(116, this.cooldown);
+    }
+
+    updateDetailsView(unit) {
+        if (unit) {
+            this.type.text = `${unit.type}`;
+            this.health.text = `Health: ${unit.health}`;
+            this.defense.text = `Defense: ${100 * unit.defense}%`;
+            this.offense.text = `Offense: ${unit.offense}`;
+            this.range.text = `Range: ${unit.range}`;
+            this.movement.text = `Movement: ${unit.movement}`;
+            this.dodge.text = `Dodge: ${100 * unit.dodge}%`;
+            this.block.text = `Block: ${100 * unit.block}%`;
+            this.cooldown.text = `Cooldown: ${unit.cooldown} [+1 after move and attack]`;
+
+            this.type.setVisible(true);
+            this.health.setVisible(true);
+            this.defense.setVisible(true);
+            this.offense.setVisible(true);
+            this.range.setVisible(true);
+            this.movement.setVisible(true);
+            this.dodge.setVisible(true);
+            this.block.setVisible(true);
+            this.cooldown.setVisible(true);
+        }
+    }
+
+    hideDetailsView() {
+        this.type.setVisible(false);
+        this.health.setVisible(false);
+        this.defense.setVisible(false);
+        this.offense.setVisible(false);
+        this.range.setVisible(false);
+        this.movement.setVisible(false);
+        this.dodge.setVisible(false);
+        this.block.setVisible(false);
+        this.cooldown.setVisible(false);
+    }
+
     // // Set the highlight to all tiles in range
     // highlightTilesInRange(tile) {
     //     // Get the range

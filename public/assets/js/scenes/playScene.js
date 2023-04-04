@@ -32,25 +32,32 @@ class PlayScene extends Phaser.Scene {
 
         this.generateBoard = new GenerateBoard(boardConfig);
 
-        // console.log('create function');
-        // const self = this;
-        // this.socket = io();
-        // this.socket.on('currentPlayers', function(players) {
-        //     console.log('Current players called');
-        //     console.log(players);
-        //     Object.keys(players).forEach(id => {
-        //         if (players[id].playerId === self.socket.io) {
+        // Add interactivity to each of the tiles in the board container
+       //  this.boardContainer.iterate(this.addInteractionToBoardTiles);
 
-        //             console.log('add player');
-        //             // addPlayer(self, players[id]);
-        //         };
-        //     });
-        // });
-        // Add a container for the tiles and make sure they can be interacted with
-        // this.tileContainer = this.add.container(0, 0);
-        // this.tileContainer.setInteractive();
+        // Add a container for the units
+        this.unitsBoard = this.add.container(0, 0);
 
-        // this.buildMap();
+        // Wait for Socket.IO to return both selected armies
+
+        // The button to get back to the home page
+        this.acceptButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'QUIT',
+            textConfig: CONSTANTS.TEXT_STYLE,
+            event: 'QuitGame',
+            alignmentGrid: this.alignmentGrid,
+            index: 12
+        });
+        emitter.on('QuitGame', this.quitGame);
+    }
+
+    quitGame() {
+        // Save the board placements to the database
+
+        game.scene.start('HomeScene');
+        game.scene.stop('PlayScene');
     }
 
     update() {

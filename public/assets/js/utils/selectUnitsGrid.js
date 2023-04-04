@@ -2,13 +2,13 @@ class SelectUnitsGrid {
     constructor(config) {
         this.config = config;
         this.config.scale = this.config.scale ? this.config.scale : 1;
+        this.board;
 
         this.createGrid();
-
-        this.totalPages;
-        this.page;
-        this.page;
-        this.board;
+        
+        // this.totalPages;
+        // this.page;
+        // this.page;
     }
 
     createGrid() {
@@ -18,14 +18,66 @@ class SelectUnitsGrid {
         this.gridRows = this.config.gridRows ? this.config.gridRows : 3;
         this.gridColumns = this.config.gridColumns ? this.config.gridColumns : 3;
 
-        this.units = this.config.units;
+        this.units = [];
 
-        const tileConfig = {
-            tileWidth: this.config.tileWidth, 
-            tileHeight: this.config.tileHeight,
-            scale: this.config.scale,
-            orientation: CONSTANTS.UNITS_ORIENTATION
-        }
+        this.config.units.forEach(unit => {            
+            switch(unit.unit) {
+                case 'axe':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('axe');
+                    }
+                    break;
+                case 'bow':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('bow');
+                    }
+                    break;
+                case 'control':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('control');
+                    }
+                    break;
+                case 'dagger':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('dagger');
+                    }
+                    break;
+                case 'healing':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('healing');
+                    }
+                    break;
+                case 'lance':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('lance');
+                    }
+                    break;
+                case 'shield':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('shield');
+                    }
+                    break;
+                case 'sorcery':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('sorcery');
+                    }
+                    break;
+                case 'sword':
+                    for (let i = 0; i < unit.num; i ++) {
+                        this.units.push('sword');
+                    }
+                    break;
+            }
+        });
+
+        // const tileConfig = {
+        //     scene: this.scene,
+        //     tileWidth: this.config.tileWidth, 
+        //     tileHeight: this.config.tileHeight,
+        //     scale: this.config.scale,
+        //     container: this.boardContainer,
+        //     orientation: CONSTANTS.UNITS_ORIENTATION
+        // }
 
         const unitConfig = {
             scene: this.scene,
