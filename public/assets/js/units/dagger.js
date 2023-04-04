@@ -6,6 +6,7 @@ class Dagger extends Unit {
         super(config);
 
         this.type = 'dagger';
+        this.description = 'Attacks same tile twice';
         this.health = 20;
         this.defense = .05;
         this.offense = 10;

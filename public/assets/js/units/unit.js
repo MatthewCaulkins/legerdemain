@@ -63,6 +63,7 @@ class Unit extends Phaser.GameObjects.Container {
         // this.f = this.anim.startFrame;
 
         // Universal attributes used by sub-classes
+        this.description;
         this.health;
         this.defense;
         this.offense;

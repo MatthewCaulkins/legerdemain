@@ -6,10 +6,11 @@ class Control extends Unit {
         super(config);
 
         this.type = 'control';
+        this.description = 'Adds 2 to single unit cooldown anywhere on board'
         this.health = 20;
         this.defense = 0;
         this.offense = 0;
-        this.range = 4;
+        this.range = '-';
         this.movement = 4;
         this.dodge = .1;
         this.block = .1;

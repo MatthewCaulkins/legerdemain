@@ -6,6 +6,7 @@ class Lance extends Unit {
         super(config);
 
         this.type = 'lance';
+        this.description = 'Can attack 2 spaces away; if a straight line, hits both';
         this.health = 30;
         this.defense = .1;
         this.offense = 15;

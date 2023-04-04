@@ -99,6 +99,9 @@ class SetupScene extends Phaser.Scene {
     update() {
         // This will let me iterate over all items inside this container
         // this.boardContainer.iterate(this.rollTile);
+        if (!this.boardTile && !this.selectGridTile) {
+            this.hideDetailsView();
+        }
     }
 
     // Grid Tile Interaction
@@ -115,7 +118,7 @@ class SetupScene extends Phaser.Scene {
             } else { // non-active tile
                 if (this.scene.unitsPlaced < 10) { 
                     this.setTint(CONSTANTS.BLUE_TINT);
-                    this.unit.alpha = .75;
+                    this.unit.alpha = .5;
                 }
             }
         } else {
@@ -127,7 +130,7 @@ class SetupScene extends Phaser.Scene {
                     this.setTint(CONSTANTS.GREEN_TINT);
                 } else { 
                     this.setTint(CONSTANTS.BLUE_TINT);
-                    this.unit.alpha = .75;
+                    this.unit.alpha = .5;
                 }
             }
         }
@@ -212,18 +215,19 @@ class SetupScene extends Phaser.Scene {
                     this.scene.updateDetailsView(this.unit);
 
                     this.unit.alpha = .5;
-                    this.setTint(CONSTANTS.RED_TINT);
                 }
 
                 this.scene.boardTile = null;
                 this.scene.selectGridTile = this;
+                this.setTint(CONSTANTS.RED_TINT);
 
                 if (this.unitsBoardCounterpart) { // If this one has a corresponding tile
                     this.scene.boardTile = this.unitsBoardCounterpart;
-                    this.scene.boardTile.setTint(CONSTANTS.RED_TINT);
+                    this.scene.boardTile.setTint(CONSTANTS.GREEN_TINT);
                     this.scene.boardTile.unit.y -= 3;
                     this.scene.boardTile.unit.alpha = .5;    
                     
+
                     this.scene.updateDetailsView(this.unit);
                 } else { // If not
 
@@ -336,11 +340,13 @@ class SetupScene extends Phaser.Scene {
             if (!this.unit) { 
                 // If there is no unit selected - add the selected unit to this tile
                 if (!this.scene.boardTile) {// Selected === false) {
-                    console.log('Add unit');
-                    // Try to get this automatically set somewhere
-                    this.scene.addUnitToBoard(this);
-                    this.setTint(CONSTANTS.GREEN_TINT);
-                    this.scene.updateDetailsView(this.unit);
+                    if (this.scene.selectGridTile) {
+                        console.log('Add unit');
+                        // Try to get this automatically set somewhere
+                        this.scene.addUnitToBoard(this);
+                        this.setTint(CONSTANTS.GREEN_TINT);
+                        this.scene.updateDetailsView(this.unit);
+                    }
                 } else {
                     // switch the unit to here
                     this.unit = this.scene.boardTile.unit;
@@ -549,13 +555,17 @@ class SetupScene extends Phaser.Scene {
 
             this.unitsPlaced ++;
             this.updateCounter();
+            this.hideDetailsView();
         }
     }
 
 
     createDetailsView() {
         this.type = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(91, this.type);
+        this.alignmentGrid.positionItemAtIndex(80, this.type);
+
+        this.description = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(91, this.description);
 
         this.health = this.add.text(0, 0, 'Health: ');
         this.alignmentGrid.positionItemAtIndex(102, this.health);
@@ -585,6 +595,7 @@ class SetupScene extends Phaser.Scene {
     updateDetailsView(unit) {
         if (unit) {
             this.type.text = `${unit.type}`;
+            this.description.text = `${unit.description}`;
             this.health.text = `Health: ${unit.health}`;
             this.defense.text = `Defense: ${100 * unit.defense}%`;
             this.offense.text = `Offense: ${unit.offense}`;
@@ -595,6 +606,7 @@ class SetupScene extends Phaser.Scene {
             this.cooldown.text = `Cooldown: ${unit.cooldown} [+1 after move and attack]`;
 
             this.type.setVisible(true);
+            this.description.setVisible(true);
             this.health.setVisible(true);
             this.defense.setVisible(true);
             this.offense.setVisible(true);
@@ -608,6 +620,7 @@ class SetupScene extends Phaser.Scene {
 
     hideDetailsView() {
         this.type.setVisible(false);
+        this.description.setVisible(false);
         this.health.setVisible(false);
         this.defense.setVisible(false);
         this.offense.setVisible(false);
