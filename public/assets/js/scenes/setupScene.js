@@ -479,97 +479,100 @@ class SetupScene extends Phaser.Scene {
         this.counter.text = `${this.unitsPlaced} / 10`;
     }
 
-    addUnitToBoard(tile) {
+    addUnitToBoard(boardTile, selectGridTile = this.selectGridTile, incrementCounter = true) {
         if (this.selectGridTile) {
-            const type = this.selectGridTile.unit.type;
+            const type = selectGridTile.unit.type;
 
             // Link the two tiles
-            this.selectGridTile.unitsBoardCounterpart = tile;
-            tile.selectGridCounterpart = this.selectGridTile;
+            selectGridTile.unitsBoardCounterpart = boardTile;
+            boardTile.selectGridCounterpart = selectGridTile;
 
             // Clear the select grid tile but leave it knowing it is active
-            this.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-            this.selectGridTile = null;
-            this.boardTile = null;
+            selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
 
             switch(type) {
                 case 'axe':
-                    tile.unit = this.add.existing(new Axe({
+                    boardTile.unit = this.add.existing(new Axe({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'bow':
-                    tile.unit = this.add.existing(new Bow({
+                    boardTile.unit = this.add.existing(new Bow({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'control':
-                    tile.unit = this.add.existing(new Control({
+                    boardTile.unit = this.add.existing(new Control({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'dagger':
-                    tile.unit = this.add.existing(new Dagger({
+                    boardTile.unit = this.add.existing(new Dagger({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'healing':
-                    tile.unit = this.add.existing(new Healing({
+                    boardTile.unit = this.add.existing(new Healing({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'lance':
-                    tile.unit = this.add.existing(new Lance({
+                    boardTile.unit = this.add.existing(new Lance({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'shield':
-                    tile.unit = this.add.existing(new Shield({
+                    boardTile.unit = this.add.existing(new Shield({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'sorcery':
-                    tile.unit = this.add.existing(new Sorcery({
+                    boardTile.unit = this.add.existing(new Sorcery({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
                 case 'sword':
-                    tile.unit = this.add.existing(new Sword({
+                    boardTile.unit = this.add.existing(new Sword({
                         scene: this, 
                         player: game.player,
-                        tile: tile,
+                        tile: boardTile,
                         container: this.unitsBoard
                     }));
                 break;
             }
 
+            this.selectGridTile = null;
+            this.boardTile = null;
             this.unitsPlaced ++;
-            this.updateCounter();
-            this.hideDetailsView();
+
+            if (incrementCounter) {
+                this.updateCounter();
+                this.hideDetailsView();
+            }
         }
     }
 
