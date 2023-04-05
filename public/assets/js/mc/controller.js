@@ -1,6 +1,8 @@
 class Controller {
     constructor() {
         emitter.on('gameLoaded', this.connectSocket);
+        
+        this.otherPlayers = [];
     }
 
     // Pay attention to the socket for every new player
@@ -12,12 +14,13 @@ class Controller {
         console.log(this);
         console.log('game');
         console.log(game);
+        console.log(controller);
 
         this.socket.on('currentPlayers', players => {
             console.log('Current players called');
             console.log(players);
 
-            const playerId = players[players.length - 1];
+            const playerId = players.pop();
 
             console.log('player ID');
             console.log(playerId);
@@ -26,7 +29,6 @@ class Controller {
             // game.player = currentPlayer;
             // console.log(self);
             Object.keys(players).forEach(id => {
-
                 for (const [key, value] of Object.entries(players[id])) {
                     if(key === playerId) {
                         game.player = value;
@@ -36,26 +38,22 @@ class Controller {
 
                         emitter.emit('createHUD');
                         return;
+                    } else {
+                        controller.otherPlayers.push(value);
                     }
                 }
-                game.otherPlayers = [];
-                console.log('other players');
-                console.log(game.otherPlayers);
             });
         });
 
         this.socket.emit('gameScreenReached');
 
         this.socket.on('newPlayer', player => {
-            console.log(player);
-            console.log('game');
-            console.log(game);
             if (player !== game.player) {
-                game.otherPlayers.push(player);
+                controller.otherPlayers.push(player);
                 console.log('New Player connected');
             }
 
-            console.log(game.otherPlayers);
+            console.log(controller.otherPlayers);
         });
 
         emitter.on('saveArmy', async (data) => {

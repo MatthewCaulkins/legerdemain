@@ -126,7 +126,7 @@ io.on('connection', async function (socket) {
         const name = data.name;
         const playerId = data.playerId;
 
-        const user = await ArmyModel.create({units, name});
+        const user = await ArmyModel.create({units, name, playerId});
         console.log('added army');
 
         socket.emit('armySaved');

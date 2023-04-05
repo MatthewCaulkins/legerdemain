@@ -143,7 +143,8 @@ class SetupScene extends Phaser.Scene {
 
         const data = {
             units: unitPlacements,
-            name: 'test'
+            name: 'test',
+            playerId: this.game.player.playerId
         }
         // Save the board placements to the database
         emitter.emit('saveArmy', data);

@@ -11,6 +11,10 @@ const ArmySchema = new Schema({
         type: String,
         required: true
     },
+    playerId: [{
+        type: String,
+        required: true
+    }],
     avatar: {
         type: String,
     },

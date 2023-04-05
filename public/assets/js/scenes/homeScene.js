@@ -10,7 +10,7 @@ class HomeScene extends Phaser.Scene {
     create() {
         console.log('Home Game');
         console.log(game);
-        
+
         model.currentScene = this;
         this.scene = this;
         
@@ -44,7 +44,7 @@ class HomeScene extends Phaser.Scene {
             this.createHUD();
         }
 
-        emitter.emit('gameLoaded', game);
+        emitter.emit('gameLoaded');
         emitter.on('createHUD', this.createHUD.bind(this));
     }
 
@@ -66,6 +66,7 @@ class HomeScene extends Phaser.Scene {
         this.graphics.fillStyle(0xffffff, 1);
         this.graphics.fillRect(0, this.alignmentGrid.cellHeight * (this.alignmentGrid.rows - 2), gameWidth, gameHeight);
 
+        console.log(controller);
         const text = this.add.text(0, 0, `Welcome ${game.player.name}`, {
             color: '#000000'
         });
