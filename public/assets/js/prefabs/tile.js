@@ -1,5 +1,5 @@
 class Tile extends Phaser.GameObjects.Image {
-    constructor(config, x, y, segments, n) {
+    constructor(config, x, y, segments) { //}, n) {
         const tileWidth = config.tileWidth ? config.scale * config.tileWidth : 75;
         const tileHeight = config.tileHeight ? config.scale * config.tileHeight : 75; // data.tileheight;
         
@@ -46,7 +46,7 @@ class Tile extends Phaser.GameObjects.Image {
         this.inRange = false;
 
         // The number of this tile on the board
-        this.number = n;
+        this._number;// = n;
 
         // The path to get to this tile
         this.path = [];
@@ -71,5 +71,14 @@ class Tile extends Phaser.GameObjects.Image {
     // Get the unit on this tile
     set unit(unit) {
         this._unit = unit;
+    }
+
+    get number() {
+        return this._number;
+    }
+
+    // Get the unit on this tile
+    set number(number) {
+        this._number = number;
     }
 }

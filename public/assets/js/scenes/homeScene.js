@@ -8,6 +8,9 @@ class HomeScene extends Phaser.Scene {
     }
 
     create() {
+        console.log('Home Game');
+        console.log(game);
+        
         model.currentScene = this;
         this.scene = this;
         
@@ -41,7 +44,8 @@ class HomeScene extends Phaser.Scene {
             this.createHUD();
         }
 
-        emitter.on('CreateHUD', this.createHUD);
+        emitter.emit('gameLoaded', game);
+        emitter.on('createHUD', this.createHUD.bind(this));
     }
 
     // Change scenes

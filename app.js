@@ -11,6 +11,7 @@ const passwordRoutes = require('./routes/password');
 
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const ArmyModel = require('./models/armyModel');
 
 // setup mongo connection
 const uri = process.env.MONGO_CONNECTION_URL;
@@ -92,44 +93,57 @@ io.on('connection', async function (socket) {
 
     // Gather our player data and then respond that the game can load
     socket.on('playerData', (data) => {
-        // console.log('data from player data server');
-        // console.log(data);
-
         currentPlayer = {
             name: data.name,
             units: data.units,
-            playerId: socket.id
+            playerId: data._id,
         };
-        players[socket.id] = currentPlayer;
+        players[currentPlayer.playerId] = currentPlayer;
 
         screen = 'introScreen';
+
         // console.log('load the game scene');
         socket.emit('playerDataCollected');
     });
 
-    
-    // send players object to new player  - only to this new socket
-    socket.emit('currentPlayers', [players, currentPlayer.playerId]);
+    if (screen === 'introScreen') {
+        console.log('connect To Game');
+        // send players object to new player  - only to this new socket
+        socket.emit('currentPlayers', [players, currentPlayer.playerId]);
+        // update all other players of the new player  - sends to all sockets
+        socket.broadcast.emit('newPlayer', players[currentPlayer.playerId]);
+    }
 
     // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
     socket.on('gameScreenReached', () => {
         screen = 'gameScreen';
-    })
+    });
 
-    // update all other players of the new player  - sends to all sockets
-    socket.broadcast.emit('newPlayer', players[socket.id]);
+
+    // Save armies
+    socket.on('saveArmy', async (data) => {
+        const units = data.units;
+        const name = data.name;
+        const playerId = data.playerId;
+
+        const user = await ArmyModel.create({units, name});
+        console.log('added army');
+
+        socket.emit('armySaved');
+        // return done(null, user);
+    });
+
 
     socket.on('disconnect', () => {
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
-        if (screen != 'introScreen') {
-            console.log('user disconnected');
-
+        if (screen !== 'introScreen') {
             // remove this player from our players object
-            delete players[socket.id];
-
-            // emit a message to all players to remove this player
-            io.emit('disconnect', socket.id);
+            delete players[currentPlayer.playerId];
         }
+        
+        // emit a message to all players to remove this player
+        console.log('user disconnected');
+        io.emit('disconnectPlayer', currentPlayer.playerId);
     });
 });
 

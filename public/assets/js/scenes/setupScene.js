@@ -8,9 +8,13 @@ class SetupScene extends Phaser.Scene {
         
         this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
         this.load.image('lanceTint', 'assets/img/characterTint.png');
+        this.load.image('sword', 'assets/img/sword.png');
+        this.load.image('swordTint', 'assets/img/swordTint.png');
     }
 
     create() {
+        console.log('game other players from setup scene');
+        console.log(game.otherPlayers);
         model.currentScene = this;
 
         // Tiles currently active
@@ -69,6 +73,18 @@ class SetupScene extends Phaser.Scene {
         this.selectGridContainer.iterate(this.addInteractionToGridTiles);
 
         // The button to get back to the home page
+        this.homeButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Back',
+            textConfig: CONSTANTS.TEXT_STYLE,
+            event: 'BackToHome',
+            alignmentGrid: this.alignmentGrid,
+            index: 100
+        });
+        emitter.on('BackToHome', this.loadHomeScene);
+
+        // The button to get Save out the army
         this.acceptButton = new Button({
             scene: this, 
             key: 'tile',
@@ -76,9 +92,9 @@ class SetupScene extends Phaser.Scene {
             textConfig: CONSTANTS.TEXT_STYLE,
             event: 'AcceptBoardPlacement',
             alignmentGrid: this.alignmentGrid,
-            index: 100
+            index: 101
         });
-        emitter.on('AcceptBoardPlacement', this.acceptBoardPlacement);
+        emitter.on('AcceptBoardPlacement', this.acceptBoardPlacement.bind(this));
 
         // Add placement counter
         this.counter = this.add.text(0, 0, '0 / 10');
@@ -86,12 +102,55 @@ class SetupScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(12, this.counter);
 
+        // Ad Save Notice
+        this.saveNotice = this.add.text(0, 0, 'Army Saved');
+        this.saveNotice.setOrigin(.5, .5);
+        this.saveNotice.setVisible(false);
+
+        this.alignmentGrid.positionItemAtIndex(60, this.saveNotice);
+
+        emitter.on('armySaved', () => {
+            this.saveNotice.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hideSaveNotice, callbackScope: this, loop: false});
+        });
         // Add the details view
         this.createDetailsView();
     }
 
+    hideSaveNotice() {
+        this.saveNotice.setVisible(false);
+    }
+
     acceptBoardPlacement() {
+        const unitPlacements = [];
+
+        console.log(this);
+
+        for (let i = 0; i < this.generatedBoard.mapRows; i++) {
+            for (let j = 0; j < this.generatedBoard.mapColumns; j++) {
+                const tile = this.generatedBoard.board[i][j];
+
+                if (tile.unit) {
+                    unitPlacements.push({
+                        unit: tile.unit.type,
+                        tileNum: tile.number
+                    });
+                }
+
+            }
+        }
+
+        const data = {
+            units: unitPlacements,
+            name: 'test'
+        }
         // Save the board placements to the database
+        emitter.emit('saveArmy', data);
+    }
+
+
+    loadHomeScene() {
         game.scene.start('HomeScene');
         game.scene.stop('SetupScene');
     }

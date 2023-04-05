@@ -9,6 +9,8 @@ class GenerateBoard {
         this.createBoard();
 
         this.board;
+        this.mapRows;
+        this.mapColumns;
     }
 
     // get tileContainer() {
@@ -57,9 +59,9 @@ class GenerateBoard {
                 // const ty = (x + y) * (.5 * diagonal); // tileHeightHalf;
 
                 // if (this.config.orientation === CONSTANTS.UNITS_ORIENTATION) {
-                const tile = new Tile(this.config, x, y, segments, n);
+                const tile = new Tile(this.config, x, y, segments);//, n);
                 this.board[x][y] = tile;
-                n++;
+                //n++;
                 // }
 
                 // if (this.config.index && this.config.alignmentGrid) {
@@ -81,6 +83,15 @@ class GenerateBoard {
             }
         }
 
+        for (let x = 0; x < this.mapRows; x++)
+        {
+            for (let y = 0; y < this.mapColumns; y++)
+            {
+                const tile = this.board[x][y];
+                tile.number = n;
+                n++;
+            }
+        }
         console.log(this.board);
         // this.config.container.iterate(this.addInteractionToTile, this, this.config);
     }

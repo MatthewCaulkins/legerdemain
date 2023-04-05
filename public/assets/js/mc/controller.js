@@ -1,13 +1,17 @@
 class Controller {
     constructor() {
-        // emitter.on(CONSTANTS.ATTACK_SOUND, this.playAttackSound);
-        this.connectSocket();
+        emitter.on('gameLoaded', this.connectSocket);
     }
 
     // Pay attention to the socket for every new player
     connectSocket() {
         const self = this;
         this.socket = io();
+
+        console.log('this');
+        console.log(this);
+        console.log('game');
+        console.log(game);
 
         this.socket.on('currentPlayers', players => {
             console.log('Current players called');
@@ -22,10 +26,6 @@ class Controller {
             // game.player = currentPlayer;
             // console.log(self);
             Object.keys(players).forEach(id => {
-                console.log('PlayerID');
-                console.log(id);
-                console.log('Player is');
-                console.log(players[id]);
 
                 for (const [key, value] of Object.entries(players[id])) {
                     if(key === playerId) {
@@ -34,44 +34,40 @@ class Controller {
                         console.log('Game Scene');
                         console.log(game.scene);
 
-                        emitter.emit('CreateHUD');
+                        emitter.emit('createHUD');
                         return;
                     }
-                    // console.log('Key');
-                    // console.log(key);
-                    // console.log('Value');
-                    // console.log(value);
                 }
-                // if (players[id].playerId === playerId) {
-                //     game.player = players[id];
-                // }
-
-                // Object.keys(players[id]).forEach(key => {
-                //     console.log('the keys of players');
-                //     console.log(key)
-                // });
-            //     // const player = players[id];
-            //     const player = players[playerID];
-            //     if (players[id] === players[playerID]) {
-            //         console.log('add player');
-            //         console.log(player);
-            //         // game.player = {
-            //         //     name: player.name,
-            //         //     units: player.units 
-            //         // };
-            //         game.player = player;  // self?
-                    // addPlayer(self, players[id]);
-                // };
+                game.otherPlayers = [];
+                console.log('other players');
+                console.log(game.otherPlayers);
             });
         });
 
         this.socket.emit('gameScreenReached');
 
         this.socket.on('newPlayer', player => {
+            console.log(player);
+            console.log('game');
+            console.log(game);
             if (player !== game.player) {
                 game.otherPlayers.push(player);
                 console.log('New Player connected');
             }
+
+            console.log(game.otherPlayers);
+        });
+
+        emitter.on('saveArmy', async (data) => {
+            console.log(data);
+            console.log('Save Army');
+            this.socket.emit('saveArmy', data);
+        });
+
+        
+        this.socket.on('armySaved', () => {
+            console.log('Army Saved');
+            emitter.emit('armySaved');
         })
     }
 }

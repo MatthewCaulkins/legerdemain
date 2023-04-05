@@ -1,7 +1,7 @@
 class Sword extends Unit {
     constructor(config) {
-        config.tintTexture = 'lanceTint';
-        config.characterTexture = 'lanceCharacter';
+        config.tintTexture = 'swordTint';
+        config.characterTexture = 'sword';
         
         super(config);
 

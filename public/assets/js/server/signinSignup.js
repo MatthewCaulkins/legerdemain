@@ -54,7 +54,7 @@ function signIn() {
             console.log(data);
             
             // Send the player data to our game frontend and wait for acceptance before loading the game scene
-            socket.emit('playerData', {name: data.user.name, units: data.user.units});
+            socket.emit('playerData', {name: data.user.name, units: data.user.units, _id: data.user._id});
             socket.on('playerDataCollected', () => {
                 window.location.replace('/game.html');
             })
