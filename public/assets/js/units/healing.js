@@ -5,7 +5,7 @@ class Healing extends Unit {
         
         super(config);
 
-        this.type = 'healing';
+        this.type = CONSTANTS.HEALING;
         this.description = 'Area of effect heal with radius 3';
         this.health = 18;
         this.defense = 0;

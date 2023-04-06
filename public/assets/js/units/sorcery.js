@@ -5,7 +5,7 @@ class Sorcery extends Unit {
         
         super(config);
 
-        this.type = 'sorcery';
+        this.type = CONSTANTS.SORCERY;
         this.description = 'Line of sight attack with radius 1';
         this.health = 20;
         this.defense = 0;

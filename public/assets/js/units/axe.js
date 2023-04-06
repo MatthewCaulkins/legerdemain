@@ -5,7 +5,7 @@ class Axe extends Unit {
         
         super(config);
 
-        this.type = 'axe';
+        this.type = CONSTANTS.AXE;
         this.description = 'Attacks all adjacent tiles';
         this.health = 30;
         this.defense = .1;

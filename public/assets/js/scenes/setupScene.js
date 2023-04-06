@@ -1,6 +1,6 @@
 class SetupScene extends Phaser.Scene {
     constructor() {
-        super({key: 'SetupScene'}); 
+        super({key: CONSTANTS.SETUP_SCENE}); 
     }
 
     preload() {
@@ -77,39 +77,39 @@ class SetupScene extends Phaser.Scene {
             scene: this, 
             key: 'tile',
             text: 'Back',
-            textConfig: CONSTANTS.TEXT_STYLE,
-            event: 'BackToHome',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.BACK_TO_HOME,
             alignmentGrid: this.alignmentGrid,
             index: 100
         });
-        emitter.on('BackToHome', this.loadHomeScene);
+        emitter.on(CONSTANTS.BACK_TO_HOME, this.loadHomeScene);
 
         // The button to get Save out the army
         this.acceptButton = new Button({
             scene: this, 
             key: 'tile',
             text: 'Accept',
-            textConfig: CONSTANTS.TEXT_STYLE,
-            event: 'AcceptBoardPlacement',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
             alignmentGrid: this.alignmentGrid,
             index: 101
         });
-        emitter.on('AcceptBoardPlacement', this.acceptBoardPlacement.bind(this));
+        emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
         // Add placement counter
-        this.counter = this.add.text(0, 0, '0 / 10');
+        this.counter = this.add.text(0, 0, '0 / 10', CONSTANTS.HUD_STYLE);
         this.counter.setOrigin(.5, .5);
 
         this.alignmentGrid.positionItemAtIndex(12, this.counter);
 
         // Ad Save Notice
-        this.saveNotice = this.add.text(0, 0, 'Army Saved');
+        this.saveNotice = this.add.text(0, 0, 'Army Saved', CONSTANTS.HUD_STYLE);
         this.saveNotice.setOrigin(.5, .5);
         this.saveNotice.setVisible(false);
 
         this.alignmentGrid.positionItemAtIndex(60, this.saveNotice);
 
-        emitter.on('armySaved', () => {
+        emitter.on(CONSTANTS.ARMY_SAVED, () => {
             this.saveNotice.setVisible(true);
 
             this.time.addEvent({delay: 2000, callback: this.hideSaveNotice, callbackScope: this, loop: false});
@@ -147,13 +147,13 @@ class SetupScene extends Phaser.Scene {
             playerId: this.game.player.playerId
         }
         // Save the board placements to the database
-        emitter.emit('saveArmy', data);
+        emitter.emit(CONSTANTS.SAVE_ARMY, data);
     }
 
 
     loadHomeScene() {
-        game.scene.start('HomeScene');
-        game.scene.stop('SetupScene');
+        game.scene.start(CONSTANTS.HOME_SCENE);
+        game.scene.stop(CONSTANTS.SETUP_SCENE);
     }
         
     update() {
@@ -166,9 +166,9 @@ class SetupScene extends Phaser.Scene {
 
     // Grid Tile Interaction
     addInteractionToGridTiles(tile) {
-        tile.on('pointerover', tile.scene.gridPointerover.bind(tile));
-        tile.on('pointerout', tile.scene.gridPointerout.bind(tile));
-        tile.on('pointerdown', tile.scene.gridPointerdown.bind(tile));
+        tile.on(CONSTANTS.POINTER_OVER, tile.scene.gridPointerover.bind(tile));
+        tile.on(CONSTANTS.POINTER_OUT, tile.scene.gridPointerout.bind(tile));
+        tile.on(CONSTANTS.POINTER_DOWN, tile.scene.gridPointerdown.bind(tile));
     }
 
     gridPointerover() {
@@ -333,9 +333,9 @@ class SetupScene extends Phaser.Scene {
 
     // Board Tile Interaction
     addInteractionToBoardTiles(tile) {
-        tile.on('pointerover', tile.scene.boardPointerover.bind(tile));
-        tile.on('pointerout', tile.scene.boardPointerout.bind(tile));
-        tile.on('pointerdown', tile.scene.boardPointerdown.bind(tile));
+        tile.on(CONSTANTS.POINTER_OVER, tile.scene.boardPointerover.bind(tile));
+        tile.on(CONSTANTS.POINTER_OUT, tile.scene.boardPointerout.bind(tile));
+        tile.on(CONSTANTS.POINTER_DOWN, tile.scene.boardPointerdown.bind(tile));
     }
 
     // rollTile(tile) {
@@ -551,7 +551,7 @@ class SetupScene extends Phaser.Scene {
             selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
 
             switch(type) {
-                case 'axe':
+                case CONSTANTS.AXE:
                     boardTile.unit = this.add.existing(new Axe({
                         scene: this, 
                         player: game.player,
@@ -559,7 +559,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'bow':
+                case CONSTANTS.BOW:
                     boardTile.unit = this.add.existing(new Bow({
                         scene: this, 
                         player: game.player,
@@ -567,7 +567,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'control':
+                case CONSTANTS.CONTROL:
                     boardTile.unit = this.add.existing(new Control({
                         scene: this, 
                         player: game.player,
@@ -575,7 +575,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'dagger':
+                case CONSTANTS.DAGGER:
                     boardTile.unit = this.add.existing(new Dagger({
                         scene: this, 
                         player: game.player,
@@ -583,7 +583,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'healing':
+                case CONSTANTS.HEALING:
                     boardTile.unit = this.add.existing(new Healing({
                         scene: this, 
                         player: game.player,
@@ -591,7 +591,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'lance':
+                case CONSTANTS.LANCE:
                     boardTile.unit = this.add.existing(new Lance({
                         scene: this, 
                         player: game.player,
@@ -599,7 +599,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'shield':
+                case CONSTANTS.SHIELD:
                     boardTile.unit = this.add.existing(new Shield({
                         scene: this, 
                         player: game.player,
@@ -607,7 +607,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'sorcery':
+                case CONSTANTS.SORCERY:
                     boardTile.unit = this.add.existing(new Sorcery({
                         scene: this, 
                         player: game.player,
@@ -615,7 +615,7 @@ class SetupScene extends Phaser.Scene {
                         container: this.unitsBoard
                     }));
                 break;
-                case 'sword':
+                case CONSTANTS.SWORD:
                     boardTile.unit = this.add.existing(new Sword({
                         scene: this, 
                         player: game.player,
@@ -639,48 +639,48 @@ class SetupScene extends Phaser.Scene {
 
     createDetailsView() {
         this.type = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(80, this.type);
+        this.alignmentGrid.positionItemAtIndex(80, this.type, CONSTANTS.HUD_STYLE);
 
         this.description = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(91, this.description);
+        this.alignmentGrid.positionItemAtIndex(91, this.description, CONSTANTS.HUD_STYLE);
 
-        this.health = this.add.text(0, 0, 'Health: ');
-        this.alignmentGrid.positionItemAtIndex(102, this.health);
+        this.health = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(102, this.health, CONSTANTS.HUD_STYLE);
         
-        this.offense = this.add.text(0, 0, 'Offense: ');
-        this.alignmentGrid.positionItemAtIndex(103, this.offense);
+        this.offense = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(103, this.offense, CONSTANTS.HUD_STYLE);
         
-        this.defense = this.add.text(0, 0, 'Defense: %');
-        this.alignmentGrid.positionItemAtIndex(104, this.defense);
+        this.defense = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(104, this.defense, CONSTANTS.HUD_STYLE);
 
-        this.range = this.add.text(0, 0, 'Range: ');
-        this.alignmentGrid.positionItemAtIndex(105, this.range);
+        this.range = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(105, this.range, CONSTANTS.HUD_STYLE);
         
-        this.movement = this.add.text(0, 0, 'Movement: ');
-        this.alignmentGrid.positionItemAtIndex(113, this.movement);
+        this.movement = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(113, this.movement, CONSTANTS.HUD_STYLE);
         
-        this.dodge = this.add.text(0, 0, 'Dodge: %');
-        this.alignmentGrid.positionItemAtIndex(114, this.dodge);
+        this.dodge = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(114, this.dodge, CONSTANTS.HUD_STYLE);
 
-        this.block = this.add.text(0, 0, 'Block: %');
-        this.alignmentGrid.positionItemAtIndex(115, this.block);
+        this.block = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(115, this.block, CONSTANTS.HUD_STYLE);
 
-        this.cooldown = this.add.text(0, 0, 'Cooldown: ');
-        this.alignmentGrid.positionItemAtIndex(116, this.cooldown);
+        this.cooldown = this.add.text(0, 0, '');
+        this.alignmentGrid.positionItemAtIndex(116, this.cooldown, CONSTANTS.HUD_STYLE);
     }
 
     updateDetailsView(unit) {
         if (unit) {
             this.type.text = `${unit.type}`;
             this.description.text = `${unit.description}`;
-            this.health.text = `Health: ${unit.health}`;
-            this.defense.text = `Defense: ${100 * unit.defense}%`;
-            this.offense.text = `Offense: ${unit.offense}`;
-            this.range.text = `Range: ${unit.range}`;
-            this.movement.text = `Movement: ${unit.movement}`;
-            this.dodge.text = `Dodge: ${100 * unit.dodge}%`;
-            this.block.text = `Block: ${100 * unit.block}%`;
-            this.cooldown.text = `Cooldown: ${unit.cooldown} [+1 after move and attack]`;
+            this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
+            this.defense.text = `${CONSTANTS.DEFENSE}: ${100 * unit.defense}%`;
+            this.offense.text = `${CONSTANTS.OFFENSE}: ${unit.offense}`;
+            this.range.text = `${CONSTANTS.RANGE}: ${unit.range}`;
+            this.movement.text = `${CONSTANTS.MOVEMENT}: ${unit.movement}`;
+            this.dodge.text = `${CONSTANTS.DODGE}: ${100 * unit.dodge}%`;
+            this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
+            this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1 after move and attack]`;
 
             this.type.setVisible(true);
             this.description.setVisible(true);

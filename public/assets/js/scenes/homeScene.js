@@ -1,6 +1,6 @@
 class HomeScene extends Phaser.Scene {
     constructor() {
-        super({key: 'HomeScene'});
+        super({key: CONSTANTS.HOME_SCENE});
     }
 
     preload() {
@@ -22,41 +22,41 @@ class HomeScene extends Phaser.Scene {
             scene: this, 
             key: 'tile',
             text: 'Play',
-            textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
-            event: 'LoadPlayScene',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.LOAD_PLAY_SCENE,
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.on('LoadPlayScene', this.loadPlayScene);
+        emitter.on(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
 
-        this.playSceneButton = new Button({
+        this.setupSceneButton = new Button({
             scene: this, 
             key: 'tile',
             text: 'Setup',
-            textConfig: { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' },
-            event: 'LoadSetupScene',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.LOAD_SETUP_SCENE,
             alignmentGrid: this.alignmentGrid,
             index: 14
         });
-        emitter.on('LoadSetupScene', this.loadSetupScene);
+        emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
 
         if (game.player) {
             this.createHUD();
         }
 
-        emitter.emit('gameLoaded');
-        emitter.on('createHUD', this.createHUD.bind(this));
+        emitter.emit(CONSTANTS.GAME_LOADED);
+        emitter.on(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
     }
 
     // Change scenes
     loadPlayScene() {
-        game.scene.start('PlayScene');
-        game.scene.stop('HomeScene');
+        game.scene.start(CONSTANTS.PLAY_SCENE);
+        game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 
     loadSetupScene() {
-        game.scene.start('SetupScene');
-        game.scene.stop('HomeScene');
+        game.scene.start(CONSTANTS.SETUP_SCENE);
+        game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 
     // Show players
@@ -67,9 +67,7 @@ class HomeScene extends Phaser.Scene {
         this.graphics.fillRect(0, this.alignmentGrid.cellHeight * (this.alignmentGrid.rows - 2), gameWidth, gameHeight);
 
         console.log(controller);
-        const text = this.add.text(0, 0, `Welcome ${game.player.name}`, {
-            color: '#000000'
-        });
+        const text = this.add.text(0, 0, `Welcome ${game.player.name}`, CONSTANTS.DARK_TEXT_STYLE);
 
         this.alignmentGrid.positionItemAtIndex(100, text);
     }

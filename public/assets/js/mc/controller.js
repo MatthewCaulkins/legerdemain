@@ -2,7 +2,7 @@ class Controller {
     constructor() {
         emitter.on('gameLoaded', this.connectSocket);
         
-        this.otherPlayers = [];
+        this.otherPlayers = {};
     }
 
     // Pay attention to the socket for every new player
@@ -10,62 +10,51 @@ class Controller {
         const self = this;
         this.socket = io();
 
-        console.log('this');
-        console.log(this);
-        console.log('game');
-        console.log(game);
-        console.log(controller);
+        // When a new player connects, get a list of all active players
+        this.socket.on(CONSTANTS.CURRENT_PLAYERS, players => {
+            game.player = players.pop();
+            emitter.emit(CONSTANTS.CREATE_HUD);
 
-        this.socket.on('currentPlayers', players => {
-            console.log('Current players called');
-            console.log(players);
+            console.log('Connected');
+            console.log(controller.otherPlayers);
 
-            const playerId = players.pop();
 
-            console.log('player ID');
-            console.log(playerId);
-
-            // game.allPlayers = players;
-            // game.player = currentPlayer;
-            // console.log(self);
             Object.keys(players).forEach(id => {
                 for (const [key, value] of Object.entries(players[id])) {
-                    if(key === playerId) {
-                        game.player = value;
-                        console.log('Player is found');
-                        console.log('Game Scene');
-                        console.log(game.scene);
-
-                        emitter.emit('createHUD');
-                        return;
-                    } else {
-                        controller.otherPlayers.push(value);
+                    if (key != game.player.socketId) {
+                        controller.otherPlayers[key] = value;
                     }
                 }
             });
         });
 
-        this.socket.emit('gameScreenReached');
+        // Return that data is loaded
+        this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED);
 
-        this.socket.on('newPlayer', player => {
-            if (player !== game.player) {
-                controller.otherPlayers.push(player);
-                console.log('New Player connected');
-            }
-
+        // Add a new player to the object
+        this.socket.on(CONSTANTS.NEW_PLAYER, player => {
+            console.log('New Player Connected');
             console.log(controller.otherPlayers);
+
+            controller.otherPlayers[player.socketId] = player;
         });
 
-        emitter.on('saveArmy', async (data) => {
-            console.log(data);
-            console.log('Save Army');
-            this.socket.emit('saveArmy', data);
+        // Save this army
+        emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
+            this.socket.emit(CONSTANTS.SAVE_ARMY, data);
         });
 
-        
-        this.socket.on('armySaved', () => {
-            console.log('Army Saved');
-            emitter.emit('armySaved');
-        })
+        // Return when army is saved
+        this.socket.on(CONSTANTS.ARMY_SAVED, () => {
+            emitter.emit(CONSTANTS.ARMY_SAVED);
+        });
+
+        // Disconnect a player and delete their ID
+        this.socket.on(CONSTANTS.DISCONNECT_PLAYER, (socketId) => {
+            console.log('Player disconnected');
+            console.log(controller.otherPlayers);
+
+            delete controller.otherPlayers[socketId];
+        });
     }
 }

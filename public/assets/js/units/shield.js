@@ -5,7 +5,7 @@ class Shield extends Unit {
         
         super(config);
 
-        this.type = 'shield';
+        this.type = CONSTANTS.SHIELD;
         this.description = 'Strongest defense';
         this.health = 40;
         this.defense = .2;

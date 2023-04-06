@@ -1,6 +1,6 @@
 class PlayScene extends Phaser.Scene {
     constructor() {
-        super({key: 'PlayScene'});
+        super({key: CONSTANTS.PLAY_SCENE});
     }
 
     preload() {
@@ -46,18 +46,18 @@ class PlayScene extends Phaser.Scene {
             key: 'tile',
             text: 'QUIT',
             textConfig: CONSTANTS.TEXT_STYLE,
-            event: 'QuitGame',
+            event: CONSTANTS.QUIT_GAME,
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.on('QuitGame', this.quitGame);
+        emitter.on(CONSTANTS.QUIT_GAME, this.quitGame);
     }
 
     quitGame() {
         // Save the board placements to the database
 
-        game.scene.start('HomeScene');
-        game.scene.stop('PlayScene');
+        game.scene.start(CONSTANTS.HOME_SCENE);
+        game.scene.stop(CONSTANTS.PLAY_SCENE);
     }
 
     update() {
@@ -159,7 +159,7 @@ class PlayScene extends Phaser.Scene {
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push('up');
+                            questionedTile.path.push(CONSTANTS.TOP);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -170,7 +170,7 @@ class PlayScene extends Phaser.Scene {
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push('right');
+                            questionedTile.path.push(CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -181,7 +181,7 @@ class PlayScene extends Phaser.Scene {
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push('down');
+                            questionedTile.path.push(CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -192,7 +192,7 @@ class PlayScene extends Phaser.Scene {
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push('left');
+                            questionedTile.path.push(CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }

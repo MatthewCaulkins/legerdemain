@@ -5,7 +5,7 @@ class Control extends Unit {
         
         super(config);
 
-        this.type = 'control';
+        this.type = CONSTANTS.CONTROL;
         this.description = 'Adds 2 to single unit cooldown anywhere on board'
         this.health = 20;
         this.defense = 0;

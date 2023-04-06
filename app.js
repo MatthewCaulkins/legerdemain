@@ -97,8 +97,9 @@ io.on('connection', async function (socket) {
             name: data.name,
             units: data.units,
             playerId: data._id,
+            socketId: socket.id
         };
-        players[currentPlayer.playerId] = currentPlayer;
+        players[currentPlayer.socketId] = currentPlayer;
 
         screen = 'introScreen';
 
@@ -108,10 +109,14 @@ io.on('connection', async function (socket) {
 
     if (screen === 'introScreen') {
         console.log('connect To Game');
-        // send players object to new player  - only to this new socket
-        socket.emit('currentPlayers', [players, currentPlayer.playerId]);
+
+        const otherPlayers = socket.sockets;
+
+        // send players object to new player  - only to this new socket, array of all players and then this player
+        socket.emit('currentPlayers', [players, currentPlayer]);
+
         // update all other players of the new player  - sends to all sockets
-        socket.broadcast.emit('newPlayer', players[currentPlayer.playerId]);
+        socket.broadcast.emit('newPlayer', currentPlayer);
     }
 
     // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
@@ -138,12 +143,12 @@ io.on('connection', async function (socket) {
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
         if (screen !== 'introScreen') {
             // remove this player from our players object
-            delete players[currentPlayer.playerId];
+            delete players[currentPlayer.socketId];
         }
         
         // emit a message to all players to remove this player
         console.log('user disconnected');
-        io.emit('disconnectPlayer', currentPlayer.playerId);
+        io.emit('disconnectPlayer', currentPlayer.socketId);
     });
 });
 
