@@ -8,8 +8,8 @@ class Constants {
         this.BOARD_ORIENTATION = 0.785398;
         this.GRID_ORIENTATION = 0;
 
-        this.WHITE = 0xffffff;
-        this.BLACK = 0x000000;
+        this.WHITE = '#ffffff';
+        this.BLACK = '#000000';
 
         // Tints
         this.BLUE_TINT = 0x0044ff;
@@ -28,10 +28,11 @@ class Constants {
         this.SETUP_SCENE = 'SetupScene';
 
         // Text styles
-        this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: '#000', fontSize: '12px' };
-        this.LIGHT_TEXT_STYLE = { fontFamily: 'Georgia', color: '#fff', fontSize: '12px' };
-        this.HUD_STYLE = { fontFamily: 'Bungee', color: '#fff', fontSize: '24px', fontStyle: 'strong' };
-
+        this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };
+        this.LIGHT_TEXT_STYLE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 12 };
+        this.HUD_STYLE = { fontFamily: 'Bungee', color: this.WHITE, fontSize: 24, fontStyle: 'bold' };
+        this.INPUT_STYPE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 60, fontStyle: 'bold' };
+        
         // Events
         this.ACCEPT_BOARD_PLACEMENT = 'acceptBoardPlacement';
         this.ARMY_SAVED = 'armySaved';

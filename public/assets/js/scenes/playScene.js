@@ -16,7 +16,7 @@ class PlayScene extends Phaser.Scene {
         // Create the container for the board and units
         this.boardContainer = this.add.container(0, 0);
         this.boardContainer.setInteractive();
-        
+
         const boardConfig = {
             tileWidth: 75,
             tileHeight: 75,
@@ -26,8 +26,7 @@ class PlayScene extends Phaser.Scene {
             scene: this,
             container: this.boardContainer,
         }
-
-        this.generateBoard = new GenerateBoard(boardConfig);
+        this.generatedBoard = new GenerateBoard(boardConfig);
 
         // Add interactivity to each of the tiles in the board container
        //  this.boardContainer.iterate(this.addInteractionToBoardTiles);
@@ -35,10 +34,22 @@ class PlayScene extends Phaser.Scene {
         // Add a container for the units
         this.unitsBoard = this.add.container(0, 0);
 
-        // Wait for Socket.IO to return both selected armies
+        // TODO: Wait for Socket.IO to return both selected armies
+
+        // TODO: This should be stored in the user profile
+        this.selectedArmy = 0;
+        
+        const armyDeploymentConfig = {
+            scene: this,
+            armyUnits: controller.playerArmies[this.selectedArmy],  
+            generatedBoard: this.generatedBoard,
+            unitsBoard: this.unitsBoard,
+        }
+        this.armyDeployment = new ArmyDeployment(armyDeploymentConfig);
+
 
         // The button to get back to the home page
-        this.acceptButton = new Button({
+        this.quitButton = new Button({
             scene: this, 
             key: 'tile',
             text: 'QUIT',

@@ -224,6 +224,9 @@ class SetupScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
         this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
+
+        // Test message
+        this.message = this.add.text(640, 250, "Hello, --", CONSTANTS.INPUT_STYLE).setOrigin(0.5);
     }
 
     shiftArmy() {

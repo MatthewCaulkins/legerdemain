@@ -9,9 +9,12 @@ class ArmyDeployment {
         // Specific to setup scene
         this.selectGrid = config.selectGrid;
 
-        this.armyUnits.units.forEach(unit => {
+        this.populateBoard();
+    }
 
-            if (this.selectGrid) {
+    populateBoard() {
+        this.armyUnits.units.forEach(unit => {
+            if (this.selectGrid) { // Setup scene
                 let n = 0;
                 this.scene.selectGridTile = null;
 
@@ -23,7 +26,7 @@ class ArmyDeployment {
                 } while (!this.scene.selectGridTile);
 
                 this.addUnitToSetupBoard(this.generatedBoard.tiles[unit.tileNum], this.scene.selectGridTile);
-            } else {
+            } else { // Play scene
                 this.addUnitToGameBoard(unit);
             }
         });
@@ -31,9 +34,11 @@ class ArmyDeployment {
 
     addUnitToGameBoard(unit) {
         // TODO: Test for player 2
+        console.log(unit);
         const boardTile = this.generatedBoard.tiles[unit.tileNum];
 
-        this.createUnit(unit.type, boardTile);
+        console.log(boardTile);
+        this.createUnit(unit.unit, boardTile);
     }
 
     addUnitToSetupBoard(boardTile, selectGridTile, incrementCounter = true) {
@@ -60,11 +65,11 @@ class ArmyDeployment {
 
 
     createUnit(type, boardTile) {
-        let unit;
-
+        console.log(type);
+        console.log(boardTile);
         switch(type) {
             case CONSTANTS.AXE:
-                unit = new Axe({
+                boardTile.unit = new Axe({
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
@@ -72,7 +77,7 @@ class ArmyDeployment {
                 });
             break;
             case CONSTANTS.BOW:
-                unit = new Bow({
+                boardTile.unit = new Bow({
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
@@ -80,6 +85,7 @@ class ArmyDeployment {
                 });
             break;
             case CONSTANTS.CONTROL:
+                console.log('wtf');
                 boardTile.unit = new Control({
                     scene: this.scene, 
                     player: game.player,
