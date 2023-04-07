@@ -16,7 +16,7 @@ class PlayScene extends Phaser.Scene {
         // Create the container for the board and units
         this.boardContainer = this.add.container(0, 0);
         this.boardContainer.setInteractive();
-
+        
         const boardConfig = {
             tileWidth: 75,
             tileHeight: 75,
@@ -25,7 +25,6 @@ class PlayScene extends Phaser.Scene {
             scale: .70,
             scene: this,
             container: this.boardContainer,
-            // orientation: CONSTANTS.BOARD_ORIENTATION
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);
@@ -57,73 +56,69 @@ class PlayScene extends Phaser.Scene {
         game.scene.stop(CONSTANTS.PLAY_SCENE);
     }
 
-    update() {
-        // this.generateBoard.tileContainer.iterate(this.rotateTile);
-        // this.tileContainer.iterate(this.rotateTile);
-        // this.rotateTile(this.tileContainer);
-    }
+    update() {}
 
 
-    onPointerdown() {
-        // const x = this.x;
-        // const y = this.y;
+    // onPointerdown() {
+    //     // const x = this.x;
+    //     // const y = this.y;
 
-        // If there is no unit on this tile
-        if (!this.unit) { 
-            // If there is no unit selected - add the selected unit to this tile
-            if (this.scene.unitSelected === false) {
-                console.log('Add unit');
-                // Try to get this automatically set somewhere
-                this.unit = this.scene.add.existing(new Lance({
-                    scene: this.scene, 
-                    player: game.player,
-                    tile: this,
-                    container: this.scene.unitsBoard
-                }));
-                this.setTint(CONSTANTS.ORANGE_TINT);
-            }
-        // If there is a unit on this tile
-        } else {
-            // if (this.active) {
-                // If this tile has a unit and it is the active unit - remove it's activity
-                if (this === this.scene.selectedTileFrom) {
-                //    this.active = false;
-                    this.scene.unitSelected = false;
-                    this.scene.selectedTileFrom = null;
-                    this.setTint(CONSTANTS.ORANGE_TINT);
-                // }
-                // If this tile has a unit and it's not the active unit
-            } else {
-                // If there is no selected tile to move from - set this unit to the selected unit
-                if (this.scene.selectedTileFrom === null) {
-                    this.scene.unitSelected = true;
-                    this.scene.selectedTileFrom = this;
+    //     // If there is no unit on this tile
+    //     if (!this.unit) { 
+    //         // If there is no unit selected - add the selected unit to this tile
+    //         if (this.scene.unitSelected === false) {
+    //             console.log('Add unit');
+    //             // Try to get this automatically set somewhere
+    //             this.unit = this.scene.add.existing(new Lance({
+    //                 scene: this.scene, 
+    //                 player: game.player,
+    //                 tile: this,
+    //                 container: this.scene.unitsBoard
+    //             }));
+    //             this.setTint(CONSTANTS.ORANGE_TINT);
+    //         }
+    //     // If there is a unit on this tile
+    //     } else {
+    //         // if (this.active) {
+    //             // If this tile has a unit and it is the active unit - remove it's activity
+    //             if (this === this.scene.selectedTileFrom) {
+    //             //    this.active = false;
+    //                 this.scene.unitSelected = false;
+    //                 this.scene.selectedTileFrom = null;
+    //                 this.setTint(CONSTANTS.ORANGE_TINT);
+    //             // }
+    //             // If this tile has a unit and it's not the active unit
+    //         } else {
+    //             // If there is no selected tile to move from - set this unit to the selected unit
+    //             if (this.scene.selectedTileFrom === null) {
+    //                 this.scene.unitSelected = true;
+    //                 this.scene.selectedTileFrom = this;
 
-                    this.setTint(CONSTANTS.RED_TINT);
-                    // Highlight all tiles within unit's range
-                    this.scene.highlightTilesInRange(this);
+    //                 this.setTint(CONSTANTS.RED_TINT);
+    //                 // Highlight all tiles within unit's range
+    //                 this.scene.highlightTilesInRange(this);
 
-                // If this is the another unit - set them to active    
-                } else {
-                    this.scene.selectedTileFrom.clearTint();
-                    this.scene.selectedTileFrom = false;
+    //             // If this is the another unit - set them to active    
+    //             } else {
+    //                 this.scene.selectedTileFrom.clearTint();
+    //                 this.scene.selectedTileFrom = false;
 
-                    this.scene.selectedTileFrom = this;
-                    this.scene.unitSelected = true;
-                    this.setTint(CONSTANTS.RED_TINT);
-                }
-            }
-        }
+    //                 this.scene.selectedTileFrom = this;
+    //                 this.scene.unitSelected = true;
+    //                 this.setTint(CONSTANTS.RED_TINT);
+    //             }
+    //         }
+    //     }
 
-        // DO THE STUFF TO MOVE THEM OR REMOVE THEM FROM THE BOARD
-        // else {
+    //     // DO THE STUFF TO MOVE THEM OR REMOVE THEM FROM THE BOARD
+    //     // else {
 
-        // }
-        // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
-        // character.setOrigin(.5, .5);
+    //     // }
+    //     // const character = this.scene.add.existing(new Unit(this.scene, x, y, 'character'));// , 'southEast', 100)));//this.scene.add.image(x, y, 'character');
+    //     // character.setOrigin(.5, .5);
 
-        // character.y = this.y;
-    }
+    //     // character.y = this.y;
+    // }
 
 
     // Set the highlight to all tiles in range

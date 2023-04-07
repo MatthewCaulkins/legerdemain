@@ -4,6 +4,7 @@ class SelectUnitsGrid {
         this.config.scale = this.config.scale ? this.config.scale : 1;
         this.board;
         this.tiles = [];
+        this.units = [];
 
         this.createGrid();
         
@@ -18,8 +19,6 @@ class SelectUnitsGrid {
         
         this.gridRows = this.config.gridRows ? this.config.gridRows : 3;
         this.gridColumns = this.config.gridColumns ? this.config.gridColumns : 3;
-
-        this.units = [];
 
         this.config.units.forEach(unit => {            
             switch(unit.unit) {

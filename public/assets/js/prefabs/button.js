@@ -4,7 +4,7 @@ class Button extends Phaser.GameObjects.Container {
         this.fired = false;
 
         this.config = config;
-        this.scene = config.scene;
+        //this.scene = config.scene;
         this.text = config.text;
         this.textConfig = config.textConfig;
         this.event = config.event;

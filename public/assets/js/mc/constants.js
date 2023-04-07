@@ -4,6 +4,7 @@ class Constants {
         this.DODGE = 'dodge';
         this.MOVE_UNIT = 'moveUnit';
 
+        // Board Orientations
         this.BOARD_ORIENTATION = 0.785398;
         this.GRID_ORIENTATION = 0;
 
@@ -56,16 +57,30 @@ class Constants {
         this.LEFT = 'left';
         this.RIGHT = 'right';
 
+        // Prefabs
+        this.TILE = 'tile';
+        this.ORB = 'orb';
+        this.ARROW = 'arrow';
+
         // Units
         this.AXE = 'axe';
+        this.AXE_TINT = 'axeTint';
         this.BOW = 'bow';
+        this.BOW_TINT = 'bowTint';
         this.CONTROL = 'control';
+        this.CONTROL_TINT = 'controlTint';
         this.DAGGER = 'dagger';
+        this.DAGGER_TINT = 'daggerTint';
         this.HEALING = 'healing';
+        this.HEALING_TINT = 'healingTint';
         this.LANCE = 'lance';
+        this.LANCE_TINT = 'lanceTint';
         this.SHIELD = 'shield';
+        this.SHIELD_TINT = 'shieldTint';
         this.SORCERY = 'sorcery';
+        this.SORCERY_TINT = 'sorceryTint';
         this.SWORD = 'sword';
+        this.SWORD_TINT = 'swordTint';
 
         // Stats
         this.HEALTH = 'Health';

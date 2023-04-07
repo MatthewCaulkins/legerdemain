@@ -3,19 +3,7 @@ class SetupScene extends Phaser.Scene {
         super({key: CONSTANTS.SETUP_SCENE}); 
     }
 
-    preload() {
-        this.load.image('tile', 'assets/img/tile.png');
-        
-        // Image (eventually Sprite sheets) for characters
-        this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
-        this.load.image('lanceTint', 'assets/img/characterTint.png');
-        this.load.image('sword', 'assets/img/sword.png');
-        this.load.image('swordTint', 'assets/img/swordTint.png');
-
-        // Sprite sheets for arrows
-        this.load.spritesheet('arrow', 'assets/img/scrollArrow.png', {frameWidth: 75, frameHeight: 150, endFrame: 1});
-        this.load.spritesheet('orb', 'assets/img/orbs.png', {frameWidth: 32, frameHeight: 32, endFrame: 2});
-    }
+    preload() {}
 
     create() {
         model.currentScene = this;
@@ -69,7 +57,7 @@ class SetupScene extends Phaser.Scene {
         this.unitsBoard = [];
         this.selectGridContainer = [];
         this.selectGrid = [];
-        
+        this.armyDeployment = [];        
         
         // Setup the alignment grid for testing purposes
         for (let army = 0; army < this.totalArmies; army ++) {
@@ -93,6 +81,7 @@ class SetupScene extends Phaser.Scene {
                 scale: .75,
                 scene: this,
                 container: this.boardContainer[army],
+                army: army
                 // orientation: CONSTANTS.BOARD_ORIENTATION
             }
 
@@ -119,33 +108,45 @@ class SetupScene extends Phaser.Scene {
                 scale: 1,
                 container: this.selectGridContainer[army],
                 units: game.player.units,
-                player: game.player
+                player: game.player,
             }
             this.selectGrid[army] = new SelectUnitsGrid(selectGridConfig);
             this.alignmentGrid.positionItemAtIndex(18, this.selectGridContainer[army]);
 
             // this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
-            const armyUnits = controller.playerArmies[army];
-            armyUnits.units.forEach(unit => {
-                //let gridTile = null;
-                this.selectGridTile = null;
-                let n = 0;
+            // const armyUnits = controller.playerArmies[army];
 
-                do {
-                    if (unit.unit === this.selectGrid[army].units[n] && this.selectGrid[army].tiles[n].unitsBoardCounterpart === null) {
-                        this.selectGridTile = this.selectGrid[army].tiles[n];
-                    }
+            // Army Deployment
+            const armyDeploymentConfig = {
+                scene: this,
+                army: army,
+                armyUnits: controller.playerArmies[army],
+                selectGrid: this.selectGrid[army],
+                generatedBoard: this.generatedBoard[army],
+                unitsBoard: this.unitsBoard[army],
+            }
+            this.armyDeployment[army] = new ArmyDeployment(armyDeploymentConfig);
 
-                    // console.log(unit)
-                    // console.log(this.selectGrid[army].units[n]);
-                    // console.log(this.selectGrid[army].tiles[n]);
-                    // console.log(n);
-                    //console.log(gridTile);
-                    n++;
-                } while (!this.selectGridTile);
+            // armyUnits.units.forEach(unit => {
+            //     //let gridTile = null;
+            //     this.selectGridTile = null;
+            //     let n = 0;
 
-                this.addUnitToBoard(this.generatedBoard[army].tiles[unit.tileNum]);//, gridTile, true)
-            });
+            //     do {
+            //         if (unit.unit === this.selectGrid[army].units[n] && this.selectGrid[army].tiles[n].unitsBoardCounterpart === null) {
+            //             this.selectGridTile = this.selectGrid[army].tiles[n];
+            //         }
+
+            //         // console.log(unit)
+            //         // console.log(this.selectGrid[army].units[n]);
+            //         // console.log(this.selectGrid[army].tiles[n]);
+            //         // console.log(n);
+            //         //console.log(gridTile);
+            //         n++;
+            //     } while (!this.selectGridTile);
+
+            //     this.addUnitToBoard(this.generatedBoard[army].tiles[unit.tileNum]);//, gridTile, true)
+            // });
 
             this.selectGridTile = null;
         }
@@ -184,8 +185,6 @@ class SetupScene extends Phaser.Scene {
             index: 101
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
-
-        
 
         emitter.on(CONSTANTS.ARMY_SAVED, () => {
             this.saveNotice.setVisible(true);
@@ -693,104 +692,6 @@ class SetupScene extends Phaser.Scene {
     updateCounter() {
         this.counter.text = `${this.unitsPlaced[this.currentArmy]} / 10`;
     }
-
-    addUnitToBoard(boardTile, selectGridTile = this.selectGridTile, incrementCounter = true) {
-        if (this.selectGridTile) {
-            const type = selectGridTile.unit.type;
-
-            // Link the two tiles
-            selectGridTile.unitsBoardCounterpart = boardTile;
-            boardTile.selectGridCounterpart = selectGridTile;
-
-            // Clear the select grid tile but leave it knowing it is active
-            selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-
-            switch(type) {
-                case CONSTANTS.AXE:
-                    boardTile.unit = new Axe({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.BOW:
-                    boardTile.unit = new Bow({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.CONTROL:
-                    boardTile.unit = new Control({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.DAGGER:
-                    boardTile.unit = new Dagger({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.HEALING:
-                    boardTile.unit = new Healing({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.LANCE:
-                    boardTile.unit = new Lance({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.SHIELD:
-                    boardTile.unit = new Shield({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.SORCERY:
-                    boardTile.unit = new Sorcery({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-                case CONSTANTS.SWORD:
-                    boardTile.unit = new Sword({
-                        scene: this, 
-                        player: game.player,
-                        tile: boardTile,
-                        container: this.unitsBoard[this.currentArmy]
-                    });
-                break;
-            }
-
-            this.selectGridTile = null;
-            this.boardTile = null;
-
-            if (incrementCounter) {
-                this.unitsPlaced[this.currentArmy] ++;
-                this.updateCounter();
-                this.hideDetailsView();
-            }
-        }
-    }
-
 
     createDetailsView() {
         this.type = this.add.text(0, 0, '');

@@ -1,17 +1,17 @@
 class ArmyArrow extends Phaser.GameObjects.Sprite {
     constructor(scene, direction) {
-        super(scene, 0, 0, 'arrow');
+        super(scene, 0, 0, CONSTANTS.ARROW);
 
         let config = {
             key: 'off',
-            frames: scene.anims.generateFrameNumbers('arrow', { start: 0, end: 0, first: 0 }),
+            frames: scene.anims.generateFrameNumbers(CONSTANTS.ARROW, { start: 0, end: 0, first: 0 }),
             frameRate: 1,
             repeat: 0
         };
         scene.anims.create(config);
         config = {
             key: 'on',
-            frames: scene.anims.generateFrameNumbers('arrow', { start: 1, end: 1, first: 1 }),
+            frames: scene.anims.generateFrameNumbers(CONSTANTS.ARROW, { start: 1, end: 1, first: 1 }),
             frameRate: 1,
             repeat: 0
         };

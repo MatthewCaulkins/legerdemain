@@ -1,8 +1,9 @@
 class SetupBoardTile extends Tile {
-    constructor(config) { //}, n) {
+    constructor(config) {
         super(config);
 
-        // this.scene = config.scene;
+        this.army = config.army;
+
         this.selectGridCounterpart = null;
 
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
@@ -13,7 +14,7 @@ class SetupBoardTile extends Tile {
     }
 
     pointerover() {
-        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             
             if (this.unit) { // If there is a unit on this tile
                 // If it is there is no selected unit or it isn't on this tile
@@ -43,7 +44,7 @@ class SetupBoardTile extends Tile {
     } 
 
     pointerout() {
-        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             if (this != this.scene.boardTile) {
                 this.clearTint();
                 if (this.selectGridCounterpart) {
@@ -65,14 +66,17 @@ class SetupBoardTile extends Tile {
     pointerdown() {
 
         // If there is no unit on this tile
-        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             if (!this.unit) { 
                 // If there is no unit selected - add the selected unit to this tile
                 if (!this.scene.boardTile) {// Selected === false) {
                     if (this.scene.selectGridTile) {
                         console.log('Add unit');
                         // Try to get this automatically set somewhere
-                        this.scene.addUnitToBoard(this);
+
+                        console.log(this.army);
+                        console.log(this.scene.armyDeployment);
+                        this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile);
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.updateDetailsView(this.unit);
                     }
@@ -147,7 +151,7 @@ class SetupBoardTile extends Tile {
                                     this.unit.destroy();
 
                                     this.scene.selectGridTile.unitsBoardCounterpart = this;
-                                    this.scene.addUnitToBoard(this, this.selectGridTile, false);
+                                    this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile, false);
 
                                     // this.scene.unitsPlaced[this.scene.currentArmy] --;
                                     // this.scene.updateCounter();

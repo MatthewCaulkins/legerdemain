@@ -4,7 +4,37 @@ class HomeScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tile', 'assets/img/tile.png');
+        this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
+        
+        // Image (eventually Sprite sheets) for characters
+        this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
+        this.load.image('lanceTint', 'assets/img/characterTint.png');
+        this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');
+        this.load.image(CONSTANTS.SWORD_TINT, 'assets/img/swordTint.png');
+
+        // Sprite sheets
+        this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 75, frameHeight: 150, endFrame: 1});
+        this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 32, frameHeight: 32, endFrame: 2});
+
+        
+        // this.AXE = 'axe';
+        // this.AXE_TINT = 'axeTint';
+        // this.BOW = 'bow';
+        // this.BOW_TINT = 'bowTint';
+        // this.CONTROL = 'control';
+        // this.CONTROL_TINT = 'controlTint';
+        // this.DAGGER = 'dagger';
+        // this.DAGGER_TINT = 'daggerTint';
+        // this.HEALING = 'healing';
+        // this.HEALING_TINT = 'healingTint';
+        // this.LANCE = 'lance';
+        // this.LANCE_TINT = 'lanceTint';
+        // this.SHIELD = 'shield';
+        // this.SHIELD_TINT = 'shieldTint';
+        // this.SORCERY = 'sorcery';
+        // this.SORCERY_TINT = 'sorceryTint';
+        // this.SWORD = 'sword';
+        // this.SWORD_TINT = 'swordTint';
     }
 
     create() {
