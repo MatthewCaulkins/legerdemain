@@ -6,10 +6,15 @@ class SetupScene extends Phaser.Scene {
     preload() {
         this.load.image('tile', 'assets/img/tile.png');
         
+        // Image (eventually Sprite sheets) for characters
         this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
         this.load.image('lanceTint', 'assets/img/characterTint.png');
         this.load.image('sword', 'assets/img/sword.png');
         this.load.image('swordTint', 'assets/img/swordTint.png');
+
+        // Sprite sheets for arrows
+        this.load.image('leftArrow', 'assets/img/leftArrow.png');
+        this.load.image('rightArrow', 'assets/img/rightArrow.png');
     }
 
     create() {
@@ -20,57 +25,82 @@ class SetupScene extends Phaser.Scene {
         // Tiles currently active
         this.boardTile = null; 
         this.selectGridTile = null;
-        this.unitsPlaced = 0;
+
+        this.currentArmy = 0;
+        this.totalArmies = 3;
+
+        // Create arrays for the armies
+        this.unitsPlaced = [];
+        this.boardContainer = [];
+        this.generatedBoard = [];
+        this.unitsBoard = [];
+        this.selectGridContainer = [];
+        this.selectGrid = [];
         
-        // Setup the alignment grid for testing purposes
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
-        // Create the container for the board and generate it
-        this.boardContainer = this.add.container(0, 0);
-        this.boardContainer.setInteractive();
+        
+        // Setup the alignment grid for testing purposes
+        for (let army = 0; army < this.totalArmies; army ++) {
+            this.unitsPlaced[army] = 0;
 
-        const boardConfig = {
-            tileWidth: 75,
-            tileHeight: 75,
-            mapRows: 3,
-            mapColumns: 11,
-            scale: .75,
-            scene: this,
-            container: this.boardContainer,
-            orientation: CONSTANTS.BOARD_ORIENTATION
+            // Create the container for the board and generate it
+            this.boardContainer[army] = this.add.container(0, 0);
+            this.boardContainer[army].setInteractive();
+
+            const boardConfig = {
+                tileWidth: 75,
+                tileHeight: 75,
+                mapRows: 4,
+                mapColumns: 11,
+                scale: .75,
+                scene: this,
+                container: this.boardContainer[army],
+                orientation: CONSTANTS.BOARD_ORIENTATION
+            }
+
+            this.generatedBoard[army] = new GenerateBoard(boardConfig);
+
+            // Add interactivity to each of the tiles in the board container
+            this.boardContainer[army].iterate(this.addInteractionToBoardTiles);
+
+            // Add a container for the units
+            this.unitsBoard[army] = this.add.container(0, 0);
+
+            // Player Select Units container
+            this.selectGridContainer[army] = this.add.container(0, 0);
+            this.selectGridContainer[army].setInteractive();
+            
+            // Position the units board
+            const selectGridConfig = {
+                scene: this,
+                // alignmentGrid: this.alignmentGrid,
+                tileWidth: 100,
+                tileHeight: 100,
+                gridRows: 3,
+                gridColumns: 6,
+                scale: 1,
+                container: this.selectGridContainer[army],
+                units: game.player.units,
+                player: game.player
+            }
+            this.selectGrid[army] = new SelectUnitsGrid(selectGridConfig);
+            
+            this.alignmentGrid.positionItemAtIndex(19, this.selectGridContainer[army]);
+
+            this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
         }
 
-        this.generatedBoard = new GenerateBoard(boardConfig);
-
-        // Add interactivity to each of the tiles in the board container
-        this.boardContainer.iterate(this.addInteractionToBoardTiles);
-
-        // Add a container for the units
-        this.unitsBoard = this.add.container(0, 0);
-
-        // Player Select Units container
-        this.selectGridContainer = this.add.container(0, 0);
-        this.selectGridContainer.setInteractive();
-        
-        // Position the units board
-        const selectGridConfig = {
-            scene: this,
-            // alignmentGrid: this.alignmentGrid,
-            tileWidth: 100,
-            tileHeight: 100,
-            gridRows: 3,
-            gridColumns: 6,
-            scale: 1,
-            container: this.selectGridContainer,
-            units: game.player.units,
-            player: game.player
-        }
-        this.selectGrid = new SelectUnitsGrid(selectGridConfig);
-        
-        this.alignmentGrid.positionItemAtIndex(19, this.selectGridContainer);
-
-        this.selectGridContainer.iterate(this.addInteractionToGridTiles);
+        // // Hide the other layers
+        // for (let i = 1; i < this.totalArmies; i++) {
+        //     // this.unitsPlaced[i].setVisible(false);
+        //     this.boardContainer[i].setVisible(false);
+        //     // this.generatedBoard[i].setVisible(false);
+        //     this.unitsBoard[i].setVisible(false);
+        //     this.selectGridContainer[i].setVisible(false);
+        //     // this.selectGrid[i].setVisible(false);
+        // }
 
         // The button to get back to the home page
         this.homeButton = new Button({
@@ -114,6 +144,7 @@ class SetupScene extends Phaser.Scene {
 
             this.time.addEvent({delay: 2000, callback: this.hideSaveNotice, callbackScope: this, loop: false});
         });
+
         // Add the details view
         this.createDetailsView();
     }
@@ -127,9 +158,9 @@ class SetupScene extends Phaser.Scene {
 
         console.log(this);
 
-        for (let i = 0; i < this.generatedBoard.mapRows; i++) {
-            for (let j = 0; j < this.generatedBoard.mapColumns; j++) {
-                const tile = this.generatedBoard.board[i][j];
+        for (let i = 0; i < this.generatedBoard[this.currentArmy].mapRows; i++) {
+            for (let j = 0; j < this.generatedBoard[this.currentArmy].mapColumns; j++) {
+                const tile = this.generatedBoard[this.currentArmy].board[i][j];
 
                 if (tile.unit) {
                     unitPlacements.push({
@@ -144,12 +175,13 @@ class SetupScene extends Phaser.Scene {
         const data = {
             units: unitPlacements,
             name: 'test',
-            playerId: this.game.player.playerId
+            playerId: this.game.player.playerId,
+            armyNumber: this.currentArmy
         }
+
         // Save the board placements to the database
         emitter.emit(CONSTANTS.SAVE_ARMY, data);
     }
-
 
     loadHomeScene() {
         game.scene.start(CONSTANTS.HOME_SCENE);
@@ -166,6 +198,7 @@ class SetupScene extends Phaser.Scene {
 
     // Grid Tile Interaction
     addInteractionToGridTiles(tile) {
+        console.log('TRY AND GET INTERACTION WORKING');
         tile.on(CONSTANTS.POINTER_OVER, tile.scene.gridPointerover.bind(tile));
         tile.on(CONSTANTS.POINTER_OUT, tile.scene.gridPointerout.bind(tile));
         tile.on(CONSTANTS.POINTER_DOWN, tile.scene.gridPointerdown.bind(tile));
@@ -177,7 +210,7 @@ class SetupScene extends Phaser.Scene {
                 this.setTint(CONSTANTS.GREEN_TINT);
                 this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
             } else { // non-active tile
-                if (this.scene.unitsPlaced < 10) { 
+                if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) {
                     this.setTint(CONSTANTS.GREEN_TINT);
                     this.unit.alpha = .5;
                 }
@@ -230,7 +263,7 @@ class SetupScene extends Phaser.Scene {
 
     gridPointerdown() {
         if (!this.scene.selectGridTile) {  // If no grid selected
-            if (this.scene.unitsPlaced < 10) { // If units less than 10
+            if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) { // If units less than 10
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.RED_TINT);
                     this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
@@ -313,7 +346,7 @@ class SetupScene extends Phaser.Scene {
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
 
-                    this.scene.unitsPlaced --;
+                    this.scene.unitsPlaced[this.scene.currentArmy] --;
                     this.scene.updateCounter();
                     this.scene.updateDetailsView(this.unit);
                 //    this.boardTileSelected = false;
@@ -344,7 +377,7 @@ class SetupScene extends Phaser.Scene {
     // }
 
     boardPointerover() {
-        if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
             
             if (this.unit) { // If there is a unit on this tile
                 // If it is there is no selected unit or it isn't on this tile
@@ -374,7 +407,7 @@ class SetupScene extends Phaser.Scene {
     } 
 
     boardPointerout() {
-        if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
             if (this != this.scene.boardTile) {
                 this.clearTint();
                 if (this.selectGridCounterpart) {
@@ -396,7 +429,7 @@ class SetupScene extends Phaser.Scene {
     boardPointerdown() {
 
         // If there is no unit on this tile
-        if (this.scene.selectGridTile || this.scene.unitsPlaced > 0) {
+        if (this.scene.selectGridTile || this.scene.unitsPlaced[this.scene.currentArmy] > 0) {
             if (!this.unit) { 
                 // If there is no unit selected - add the selected unit to this tile
                 if (!this.scene.boardTile) {// Selected === false) {
@@ -447,7 +480,7 @@ class SetupScene extends Phaser.Scene {
                         this.selectGridCounterpart = null;
                         this.scene.selectGridTile = null;
 
-                        this.scene.unitsPlaced --;
+                        this.scene.unitsPlaced[this.scene.currentArmy] --;
                         this.scene.updateCounter();
                     // }
                 } else { // If this tile has a unit and it's not connected to the selectGrid unit
@@ -480,7 +513,7 @@ class SetupScene extends Phaser.Scene {
                                     this.scene.selectGridTile.unitsBoardCounterpart = this;
                                     this.scene.addUnitToBoard(this);
 
-                                    this.scene.unitsPlaced --;
+                                    this.scene.unitsPlaced[this.scene.currentArmy] --;
                                     this.scene.updateCounter();
                                 } 
                             }
@@ -536,7 +569,7 @@ class SetupScene extends Phaser.Scene {
     updateCounter() {
         console.log(this);
 
-        this.counter.text = `${this.unitsPlaced} / 10`;
+        this.counter.text = `${this.unitsPlaced[this.currentArmy]} / 10`;
     }
 
     addUnitToBoard(boardTile, selectGridTile = this.selectGridTile, incrementCounter = true) {
@@ -556,7 +589,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.BOW:
@@ -564,7 +597,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.CONTROL:
@@ -572,7 +605,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.DAGGER:
@@ -580,7 +613,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.HEALING:
@@ -588,7 +621,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.LANCE:
@@ -596,7 +629,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.SHIELD:
@@ -604,7 +637,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.SORCERY:
@@ -612,7 +645,7 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
                 case CONSTANTS.SWORD:
@@ -620,14 +653,14 @@ class SetupScene extends Phaser.Scene {
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
-                        container: this.unitsBoard
+                        container: this.unitsBoard[this.currentArmy]
                     }));
                 break;
             }
 
             this.selectGridTile = null;
             this.boardTile = null;
-            this.unitsPlaced ++;
+            this.unitsPlaced[this.currentArmy] ++;
 
             if (incrementCounter) {
                 this.updateCounter();

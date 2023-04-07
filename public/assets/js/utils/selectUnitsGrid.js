@@ -22,49 +22,49 @@ class SelectUnitsGrid {
 
         this.config.units.forEach(unit => {            
             switch(unit.unit) {
-                case 'axe':
+                case CONSTANTS.AXE:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('axe');
+                        this.units.push(CONSTANTS.AXE);
                     }
                     break;
-                case 'bow':
+                case CONSTANTS.BOW:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('bow');
+                        this.units.push(CONSTANTS.BOW);
                     }
                     break;
-                case 'control':
+                case CONSTANTS.CONTROL:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('control');
+                        this.units.push(CONSTANTS.CONTROL);
                     }
                     break;
-                case 'dagger':
+                case CONSTANTS.DAGGER:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('dagger');
+                        this.units.push(CONSTANTS.DAGGER);
                     }
                     break;
-                case 'healing':
+                case CONSTANTS.HEALING:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('healing');
+                        this.units.push(CONSTANTS.HEALING);
                     }
                     break;
-                case 'lance':
+                case CONSTANTS.LANCE:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('lance');
+                        this.units.push(CONSTANTS.LANCE);
                     }
                     break;
-                case 'shield':
+                case CONSTANTS.SHIELD:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('shield');
+                        this.units.push(CONSTANTS.SHIELD);
                     }
                     break;
-                case 'sorcery':
+                case CONSTANTS.SORCERY:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('sorcery');
+                        this.units.push(CONSTANTS.SORCERY);
                     }
                     break;
-                case 'sword':
+                case CONSTANTS.SWORD:
                     for (let i = 0; i < unit.num; i ++) {
-                        this.units.push('sword');
+                        this.units.push(CONSTANTS.SWORD);
                     }
                     break;
             }
