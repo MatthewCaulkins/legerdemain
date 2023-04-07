@@ -1,4 +1,4 @@
-class ArmyPopulator {
+class ArmyDeployment {
     constructor(config) {
 
     }

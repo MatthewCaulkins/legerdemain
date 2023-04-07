@@ -13,14 +13,38 @@ class SetupScene extends Phaser.Scene {
         this.load.image('swordTint', 'assets/img/swordTint.png');
 
         // Sprite sheets for arrows
-        this.load.image('leftArrow', 'assets/img/leftArrow.png');
-        this.load.image('rightArrow', 'assets/img/rightArrow.png');
+        this.load.spritesheet('arrow', 'assets/img/scrollArrow.png', {frameWidth: 75, frameHeight: 150, endFrame: 1});
+        this.load.spritesheet('orb', 'assets/img/orbs.png', {frameWidth: 32, frameHeight: 32, endFrame: 2});
     }
 
     create() {
-        console.log('game other players from setup scene');
-        console.log(game.otherPlayers);
         model.currentScene = this;
+
+        this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
+        this.alignmentGrid.showCellIndex();
+
+        // Spritesheets
+        // Arrows
+        let config = {
+            key: 'off',
+            frames: this.anims.generateFrameNumbers('arrow', { start: 0, end: 0, first: 0 }),
+            frameRate: 1,
+            repeat: 0
+        };
+        this.anims.create(config);
+        config = {
+            key: 'on',
+            frames: this.anims.generateFrameNumbers('arrow', { start: 1, end: 1, first: 1 }),
+            frameRate: 1,
+            repeat: 0
+        };
+        this.anims.create(config);
+        this.leftArrow = this.add.sprite(0, 0, 'arrow').play('off');
+        this.rightArrow = this.add.sprite(0, 0, 'arrow').play('off');
+        this.leftArrow.scaleX = -1;
+
+        this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
+        this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
 
         // Tiles currently active
         this.boardTile = null; 
@@ -30,6 +54,7 @@ class SetupScene extends Phaser.Scene {
         this.totalArmies = 3;
 
         // Create arrays for the armies
+        this.armyOrbs = [];
         this.unitsPlaced = [];
         this.boardContainer = [];
         this.generatedBoard = [];
@@ -37,12 +62,13 @@ class SetupScene extends Phaser.Scene {
         this.selectGridContainer = [];
         this.selectGrid = [];
         
-        this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
-        this.alignmentGrid.showCellIndex();
-
         
         // Setup the alignment grid for testing purposes
         for (let army = 0; army < this.totalArmies; army ++) {
+            // TODO: switch this based on if the army is saved
+            this.armyOrbs[army] = new Orb(this, army);
+            this.alignmentGrid.positionItemAtIndex(army + 7, this.armyOrbs[army]);
+
             this.unitsPlaced[army] = 0;
 
             // Create the container for the board and generate it
@@ -87,20 +113,20 @@ class SetupScene extends Phaser.Scene {
             }
             this.selectGrid[army] = new SelectUnitsGrid(selectGridConfig);
             
-            this.alignmentGrid.positionItemAtIndex(19, this.selectGridContainer[army]);
+            this.alignmentGrid.positionItemAtIndex(18, this.selectGridContainer[army]);
 
             this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
         }
 
         // // Hide the other layers
-        // for (let i = 1; i < this.totalArmies; i++) {
-        //     // this.unitsPlaced[i].setVisible(false);
-        //     this.boardContainer[i].setVisible(false);
-        //     // this.generatedBoard[i].setVisible(false);
-        //     this.unitsBoard[i].setVisible(false);
-        //     this.selectGridContainer[i].setVisible(false);
-        //     // this.selectGrid[i].setVisible(false);
-        // }
+        for (let i = 1; i < this.totalArmies; i++) {
+            // this.unitsPlaced[i].setVisible(false);
+            this.boardContainer[i].setVisible(false);
+            // this.generatedBoard[i].setVisible(false);
+            this.unitsBoard[i].setVisible(false);
+            this.selectGridContainer[i].setVisible(false);
+            // this.selectGrid[i].setVisible(false);
+        }
 
         // The button to get back to the home page
         this.homeButton = new Button({
@@ -145,8 +171,85 @@ class SetupScene extends Phaser.Scene {
             this.time.addEvent({delay: 2000, callback: this.hideSaveNotice, callbackScope: this, loop: false});
         });
 
+        // Shift army logic
+        this.leftArrow.setInteractive();
+        this.leftArrow.on(CONSTANTS.POINTER_OVER, () => {
+            this.leftArrow.play('on');
+        });
+        this.leftArrow.on(CONSTANTS.POINTER_OUT, () => {
+            this.leftArrow.play('off');
+        });
+        this.leftArrow.on(CONSTANTS.POINTER_DOWN, this.shiftArmyLeft);
+
+        this.rightArrow.setInteractive();
+        this.rightArrow.on(CONSTANTS.POINTER_OVER, () => {
+            this.rightArrow.play('on');
+        });
+        this.rightArrow.on(CONSTANTS.POINTER_OUT, () => {
+            this.rightArrow.play('off');
+        });
+        this.rightArrow.on(CONSTANTS.POINTER_DOWN, this.shiftArmyRight);
+
         // Add the details view
         this.createDetailsView();
+
+        this.armyOrbs[this.currentArmy].play('active');
+    }
+
+    shiftArmyLeft() {
+        console.log(this);
+        this.scene.currentArmy --;
+        this.scene.shiftArmy();
+    }
+
+    shiftArmyRight() {
+        console.log(this);
+        this.scene.currentArmy ++;
+        this.scene.shiftArmy();
+    }
+
+    shiftArmy() {
+        console.log(this);
+        this.currentArmy = this.currentArmy > 2 ? 0 : this.currentArmy;
+        this.currentArmy = this.currentArmy < 0 ? 2 : this.currentArmy;
+
+        for (let i = 0; i < this.totalArmies; i++) {
+            this.boardContainer[i].setVisible(false);
+            // this.generatedBoard[i].setVisible = false;
+            this.unitsBoard[i].setVisible(false);
+            this.selectGridContainer[i].setVisible(false);
+            // this.selectGrid[i].setVisible = false;
+
+            this.armyOrbs[i].setActive(this.currentArmy);
+        }
+
+
+        this.boardContainer[this.currentArmy].setVisible(true);
+        // this.generatedBoard[this.currentArmy].setVisible = true;
+        this.unitsBoard[this.currentArmy].setVisible(true);
+        this.selectGridContainer[this.currentArmy].setVisible(true);
+        // this.selectGrid[this.currentArmy].setVisible = true;
+
+        // release scene tiles
+        if (this.boardTile) {
+            if (this.boardTile.unit) {
+                this.boardTile.unit.y += 3;
+                this.boardTile.unit.alpha = 1;
+            }
+            this.boardTile.clearTint();
+            this.boardTile = null; 
+        }
+        if (this.selectGridTile) {
+            if (this.selectGridTile.unitsBoardCounterpart) {
+                this.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
+            } else {
+                this.selectGridTile.unit.alpha = 1;
+                this.selectGridTile.clearTint();
+            }
+            this.selectGridTile = null;
+        }
+
+        this.updateCounter();
     }
 
     hideSaveNotice() {
@@ -176,7 +279,7 @@ class SetupScene extends Phaser.Scene {
             units: unitPlacements,
             name: 'test',
             playerId: this.game.player.playerId,
-            armyNumber: this.currentArmy
+            armyId: this.currentArmy
         }
 
         // Save the board placements to the database
@@ -198,7 +301,6 @@ class SetupScene extends Phaser.Scene {
 
     // Grid Tile Interaction
     addInteractionToGridTiles(tile) {
-        console.log('TRY AND GET INTERACTION WORKING');
         tile.on(CONSTANTS.POINTER_OVER, tile.scene.gridPointerover.bind(tile));
         tile.on(CONSTANTS.POINTER_OUT, tile.scene.gridPointerout.bind(tile));
         tile.on(CONSTANTS.POINTER_DOWN, tile.scene.gridPointerdown.bind(tile));
@@ -346,7 +448,7 @@ class SetupScene extends Phaser.Scene {
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
 
-                    this.scene.unitsPlaced[this.scene.currentArmy] --;
+                    // this.scene.unitsPlaced[this.scene.currentArmy] --;
                     this.scene.updateCounter();
                     this.scene.updateDetailsView(this.unit);
                 //    this.boardTileSelected = false;
@@ -511,10 +613,10 @@ class SetupScene extends Phaser.Scene {
                                     this.unit.destroy();
 
                                     this.scene.selectGridTile.unitsBoardCounterpart = this;
-                                    this.scene.addUnitToBoard(this);
+                                    this.scene.addUnitToBoard(this, this.selectGridTile, false);
 
-                                    this.scene.unitsPlaced[this.scene.currentArmy] --;
-                                    this.scene.updateCounter();
+                                    // this.scene.unitsPlaced[this.scene.currentArmy] --;
+                                    // this.scene.updateCounter();
                                 } 
                             }
                             // Highlight all tiles within unit's range
@@ -567,8 +669,6 @@ class SetupScene extends Phaser.Scene {
     }
 
     updateCounter() {
-        console.log(this);
-
         this.counter.text = `${this.unitsPlaced[this.currentArmy]} / 10`;
     }
 
@@ -585,84 +685,84 @@ class SetupScene extends Phaser.Scene {
 
             switch(type) {
                 case CONSTANTS.AXE:
-                    boardTile.unit = this.add.existing(new Axe({
+                    boardTile.unit = new Axe({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.BOW:
-                    boardTile.unit = this.add.existing(new Bow({
+                    boardTile.unit = new Bow({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.CONTROL:
-                    boardTile.unit = this.add.existing(new Control({
+                    boardTile.unit = new Control({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.DAGGER:
-                    boardTile.unit = this.add.existing(new Dagger({
+                    boardTile.unit = new Dagger({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.HEALING:
-                    boardTile.unit = this.add.existing(new Healing({
+                    boardTile.unit = new Healing({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.LANCE:
-                    boardTile.unit = this.add.existing(new Lance({
+                    boardTile.unit = new Lance({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.SHIELD:
-                    boardTile.unit = this.add.existing(new Shield({
+                    boardTile.unit = new Shield({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.SORCERY:
-                    boardTile.unit = this.add.existing(new Sorcery({
+                    boardTile.unit = new Sorcery({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
                 case CONSTANTS.SWORD:
-                    boardTile.unit = this.add.existing(new Sword({
+                    boardTile.unit = new Sword({
                         scene: this, 
                         player: game.player,
                         tile: boardTile,
                         container: this.unitsBoard[this.currentArmy]
-                    }));
+                    });
                 break;
             }
 
             this.selectGridTile = null;
             this.boardTile = null;
-            this.unitsPlaced[this.currentArmy] ++;
 
             if (incrementCounter) {
+                this.unitsPlaced[this.currentArmy] ++;
                 this.updateCounter();
                 this.hideDetailsView();
             }

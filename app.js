@@ -130,9 +130,21 @@ io.on('connection', async function (socket) {
         const units = data.units;
         const name = data.name;
         const playerId = data.playerId;
+        const armyId = data.armyId;
 
-        const user = await ArmyModel.create({units, name, playerId});
-        console.log('added army');
+        await ArmyModel.findOne({playerId, armyId})
+            .then(async (result) => {
+                if (!result) {
+                    console.log('no results');
+                    await ArmyModel.create({units, name, playerId, armyId});
+                } else {
+                    console.log('found one');
+                    await ArmyModel.updateOne({playerId, armyId}, {name, units});
+                }
+        }); 
+        // console.log(army);
+       // 
+        // console.log('added army');
 
         socket.emit('armySaved');
         // return done(null, user);
