@@ -5,7 +5,7 @@ class Constants {
         this.MOVE_UNIT = 'moveUnit';
 
         this.BOARD_ORIENTATION = 0.785398;
-        this.UNITS_ORIENTATION = 0;
+        this.GRID_ORIENTATION = 0;
 
         this.WHITE = 0xffffff;
         this.BLACK = 0x000000;

@@ -59,7 +59,14 @@ class GenerateBoard {
                 // const ty = (x + y) * (.5 * diagonal); // tileHeightHalf;
 
                 // if (this.config.orientation === CONSTANTS.UNITS_ORIENTATION) {
-                const tile = new Tile(this.config, x, y, segments);//, n);
+
+                // console.log(this.config.scene);
+
+                this.config.x = x;
+                this.config.y = y;
+                this.config.segments = segments;
+
+                const tile = new SetupBoardTile(this.config);//, n);
                 this.board[x][y] = tile;
                 //n++;
                 // }
@@ -92,7 +99,7 @@ class GenerateBoard {
                 n++;
             }
         }
-        console.log(this.board);
+        // console.log(this.board);
         // this.config.container.iterate(this.addInteractionToTile, this, this.config);
     }
 

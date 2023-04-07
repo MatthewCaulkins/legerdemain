@@ -27,7 +27,7 @@ class PlayScene extends Phaser.Scene {
             scale: .70,
             scene: this,
             container: this.boardContainer,
-            orientation: CONSTANTS.BOARD_ORIENTATION
+            // orientation: CONSTANTS.BOARD_ORIENTATION
         }
 
         this.generateBoard = new GenerateBoard(boardConfig);

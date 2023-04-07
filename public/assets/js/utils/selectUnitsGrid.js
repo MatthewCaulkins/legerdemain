@@ -101,38 +101,39 @@ class SelectUnitsGrid {
             for (let x = 0; x < this.gridRows; x++)
             {
                 if (this.units[n]) {
-                    const tile = new Tile(this.config, x, y, 0, n);
+                    this.config.x = x;
+                    this.config.y = y;
+                    const tile = new GridTile(this.config);
                     this.board[x][y] = tile;
-                    
                     unitConfig.tile = tile;
 
                     unitType = this.units[n];
                     switch(unitType) {
-                        case 'axe':
+                        case CONSTANTS.AXE:
                             new Axe(unitConfig);
                             break;
-                        case 'bow':
+                        case CONSTANTS.BOW:
                             new Bow(unitConfig);
                             break;
-                        case 'control':
+                        case CONSTANTS.CONTROL:
                             new Control(unitConfig);
                             break;
-                        case 'dagger':
+                        case CONSTANTS.DAGGER:
                             new Dagger(unitConfig);
                             break;
-                        case 'healing':
+                        case CONSTANTS.HEALING:
                             new Healing(unitConfig);
                             break;
-                        case 'lance':
+                        case CONSTANTS.LANCE:
                             new Lance(unitConfig);
                             break;
-                        case 'shield':
+                        case CONSTANTS.SHIELD:
                             new Shield(unitConfig);
                             break;
-                        case 'sorcery':
+                        case CONSTANTS.SORCERY:
                             new Sorcery(unitConfig);
                             break;
-                        case 'sword':
+                        case CONSTANTS.SWORD:
                             new Sword(unitConfig);
                             break;
                     }

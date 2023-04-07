@@ -1,11 +1,15 @@
 class Tile extends Phaser.GameObjects.Image {
-    constructor(config, x, y, segments) { //}, n) {
+    constructor(config) { //}, n) {
+        const x = config.x;
+        const y = config.y;
+        const segments = config.segments;
+
         const tileWidth = config.tileWidth ? config.scale * config.tileWidth : 75;
         const tileHeight = config.tileHeight ? config.scale * config.tileHeight : 75; // data.tileheight;
         
         const diagonal = Math.sqrt(tileWidth ** 2 + tileHeight ** 2);
 
-        if (segments > 0) {  // Diagonal
+        if (segments) {  // Diagonal
             const centerX = .5 * segments * diagonal;
             // const centerY = 16;
             const centerY = diagonal; //-.5 * mapColumns * diagonal;
@@ -39,7 +43,7 @@ class Tile extends Phaser.GameObjects.Image {
 
         // Make the tile interactive and oriented
         this.setInteractive();
-        this.setRotation(config.orientation);
+        // this.setRotation(config.orientation);
 
         // Whether or not we are about to do special stuff to the tile
         this.active = false;
@@ -50,18 +54,7 @@ class Tile extends Phaser.GameObjects.Image {
 
         // The path to get to this tile
         this.path = [];
-
-        this.selectGridCounterpart;
-        this.unitsBoardCounterpart;
     }
-
-    // setTint(tint) {
-    //     this.setTint(tint);
-    // }
-
-    // clearTint() {
-    //     this.clearTint();
-    // }
 
     // Set the unit on this tile
     get unit() {
