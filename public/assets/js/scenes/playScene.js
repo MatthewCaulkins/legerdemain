@@ -4,8 +4,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tile', 'assets/img/tile.png');
-        this.load.image('character', 'assets/img/characterHolder.png');
     }
 
     create() {
@@ -50,12 +48,11 @@ class PlayScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.on(CONSTANTS.QUIT_GAME, this.quitGame);
+        emitter.once(CONSTANTS.QUIT_GAME, this.quitGame);
     }
 
     quitGame() {
         // Save the board placements to the database
-
         game.scene.start(CONSTANTS.HOME_SCENE);
         game.scene.stop(CONSTANTS.PLAY_SCENE);
     }

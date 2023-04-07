@@ -43,6 +43,7 @@ class Constants {
         this.LOAD_PLAY_SCENE = 'loadPlayScene';
         this.LOAD_SETUP_SCENE = 'loadSetupScene';
         this.NEW_PLAYER = 'newPlayer';
+        this.PLAYER_ARMIES = 'playerArmies';
         this.POINTER_DOWN = 'pointerdown';
         this.POINTER_OUT = 'pointerout';
         this.POINTER_OVER = 'pointerover';

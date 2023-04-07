@@ -27,7 +27,7 @@ class HomeScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.on(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
+        emitter.once(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
 
         this.setupSceneButton = new Button({
             scene: this, 
@@ -45,7 +45,7 @@ class HomeScene extends Phaser.Scene {
         }
 
         emitter.emit(CONSTANTS.GAME_LOADED);
-        emitter.on(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
+        emitter.once(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
     }
 
     // Change scenes
@@ -55,8 +55,11 @@ class HomeScene extends Phaser.Scene {
     }
 
     loadSetupScene() {
-        game.scene.start(CONSTANTS.SETUP_SCENE);
-        game.scene.stop(CONSTANTS.HOME_SCENE);
+        if (!this.ended) {
+            game.scene.start(CONSTANTS.SETUP_SCENE);
+            game.scene.stop(CONSTANTS.HOME_SCENE);
+            // this.ended = true;
+        }
     }
 
     // Show players

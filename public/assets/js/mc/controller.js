@@ -3,6 +3,7 @@ class Controller {
         emitter.on('gameLoaded', this.connectSocket);
         
         this.otherPlayers = {};
+        this.playerArmies = [];
     }
 
     // Pay attention to the socket for every new player
@@ -18,7 +19,6 @@ class Controller {
             console.log('Connected');
             console.log(controller.otherPlayers);
 
-
             Object.keys(players).forEach(id => {
                 for (const [key, value] of Object.entries(players[id])) {
                     if (key != game.player.socketId) {
@@ -26,10 +26,18 @@ class Controller {
                     }
                 }
             });
+
+            // Return that data is loaded
+            this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED, game.player.playerId);
         });
 
-        // Return that data is loaded
-        this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED);
+
+        // Get players armies
+        this.socket.on(CONSTANTS.PLAYER_ARMIES, armies => {
+            // Object.keys(armies).forEach(army => {
+            controller.playerArmies = armies;
+        });
+
 
         // Add a new player to the object
         this.socket.on(CONSTANTS.NEW_PLAYER, player => {
@@ -41,6 +49,7 @@ class Controller {
 
         // Save this army
         emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
+            controller.playerArmies[data.armyId] = data;
             this.socket.emit(CONSTANTS.SAVE_ARMY, data);
         });
 

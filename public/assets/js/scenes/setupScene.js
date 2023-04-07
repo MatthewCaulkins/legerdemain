@@ -23,6 +23,20 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
+        // Add placement counter
+        this.counter = this.add.text(0, 0, '0 / 10', CONSTANTS.HUD_STYLE);
+        this.counter.setOrigin(.5, .5);
+
+        this.alignmentGrid.positionItemAtIndex(12, this.counter);
+
+        // Add Save Notice
+        this.saveNotice = this.add.text(0, 0, 'Army Saved', CONSTANTS.HUD_STYLE);
+        this.saveNotice.setOrigin(.5, .5);
+        this.saveNotice.setVisible(false);
+
+        this.alignmentGrid.positionItemAtIndex(60, this.saveNotice);
+        this.createDetailsView();
+
         // Spritesheets
         // Arrows
         // let config = {
@@ -39,12 +53,6 @@ class SetupScene extends Phaser.Scene {
         //     repeat: 0
         // };
         // this.anims.create(config);
-        this.leftArrow = new ArmyArrow(this, 'left', this.shiftArmyLeft);//this.add.sprite(0, 0, 'arrow').play('off');
-        this.rightArrow = new ArmyArrow(this, 'right', this.shiftArmyRight); //this.add.sprite(0, 0, 'arrow').play('off');
-        // this.leftArrow.scaleX = -1;
-
-        this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
-        this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
 
         // Tiles currently active
         this.boardTile = null; 
@@ -65,6 +73,8 @@ class SetupScene extends Phaser.Scene {
         
         // Setup the alignment grid for testing purposes
         for (let army = 0; army < this.totalArmies; army ++) {
+            this.currentArmy = army;
+
             // TODO: switch this based on if the army is saved
             this.armyOrbs[army] = new Orb(this, army);
             this.alignmentGrid.positionItemAtIndex(army + 7, this.armyOrbs[army]);
@@ -115,7 +125,31 @@ class SetupScene extends Phaser.Scene {
             this.alignmentGrid.positionItemAtIndex(18, this.selectGridContainer[army]);
 
             // this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
+            const armyUnits = controller.playerArmies[army];
+            armyUnits.units.forEach(unit => {
+                //let gridTile = null;
+                this.selectGridTile = null;
+                let n = 0;
+
+                do {
+                    if (unit.unit === this.selectGrid[army].units[n] && this.selectGrid[army].tiles[n].unitsBoardCounterpart === null) {
+                        this.selectGridTile = this.selectGrid[army].tiles[n];
+                    }
+
+                    // console.log(unit)
+                    // console.log(this.selectGrid[army].units[n]);
+                    // console.log(this.selectGrid[army].tiles[n]);
+                    // console.log(n);
+                    //console.log(gridTile);
+                    n++;
+                } while (!this.selectGridTile);
+
+                this.addUnitToBoard(this.generatedBoard[army].tiles[unit.tileNum]);//, gridTile, true)
+            });
+
+            this.selectGridTile = null;
         }
+
 
         // // Hide the other layers
         for (let i = 1; i < this.totalArmies; i++) {
@@ -137,7 +171,7 @@ class SetupScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 100
         });
-        emitter.on(CONSTANTS.BACK_TO_HOME, this.loadHomeScene);
+        emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene);
 
         // The button to get Save out the army
         this.acceptButton = new Button({
@@ -151,18 +185,7 @@ class SetupScene extends Phaser.Scene {
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
-        // Add placement counter
-        this.counter = this.add.text(0, 0, '0 / 10', CONSTANTS.HUD_STYLE);
-        this.counter.setOrigin(.5, .5);
-
-        this.alignmentGrid.positionItemAtIndex(12, this.counter);
-
-        // Ad Save Notice
-        this.saveNotice = this.add.text(0, 0, 'Army Saved', CONSTANTS.HUD_STYLE);
-        this.saveNotice.setOrigin(.5, .5);
-        this.saveNotice.setVisible(false);
-
-        this.alignmentGrid.positionItemAtIndex(60, this.saveNotice);
+        
 
         emitter.on(CONSTANTS.ARMY_SAVED, () => {
             this.saveNotice.setVisible(true);
@@ -190,25 +213,21 @@ class SetupScene extends Phaser.Scene {
         // this.rightArrow.on(CONSTANTS.POINTER_DOWN, this.shiftArmyRight);
 
         // Add the details view
-        this.createDetailsView();
 
+        
+        this.currentArmy = 0;
+        console.log('active army' + this.currentArmy);
         this.armyOrbs[this.currentArmy].play('active');
-    }
+        
+        this.leftArrow = new ArmyArrow(this, 'left');//, shiftArmyLeft);//this.add.sprite(0, 0, 'arrow').play('off');
+        this.rightArrow = new ArmyArrow(this, 'right');//, shiftArmyRight); //this.add.sprite(0, 0, 'arrow').play('off');
+        // this.leftArrow.scaleX = -1;
 
-    shiftArmyLeft() {
-        console.log(this);
-        this.scene.currentArmy --;
-        this.scene.shiftArmy();
-    }
-
-    shiftArmyRight() {
-        console.log(this);
-        this.scene.currentArmy ++;
-        this.scene.shiftArmy();
+        this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
+        this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
     }
 
     shiftArmy() {
-        console.log(this);
         this.currentArmy = this.currentArmy > 2 ? 0 : this.currentArmy;
         this.currentArmy = this.currentArmy < 0 ? 2 : this.currentArmy;
 

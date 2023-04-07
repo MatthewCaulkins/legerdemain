@@ -6,11 +6,12 @@ class GenerateBoard {
         // this._tileContainer = this.config.scene.add.container(0, 0);
         // this._tileContainer.setInteractive();
 
-        this.createBoard();
-
+        this.tiles = [];
         this.board;
         this.mapRows;
         this.mapColumns;
+
+        this.createBoard();
     }
 
     // get tileContainer() {
@@ -95,6 +96,12 @@ class GenerateBoard {
             for (let y = 0; y < this.mapColumns; y++)
             {
                 const tile = this.board[x][y];
+
+                // console.log(tile);
+                // console.log(n);
+                // console.log(this.tiles);
+
+                this.tiles[n] = tile;
                 tile.number = n;
                 n++;
             }

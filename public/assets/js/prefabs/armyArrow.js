@@ -1,5 +1,5 @@
 class ArmyArrow extends Phaser.GameObjects.Sprite {
-    constructor(scene, direction, callback) {
+    constructor(scene, direction) {
         super(scene, 0, 0, 'arrow');
 
         let config = {
@@ -17,8 +17,10 @@ class ArmyArrow extends Phaser.GameObjects.Sprite {
         };
         scene.anims.create(config);
 
+        let callback = this.shiftArmyRight();
         if (direction === 'left') {
             this.scaleX = -1;
+            callback = this.shiftArmyLeft();
         }
 
         this.setInteractive();
@@ -28,7 +30,13 @@ class ArmyArrow extends Phaser.GameObjects.Sprite {
         this.on(CONSTANTS.POINTER_OUT, () => {
             this.play('off');
         });
-        this.on(CONSTANTS.POINTER_DOWN, callback) ;//scene.shiftArmyLeft);
+        this.on(CONSTANTS.POINTER_DOWN, () => {
+            if (direction === 'left') {
+                this.shiftArmyLeft();
+            } else {
+                this.shiftArmyRight();
+            }
+        }) ;//scene.shiftArmyLeft);
 
         // this.rightArrow.setInteractive();
         // this.rightArrow.on(CONSTANTS.POINTER_OVER, () => {
@@ -41,5 +49,15 @@ class ArmyArrow extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this);
         this.play('off');
+    }
+
+    shiftArmyLeft() {
+        this.scene.currentArmy --;
+        this.scene.shiftArmy();
+    }
+
+    shiftArmyRight() {
+        this.scene.currentArmy ++;
+        this.scene.shiftArmy();
     }
 }

@@ -1,6 +1,7 @@
 class Button extends Phaser.GameObjects.Container {
     constructor(config) {
         super(config.scene);
+        this.fired = false;
 
         this.config = config;
         this.scene = config.scene;
@@ -38,10 +39,13 @@ class Button extends Phaser.GameObjects.Container {
     }
 
     onPointerdown() {
-        if (this.params) {
-            emitter.emit(this.event, this.params);
-        } else {
-            emitter.emit(this.event);
+        if (!this.fired) {
+            if (this.params) {
+                emitter.emit(this.event, this.params);
+            } else {
+                emitter.emit(this.event);
+            }
+            this.fired = true;
         }
     }
 
@@ -51,5 +55,6 @@ class Button extends Phaser.GameObjects.Container {
 
     onPointerout() {
         this.image.clearTint();
+        this.fired = false;
     }
 }

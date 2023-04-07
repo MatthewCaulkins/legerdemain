@@ -3,6 +3,7 @@ class SelectUnitsGrid {
         this.config = config;
         this.config.scale = this.config.scale ? this.config.scale : 1;
         this.board;
+        this.tiles = [];
 
         this.createGrid();
         
@@ -105,6 +106,8 @@ class SelectUnitsGrid {
                     this.config.y = y;
                     const tile = new GridTile(this.config);
                     this.board[x][y] = tile;
+                    this.tiles[n] = tile;
+
                     unitConfig.tile = tile;
 
                     unitType = this.units[n];

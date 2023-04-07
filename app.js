@@ -120,8 +120,13 @@ io.on('connection', async function (socket) {
     }
 
     // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
-    socket.on('gameScreenReached', () => {
+    socket.on('gameScreenReached', async (playerId) => {
         screen = 'gameScreen';
+
+        await ArmyModel.find({playerId})
+            .then(async (result) => {
+                socket.emit('playerArmies', result);
+        });
     });
 
 
@@ -135,10 +140,10 @@ io.on('connection', async function (socket) {
         await ArmyModel.findOne({playerId, armyId})
             .then(async (result) => {
                 if (!result) {
-                    console.log('no results');
+                    console.log('no army results');
                     await ArmyModel.create({units, name, playerId, armyId});
                 } else {
-                    console.log('found one');
+                    console.log('found an army');
                     await ArmyModel.updateOne({playerId, armyId}, {name, units});
                 }
         }); 
