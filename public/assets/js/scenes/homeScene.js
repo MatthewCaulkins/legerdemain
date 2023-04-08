@@ -13,8 +13,8 @@ class HomeScene extends Phaser.Scene {
         this.load.image(CONSTANTS.SWORD_TINT, 'assets/img/swordTint.png');
 
         // Sprite sheets
-        this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 75, frameHeight: 150, endFrame: 1});
-        this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 32, frameHeight: 32, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 77, frameHeight: 150, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 33, frameHeight: 32, endFrame: 2});
 
         
         // this.AXE = 'axe';
@@ -38,14 +38,14 @@ class HomeScene extends Phaser.Scene {
     }
 
     create() {
-        console.log('Home Game');
-        console.log(game);
-
         model.currentScene = this;
         this.scene = this;
         
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
+
+        // Add matchmaking tiles
+        console.log(this);
 
         // Add navigation buttons
         this.playSceneButton = new Button({

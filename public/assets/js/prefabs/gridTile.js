@@ -1,8 +1,6 @@
 class GridTile extends Tile {
-    constructor(config) { //}, n) {
+    constructor(config) {
         super(config);
-
-        // this.scene = config.scene;
         this.unitsBoardCounterpart = null;
 
         this.setRotation(CONSTANTS.GRID_ORIENTATION);
@@ -168,5 +166,17 @@ class GridTile extends Tile {
                 }
             }
         }
+    }
+
+    select() {
+        
+    }
+
+    setHighlight() {
+
+    }
+
+    clearHighlight() {
+
     }
 }

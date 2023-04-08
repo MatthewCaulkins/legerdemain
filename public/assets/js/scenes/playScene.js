@@ -8,6 +8,10 @@ class PlayScene extends Phaser.Scene {
 
     create() {
         model.currentScene = this;
+        this.phase = CONSTANTS.ARMY_SELECT_PHASE;
+
+        // Set current army for deployment phase
+        this.currentArmy = 0;
 
         // Setup the alignment grid for testing purposes
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
@@ -36,16 +40,26 @@ class PlayScene extends Phaser.Scene {
 
         // TODO: Wait for Socket.IO to return both selected armies
 
-        // TODO: This should be stored in the user profile
-        this.selectedArmy = 0;
         
         const armyDeploymentConfig = {
             scene: this,
-            armyUnits: controller.playerArmies[this.selectedArmy],  
+            armyUnits: game.player.armies[this.currentArmy],  
             generatedBoard: this.generatedBoard,
             unitsBoard: this.unitsBoard,
         }
         this.armyDeployment = new ArmyDeployment(armyDeploymentConfig);
+
+        
+        // Add arrows to pick army
+        this.armyName = this.add.text(0, 0, game.player.armies[this.currentArmy].name, CONSTANTS.HUD_STYLE);
+        this.armyName.setOrigin(.5, .5);
+
+        this.leftArrow = new ScrollArrow(this, 'left', .5);
+        this.rightArrow = new ScrollArrow(this, 'right', .5);
+
+        this.alignmentGrid.positionItemAtIndex(17, this.leftArrow);
+        this.alignmentGrid.positionItemAtIndex(19, this.armyName);
+        this.alignmentGrid.positionItemAtIndex(21, this.rightArrow);
 
 
         // The button to get back to the home page
@@ -59,7 +73,21 @@ class PlayScene extends Phaser.Scene {
             index: 12
         });
         emitter.once(CONSTANTS.QUIT_GAME, this.quitGame);
+
+        // The button to accept this setup
+        this.acceptButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Accept',
+            textConfig: CONSTANTS.TEXT_STYLE,
+            event: CONSTANTS.ACCEPT_ARMY,
+            alignmentGrid: this.alignmentGrid,
+            index: 41
+        });
+        emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
     }
+
+    update() {}
 
     quitGame() {
         // Save the board placements to the database
@@ -67,9 +95,28 @@ class PlayScene extends Phaser.Scene {
         game.scene.stop(CONSTANTS.PLAY_SCENE);
     }
 
-    update() {}
+    shiftArmy() {
+        console.log(this.armyName);
+        this.armyName.text = game.player.armies[this.currentArmy].name;
+        this.armyDeployment.armyUnits = game.player.armies[this.currentArmy];
+        this.armyDeployment.clearGameBoard();
+        this.armyDeployment.populateBoard();
+    }
 
+    acceptArmy() {
+        // TODO: Get both events fired to server and start game
 
+        this.startGame();
+    }
+
+    startGame() {
+        this.phase = CONSTANTS.GAME_PHASE;
+
+        this.armyName.setVisible(false);
+        this.acceptButton.setVisible(false);
+        this.leftArrow.setVisible(false);
+        this.rightArrow.setVisible(false); 
+    }
     // onPointerdown() {
     //     // const x = this.x;
     //     // const y = this.y;
@@ -152,7 +199,7 @@ class PlayScene extends Phaser.Scene {
 
                 // console.log(tileOfInterest);
 
-                console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+                // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
                 if (tileOfInterest.column - 1 >= 0) {
                     questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
 
@@ -222,15 +269,11 @@ class PlayScene extends Phaser.Scene {
     }
 
     // Iterate over all tiles and remove the tint
-    removeAllHighlights(tile) {
-        const scene = tile.scene;
-        const boardContainer = scene.boardContainer;
-
-        for (let i = 0; i < boardContainer.rows; i++) {
-            for (let j = 0; j < boardContainer.columns; j++) {
-                boardContainer[i][j].clearTint();
-            }
-        }
+    removeAllHighlights() {
+        console.log(this.generatedBoard);
+        this.generatedBoard.tiles.forEach((tile) => {
+            tile.clearTint();
+        });
     }
 
     // rotateTile(tile) {

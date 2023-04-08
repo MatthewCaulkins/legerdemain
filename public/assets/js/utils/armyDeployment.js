@@ -12,6 +12,15 @@ class ArmyDeployment {
         this.populateBoard();
     }
 
+    clearGameBoard() {
+        this.generatedBoard.tiles.forEach(tile => {
+            if (tile.unit) {
+                tile.unit.destroy();
+                tile.unit = null;
+            }
+        })
+    }
+
     populateBoard() {
         this.armyUnits.units.forEach(unit => {
             if (this.selectGrid) { // Setup scene
@@ -34,10 +43,10 @@ class ArmyDeployment {
 
     addUnitToGameBoard(unit) {
         // TODO: Test for player 2
-        console.log(unit);
+        // console.log(unit);
         const boardTile = this.generatedBoard.tiles[unit.tileNum];
 
-        console.log(boardTile);
+        // console.log(boardTile);
         this.createUnit(unit.unit, boardTile);
     }
 
@@ -49,6 +58,7 @@ class ArmyDeployment {
             boardTile.selectGridCounterpart = selectGridTile;
 
             // Clear the select grid tile but leave it knowing it is active
+            selectGridTile.unit.alpha = .5;
             selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
             this.createUnit(selectGridTile.unit.type, boardTile)
 
@@ -65,8 +75,8 @@ class ArmyDeployment {
 
 
     createUnit(type, boardTile) {
-        console.log(type);
-        console.log(boardTile);
+        // console.log(type);
+        // console.log(boardTile);
         switch(type) {
             case CONSTANTS.AXE:
                 boardTile.unit = new Axe({
@@ -85,7 +95,6 @@ class ArmyDeployment {
                 });
             break;
             case CONSTANTS.CONTROL:
-                console.log('wtf');
                 boardTile.unit = new Control({
                     scene: this.scene, 
                     player: game.player,

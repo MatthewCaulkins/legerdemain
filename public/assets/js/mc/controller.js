@@ -3,7 +3,6 @@ class Controller {
         emitter.on('gameLoaded', this.connectSocket);
         
         this.otherPlayers = {};
-        this.playerArmies = [];
     }
 
     // Pay attention to the socket for every new player
@@ -35,7 +34,7 @@ class Controller {
         // Get players armies
         this.socket.on(CONSTANTS.PLAYER_ARMIES, armies => {
             // Object.keys(armies).forEach(army => {
-            controller.playerArmies = armies;
+            game.player.armies = armies;
         });
 
 
@@ -49,13 +48,13 @@ class Controller {
 
         // Save this army
         emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
-            controller.playerArmies[data.armyId] = data;
+            game.player.armies[data.armyId] = data;
             this.socket.emit(CONSTANTS.SAVE_ARMY, data);
         });
 
         // Return when army is saved
         this.socket.on(CONSTANTS.ARMY_SAVED, () => {
-            emitter.emit(CONSTANTS.ARMY_SAVED);
+            emitter.emit(CONSTANTS.ARMY_SAVED_NOTICE);
         });
 
         // Disconnect a player and delete their ID

@@ -4,6 +4,19 @@ class Constants {
         this.DODGE = 'dodge';
         this.MOVE_UNIT = 'moveUnit';
 
+        // Orb frames
+        this.EMPTY = 'empty';
+        this.FILLED = 'filled';
+        this.ACTIVE = 'active';
+
+        // Army Arrow frames
+        this.ON = 'on';
+        this.HOVER = 'hover';
+        this.OFF = 'off';
+
+        // Text inputs
+        this.ARMY_NAME = 'armyName';
+
         // Board Orientations
         this.BOARD_ORIENTATION = 0.785398;
         this.GRID_ORIENTATION = 0;
@@ -22,18 +35,20 @@ class Constants {
         this.TEAL_TINT = 0x12eedc;
         this.YELLOW_TINT = 0xe8ef36;
 
-        // Scenes
-        this.HOME_SCENE = 'HomeScene';
-        this.PLAY_SCENE = 'PlayScene';
-        this.SETUP_SCENE = 'SetupScene';
-
         // Text styles
         this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };
         this.LIGHT_TEXT_STYLE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 12 };
         this.HUD_STYLE = { fontFamily: 'Bungee', color: this.WHITE, fontSize: 24, fontStyle: 'bold' };
         this.INPUT_STYPE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 60, fontStyle: 'bold' };
         
+
+        // Scenes
+        this.HOME_SCENE = 'HomeScene';
+        this.PLAY_SCENE = 'PlayScene';
+        this.SETUP_SCENE = 'SetupScene';
+
         // Events
+        this.ACCEPT_ARMY = 'acceptArmy';
         this.ACCEPT_BOARD_PLACEMENT = 'acceptBoardPlacement';
         this.ARMY_SAVED = 'armySaved';
         this.BACK_TO_HOME = 'backToHome';
@@ -46,12 +61,18 @@ class Constants {
         this.LOAD_SETUP_SCENE = 'loadSetupScene';
         this.NEW_PLAYER = 'newPlayer';
         this.PLAYER_ARMIES = 'playerArmies';
-        this.POINTER_DOWN = 'pointerdown';
-        this.POINTER_OUT = 'pointerout';
-        this.POINTER_OVER = 'pointerover';
         this.QUIT_GAME = 'quitGame';
         this.SAVE_ARMY = 'saveArmy';
 
+        // Mouse events
+        this.POINTER_DOWN = 'pointerdown';
+        this.POINTER_OUT = 'pointerout';
+        this.POINTER_OVER = 'pointerover';
+        this.POINTER_UP = 'pointerup';
+
+        // Game phases
+        this.ARMY_SELECT_PHASE = 'armySelectPhase';
+        this.GAME_PHASE = 'gamePhase';
         // Directions
         this.TOP = 'top';
         this.DOWN = 'down';
@@ -92,5 +113,13 @@ class Constants {
         this.DODGE = 'Dodge';
         this.BLOCK = 'Block';
         this.COOLDOWN = 'Cooldown';
+
+        // Setup scene notices
+        this.ARMY_SAVED_NOTICE = 'armySavedNotice';
+        this.ARMY_SAVED_NOTICE_TEXT = 'Army Saved';
+        this.NEED_UNITS_NOTICE = 'needUnitsNotice';
+        this.NEED_UNITS_NOTICE_TEXT = 'Your army needs at least 1 unit';
+        this.NEED_NAME_NOTICE = 'needNameNotice';
+        this.NEED_NAME_NOTICE_TEXT = 'Your army needs a name';
     }
 }

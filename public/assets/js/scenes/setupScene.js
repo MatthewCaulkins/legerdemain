@@ -3,11 +3,32 @@ class SetupScene extends Phaser.Scene {
         super({key: CONSTANTS.SETUP_SCENE}); 
     }
 
-    preload() {}
+    preload() {
+        // this.load.html(CONSTANTS.ARMY_NAME, "form.html");
+    }
 
     create() {
         model.currentScene = this;
 
+        // Tiles currently active
+        this.boardTile = null; 
+        this.selectGridTile = null;
+
+        this.currentArmy = 0;
+        this.totalArmies = 3;
+
+        // Create arrays for the armies
+        // this.armyName = [];
+        this.armyOrbs = [];
+        this.unitsPlaced = [];
+        this.boardContainer = [];
+        this.generatedBoard = [];
+        this.unitsBoard = [];
+        this.selectGridContainer = [];
+        this.selectGrid = [];
+        this.armyDeployment = [];        
+        
+        // Alignment grid
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
@@ -17,13 +38,79 @@ class SetupScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(12, this.counter);
 
-        // Add Save Notice
-        this.saveNotice = this.add.text(0, 0, 'Army Saved', CONSTANTS.HUD_STYLE);
-        this.saveNotice.setOrigin(.5, .5);
-        this.saveNotice.setVisible(false);
+        // stores all created phaser texts
+        // let createdTexts = {};
+        
+        // // creates a new phaser text
+        // const createText = (name, i) => {
+        //     let text = createdTexts[name] || this.add.text(10, 100 + 20 * i, '');
+        //     createdTexts[name] = text;
+        //     return text;
+        // }
 
-        this.alignmentGrid.positionItemAtIndex(60, this.saveNotice);
-        this.createDetailsView();
+        // Add form input from DOM
+        // TODO: Example of input box for login purposes and chat
+        // this.add
+        // .text(0, this.cameras.main.height / 2, 'ClickMe', { fontSize: 52 })
+        // .setOrigin(0.5)
+        // .setInteractive()
+        // .on('pointerdown', () => {
+        //     let element = document.getElementById('input-box');
+        //     if (element && element.style.display === 'none') {
+        //         element.style.display = 'block'
+
+        //         for (let i = 0; i < element.children.length; i++) {
+                    
+        //             // it is an input element
+        //             if (element.children[i].tagName === 'INPUT') {
+        //                 let text = createText(element.children[i].name, i)
+        //                 element.children[i].addEventListener('input', () => {
+        //                     text.setText(element.children[i].value)
+        //                 })
+        //             }
+
+        //             // it is the button
+        //             else {
+        //                 element.children[i].addEventListener('click', () => {
+        //                     element.style.display = 'none'
+        //                 })
+        //             }
+        //         }
+        //     }
+        // });
+
+        this.armyNameInputBox = document.getElementById('input-box');
+        //if (element && element.style.display === 'none') {
+        this.armyNameInputBox.style.display = 'block'
+
+        for (let i = 0; i < this.armyNameInputBox.children.length; i++) {
+            // it is an input element
+            if (this.armyNameInputBox.children[i].tagName === 'INPUT') {
+                //let text = createText(element.children[i].name, i)
+                this.armyNameInput = this.armyNameInputBox.children[i];
+                // this.armyNameInput.addEventListener('input', () => {
+                // //    text.setText(element.children[i].value)
+                // })
+            }
+        }
+        
+        // this.alignmentGrid.positionItemAtIndex(96, this.armyNameInputBox);
+
+        // this.armyNameInput = document.getElementById(CONSTANTS.ARMY_NAME);
+        // this.armyNameText = this.add.text(640, 360);//.createFromCache(CONSTANTS.ARMY_NAME);
+        // this.armyNameInput.addEventListener('input', () => {
+        //     this.armyNameText.setText(this.armyNameInput.value);
+        // });
+        // this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        // this.returnKey.on(CONSTANTS.DOWN, event => {
+        //     let name = this.armyNameInput.text;
+        //     if(name.value != "") {
+        //         this.armyName[this.currentArmy] = name.value;
+        //     }
+        // });
+
+
+
 
         // Spritesheets
         // Arrows
@@ -42,23 +129,6 @@ class SetupScene extends Phaser.Scene {
         // };
         // this.anims.create(config);
 
-        // Tiles currently active
-        this.boardTile = null; 
-        this.selectGridTile = null;
-
-        this.currentArmy = 0;
-        this.totalArmies = 3;
-
-        // Create arrays for the armies
-        this.armyOrbs = [];
-        this.unitsPlaced = [];
-        this.boardContainer = [];
-        this.generatedBoard = [];
-        this.unitsBoard = [];
-        this.selectGridContainer = [];
-        this.selectGrid = [];
-        this.armyDeployment = [];        
-        
         // Setup the alignment grid for testing purposes
         for (let army = 0; army < this.totalArmies; army ++) {
             this.currentArmy = army;
@@ -98,6 +168,9 @@ class SetupScene extends Phaser.Scene {
             // this.selectGridContainer[army].setInteractive();
             
             // Position the units board
+
+            console.log(game.player);
+
             const selectGridConfig = {
                 scene: this,
                 // alignmentGrid: this.alignmentGrid,
@@ -114,13 +187,13 @@ class SetupScene extends Phaser.Scene {
             this.alignmentGrid.positionItemAtIndex(18, this.selectGridContainer[army]);
 
             // this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
-            // const armyUnits = controller.playerArmies[army];
+            // const armyUnits = game.player.armies[army];
 
             // Army Deployment
             const armyDeploymentConfig = {
                 scene: this,
                 army: army,
-                armyUnits: controller.playerArmies[army],
+                armyUnits: game.player.armies[army],
                 selectGrid: this.selectGrid[army],
                 generatedBoard: this.generatedBoard[army],
                 unitsBoard: this.unitsBoard[army],
@@ -165,7 +238,7 @@ class SetupScene extends Phaser.Scene {
         // The button to get back to the home page
         this.homeButton = new Button({
             scene: this, 
-            key: 'tile',
+            key: CONSTANTS.TILE,
             text: 'Back',
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.BACK_TO_HOME,
@@ -186,10 +259,32 @@ class SetupScene extends Phaser.Scene {
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
-        emitter.on(CONSTANTS.ARMY_SAVED, () => {
-            this.saveNotice.setVisible(true);
+        // Add Save Notice
+        this.noticeText = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.noticeText.setOrigin(.5, .5);
+        this.noticeText.setVisible(false);
 
-            this.time.addEvent({delay: 2000, callback: this.hideSaveNotice, callbackScope: this, loop: false});
+        this.alignmentGrid.positionItemAtIndex(60, this.noticeText);
+        this.createDetailsView();
+
+        // Setup notice events
+        emitter.on(CONSTANTS.ARMY_SAVED_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.ARMY_SAVED_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.NEED_UNITS_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.NEED_UNITS_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.NEED_NAME_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.NEED_NAME_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
         });
 
         // Shift army logic
@@ -216,23 +311,27 @@ class SetupScene extends Phaser.Scene {
         
         this.currentArmy = 0;
         console.log('active army' + this.currentArmy);
+
+        // Add army selection arrows
         this.armyOrbs[this.currentArmy].play('active');
         
-        this.leftArrow = new ArmyArrow(this, 'left');//, shiftArmyLeft);//this.add.sprite(0, 0, 'arrow').play('off');
-        this.rightArrow = new ArmyArrow(this, 'right');//, shiftArmyRight); //this.add.sprite(0, 0, 'arrow').play('off');
-        // this.leftArrow.scaleX = -1;
+        this.leftArrow = new ScrollArrow(this, 'left');
+        this.rightArrow = new ScrollArrow(this, 'right');
 
         this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
         this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
+    }
 
-        // Test message
-        this.message = this.add.text(640, 250, "Hello, --", CONSTANTS.INPUT_STYLE).setOrigin(0.5);
+        
+    update() {
+        // This will let me iterate over all items inside this container
+        // this.boardContainer.iterate(this.rollTile);
+        if (!this.boardTile && !this.selectGridTile) {
+            this.hideDetailsView();
+        }
     }
 
     shiftArmy() {
-        this.currentArmy = this.currentArmy > 2 ? 0 : this.currentArmy;
-        this.currentArmy = this.currentArmy < 0 ? 2 : this.currentArmy;
-
         for (let i = 0; i < this.totalArmies; i++) {
             this.boardContainer[i].setVisible(false);
             // this.generatedBoard[i].setVisible = false;
@@ -269,14 +368,18 @@ class SetupScene extends Phaser.Scene {
             this.selectGridTile = null;
         }
 
+        // Update UI
+        this.armyNameInput.value = game.player.armies[this.currentArmy].name;
         this.updateCounter();
     }
 
-    hideSaveNotice() {
-        this.saveNotice.setVisible(false);
+    hidenoticeText() {
+        this.noticeText.setVisible(false);
     }
 
     acceptBoardPlacement() {
+        // TODO: Check for army name and units placed > 0
+
         const unitPlacements = [];
 
         console.log(this);
@@ -295,32 +398,37 @@ class SetupScene extends Phaser.Scene {
             }
         }
 
-        if (unitPlacements.length > 0) {
-            const data = {
-                units: unitPlacements,
-                name: 'test',
-                playerId: this.game.player.playerId,
-                armyId: this.currentArmy
-            }
+        if (unitPlacements.length === 0) {
+            console.log('0units');
+            emitter.emit(CONSTANTS.NEED_UNITS_NOTICE);
+            return;
+        }  
 
-            // Save the board placements to the database
-            emitter.emit(CONSTANTS.SAVE_ARMY, data);
-        } else {
-            // TODO: Notify them that they need at least one unit in their army
+        if (this.armyNameInput.value === '') {
+            console.log('noname');
+            emitter.emit(CONSTANTS.NEED_NAME_NOTICE);
+            return;
         }
+        
+        const data = {
+            units: unitPlacements,
+            name: this.armyNameInput.value,
+            playerId: this.game.player.playerId,
+            armyId: this.currentArmy
+        }
+
+        // Save the board placements to the database
+        emitter.emit(CONSTANTS.SAVE_ARMY, data);
     }
 
     loadHomeScene() {
+        let element = document.getElementById('input-box');
+        if (element && element.style.display === 'block') {
+            element.style.display = 'none';
+        }
+
         game.scene.start(CONSTANTS.HOME_SCENE);
         game.scene.stop(CONSTANTS.SETUP_SCENE);
-    }
-        
-    update() {
-        // This will let me iterate over all items inside this container
-        // this.boardContainer.iterate(this.rollTile);
-        if (!this.boardTile && !this.selectGridTile) {
-            this.hideDetailsView();
-        }
     }
 
     // Grid Tile Interaction
@@ -697,35 +805,40 @@ class SetupScene extends Phaser.Scene {
     }
 
     createDetailsView() {
-        this.type = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(80, this.type, CONSTANTS.HUD_STYLE);
+        this.type = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(80, this.type);
 
-        this.description = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(91, this.description, CONSTANTS.HUD_STYLE);
+        this.description = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(91, this.description);
 
-        this.health = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(102, this.health, CONSTANTS.HUD_STYLE);
+        this.health = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(102, this.health);
         
-        this.offense = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(103, this.offense, CONSTANTS.HUD_STYLE);
+        this.offense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(103, this.offense);
         
-        this.defense = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(104, this.defense, CONSTANTS.HUD_STYLE);
+        this.defense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(104, this.defense);
 
-        this.range = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(105, this.range, CONSTANTS.HUD_STYLE);
+        this.range = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(105, this.range);
         
-        this.movement = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(113, this.movement, CONSTANTS.HUD_STYLE);
+        this.movement = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(113, this.movement);
         
-        this.dodge = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(114, this.dodge, CONSTANTS.HUD_STYLE);
+        this.dodge = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(114, this.dodge);
 
-        this.block = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(115, this.block, CONSTANTS.HUD_STYLE);
+        this.block = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(115, this.block);
 
-        this.cooldown = this.add.text(0, 0, '');
-        this.alignmentGrid.positionItemAtIndex(116, this.cooldown, CONSTANTS.HUD_STYLE);
+        this.cooldown = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.alignmentGrid.positionItemAtIndex(116, this.cooldown);
+        
+        this.stats = [
+            this.type, this.description, this.health, this.defense, this.offense,
+            this.range, this.movement, this.dodge, this.block, this.cooldown
+        ];
     }
 
     updateDetailsView(unit) {
@@ -741,30 +854,18 @@ class SetupScene extends Phaser.Scene {
             this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
             this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1 after move and attack]`;
 
-            this.type.setVisible(true);
-            this.description.setVisible(true);
-            this.health.setVisible(true);
-            this.defense.setVisible(true);
-            this.offense.setVisible(true);
-            this.range.setVisible(true);
-            this.movement.setVisible(true);
-            this.dodge.setVisible(true);
-            this.block.setVisible(true);
-            this.cooldown.setVisible(true);
+            this.stats.forEach(stat => {
+                stat.setVisible(true);
+            })
         }
     }
 
     hideDetailsView() {
-        this.type.setVisible(false);
-        this.description.setVisible(false);
-        this.health.setVisible(false);
-        this.defense.setVisible(false);
-        this.offense.setVisible(false);
-        this.range.setVisible(false);
-        this.movement.setVisible(false);
-        this.dodge.setVisible(false);
-        this.block.setVisible(false);
-        this.cooldown.setVisible(false);
+        if (this.stats) {
+            this.stats.forEach(stat => {
+                stat.setVisible(false);
+            });
+        }
     }
 
     // // Set the highlight to all tiles in range

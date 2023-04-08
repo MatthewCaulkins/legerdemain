@@ -16,6 +16,10 @@ var gameConfig = {
     type: Phaser.AUTO,
     height: gameHeight,
     width: gameWidth,
+    parent: 'game',
+    dom: {
+        createContainer: true
+    },
     scene: [HomeScene, SetupScene, PlayScene], // HomeScene
     //parent: 'game-container',
     
