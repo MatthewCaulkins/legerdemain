@@ -2,8 +2,8 @@
 class Unit extends Phaser.GameObjects.Container {
     constructor(config) { //}, motion, direction, distance) {
         // Create image game objects for this container
-        const tint = config.scene.add.image(0, 0, config.tintTexture);
-        const character = config.scene.add.image(0, 0, config.characterTexture);
+        const tint = config.scene.add.sprite(0, 0, config.tintTexture);
+        const character = config.scene.add.sprite(0, 0, config.characterTexture);
 
         // const x = tile.x;
         // const y = tile.y;
@@ -92,6 +92,8 @@ class Unit extends Phaser.GameObjects.Container {
 
         this.healthBar.container.setVisible(false);
         this.healthBar.bar.setVisible(false);
+
+        // this.character.play()
         // this.depth = y + 64;
 
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);

@@ -301,6 +301,13 @@ class PlayScene extends Phaser.Scene {
         const path = this.selectedToTile.path.shift();
         const direction = path.direction;
         // TODO: set direction frames
+        if (direction === CONSTANTS.TOP) {
+            unit.character.play(CONSTANTS.LANCE_TOP_IDLE);
+            unit.tint.play(CONSTANTS.LANCE_TINT_TOP_IDLE);
+        } else if (direction === CONSTANTS.RIGHT) {
+            unit.character.play(CONSTANTS.LANCE_RIGHT_IDLE);
+            unit.tint.play(CONSTANTS.LANCE_TINT_RIGHT_IDLE);
+        }
 
         this.targetTile = path.tile;
 

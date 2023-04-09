@@ -7,12 +7,14 @@ class HomeScene extends Phaser.Scene {
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
         
         // Image (eventually Sprite sheets) for characters
-        this.load.image('lanceCharacter', 'assets/img/characterHolder.png');
-        this.load.image('lanceTint', 'assets/img/characterTint.png');
         this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');
         this.load.image(CONSTANTS.SWORD_TINT, 'assets/img/swordTint.png');
 
         // Sprite sheets
+            // Characters
+        this.load.spritesheet(CONSTANTS.LANCE, 'assets/img/characterHolder.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
+        this.load.spritesheet(CONSTANTS.LANCE_TINT, 'assets/img/characterTint.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
+            // Scene Assets
         this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 77, frameHeight: 150, endFrame: 2});
         this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 33, frameHeight: 32, endFrame: 2});
 

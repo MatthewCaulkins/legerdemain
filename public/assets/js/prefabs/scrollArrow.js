@@ -60,7 +60,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
 
     shiftArmyLeft() {
         this.scene.currentArmy --;
-        this.scene.currentArmy = this.scene.currentArmy < 0 ? 2 : this.scene.currentArmy;
+        this.scene.currentArmy = this.scene.currentArmy < 0 ? 3 : this.scene.currentArmy;
         // if (this.scene.scene.key === CONSTANTS.SETUP_SCENE) {
         this.scene.shiftArmy();
         // } else {
@@ -70,7 +70,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
 
     shiftArmyRight() {
         this.scene.currentArmy ++;
-        this.scene.currentArmy = this.scene.currentArmy > 2 ? 0 : this.scene.currentArmy;
+        this.scene.currentArmy = this.scene.currentArmy > 3 ? 0 : this.scene.currentArmy;
         // if (this.scene.scene.key === CONSTANTS.SETUP_SCENE) {
         this.scene.shiftArmy();
         // } else {

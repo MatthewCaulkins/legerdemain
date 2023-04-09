@@ -15,7 +15,7 @@ class SetupScene extends Phaser.Scene {
         this.selectGridTile = null;
 
         this.currentArmy = 0;
-        this.totalArmies = 3;
+        this.totalArmies = 4;
 
         // Create arrays for the armies
         // this.armyName = [];
@@ -135,7 +135,7 @@ class SetupScene extends Phaser.Scene {
 
             // TODO: switch this based on if the army is saved
             this.armyOrbs[army] = new Orb(this, army);
-            this.alignmentGrid.positionItemAtIndex(army + 7, this.armyOrbs[army]);
+            this.alignmentGrid.positionItemAtIndex(army + 6, this.armyOrbs[army]);
 
             this.unitsPlaced[army] = 0;
 
@@ -176,7 +176,7 @@ class SetupScene extends Phaser.Scene {
                 // alignmentGrid: this.alignmentGrid,
                 tileWidth: 100,
                 tileHeight: 100,
-                gridRows: 3,
+                gridRows: 4,
                 gridColumns: 6,
                 scale: 1,
                 container: this.selectGridContainer[army],
@@ -184,7 +184,7 @@ class SetupScene extends Phaser.Scene {
                 player: game.player,
             }
             this.selectGrid[army] = new SelectUnitsGrid(selectGridConfig);
-            this.alignmentGrid.positionItemAtIndex(18, this.selectGridContainer[army]);
+            this.alignmentGrid.positionItemAtIndex(17, this.selectGridContainer[army]);
 
             // this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
             // const armyUnits = game.player.armies[army];
@@ -259,6 +259,18 @@ class SetupScene extends Phaser.Scene {
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
+        // The button to delete army
+        this.acceptButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Clear',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.CLEAR_ARMY,
+            alignmentGrid: this.alignmentGrid,
+            index: 102
+        });
+        emitter.on(CONSTANTS.CLEAR_ARMY, this.clearArmy.bind(this));
+
         // Add Save Notice
         this.noticeText = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
         this.noticeText.setOrigin(.5, .5);
@@ -318,8 +330,8 @@ class SetupScene extends Phaser.Scene {
         this.leftArrow = new ScrollArrow(this, 'left');
         this.rightArrow = new ScrollArrow(this, 'right');
 
-        this.alignmentGrid.positionItemAtIndex(50, this.leftArrow);
-        this.alignmentGrid.positionItemAtIndex(54, this.rightArrow);
+        this.alignmentGrid.positionItemAtIndex(38, this.leftArrow);
+        this.alignmentGrid.positionItemAtIndex(43, this.rightArrow);
     }
 
         
@@ -369,7 +381,7 @@ class SetupScene extends Phaser.Scene {
         }
 
         // Update UI
-        this.armyNameInput.value = game.player.armies[this.currentArmy].name;
+        this.armyNameInput.value = game.player.armies[this.currentArmy] ? game.player.armies[this.currentArmy].name : '';
         this.updateCounter();
     }
 
@@ -378,8 +390,6 @@ class SetupScene extends Phaser.Scene {
     }
 
     acceptBoardPlacement() {
-        // TODO: Check for army name and units placed > 0
-
         const unitPlacements = [];
 
         console.log(this);
@@ -419,6 +429,11 @@ class SetupScene extends Phaser.Scene {
 
         // Save the board placements to the database
         emitter.emit(CONSTANTS.SAVE_ARMY, data);
+    }
+
+    clearArmy() {
+        // TODO: make this delete this army from the database
+        console.log('CLEAR ARMY BUTTON');
     }
 
     loadHomeScene() {

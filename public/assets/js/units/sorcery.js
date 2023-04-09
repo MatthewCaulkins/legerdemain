@@ -1,7 +1,7 @@
 class Sorcery extends Unit {
     constructor(config) {
-        config.tintTexture = 'lanceTint';
-        config.characterTexture = 'lanceCharacter';
+        config.tintTexture = CONSTANTS.LANCE_TINT;
+        config.characterTexture = CONSTANTS.LANCE;
         
         super(config);
 

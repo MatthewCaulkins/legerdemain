@@ -9,7 +9,9 @@ class ArmyDeployment {
         // Specific to setup scene
         this.selectGrid = config.selectGrid;
 
-        this.populateBoard();
+        if (this.armyUnits) {
+            this.populateBoard();
+        }
     }
 
     clearGameBoard() {

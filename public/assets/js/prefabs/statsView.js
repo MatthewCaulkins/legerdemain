@@ -1,7 +1,16 @@
 class StatsView extends Phaser.GameObjects.Container {
     constructor(scene) {
-
         super(scene, 0, 0);
+
+        this._active = false;
+    }
+
+    get active() {
+        return this._active;
+    }
+
+    set active(active) {
+        this._active = active;
     }
 }
 
