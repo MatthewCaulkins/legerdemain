@@ -33,7 +33,8 @@ class Tile extends Phaser.GameObjects.Image {
         this.row = x;
         this.column = y;
 
-        this.setDepth((x + y + (x * .1)) * 10); 
+        // this.setDepth((x + y + (x * .1)) * 10); 
+        this.z = (x + y + (x * .02) + (y * .01)) * 100; //this.depth;
 
         // The unit on this tile
         this._unit = null;

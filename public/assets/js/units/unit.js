@@ -31,9 +31,12 @@ class Unit extends Phaser.GameObjects.Container {
         // this.container.add(this.character);
 
         // Set the depth to the same as the tile the unit is on
-        this.depth = this.tile.depth;
-        this.tint.setDepth(this.depth);
-        this.character.setDepth(this.depth);
+        // this.depth = this.tile.depth;
+        // this.tint.setDepth(0);
+        // this.character.setDepth(1);
+        this.z = this.tile.z;
+        // this.tint.z = 0;
+        // this.character.z = 1;
 
         // Set this units display size
         const width = character.displayWidth;

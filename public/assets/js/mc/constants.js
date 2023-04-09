@@ -73,6 +73,12 @@ class Constants {
         // Game phases
         this.ARMY_SELECT_PHASE = 'armySelectPhase';
         this.GAME_PHASE = 'gamePhase';
+        this.REVIEW_PHASE = 'reviewPhase';  // This is extra right now
+
+        // Player phase
+        this.PLAYER_ONE_PHASE = 'playerOnePhase';
+        this.PLAYER_TWO_PHASE = 'playerTwoPhase';
+
         // Directions
         this.TOP = 'top';
         this.DOWN = 'down';

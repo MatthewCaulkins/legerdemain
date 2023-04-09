@@ -9,6 +9,13 @@ class PlayScene extends Phaser.Scene {
     create() {
         model.currentScene = this;
         this.phase = CONSTANTS.ARMY_SELECT_PHASE;
+        this.playerTurn;
+
+        // Tiles for movement and attack
+        this.selectedFromTile = null;
+        this.selectedToTile = null;
+        this.targetTile = null;
+        this.currentTile = null;
 
         // Set current army for deployment phase
         this.currentArmy = 0;
@@ -36,6 +43,7 @@ class PlayScene extends Phaser.Scene {
        //  this.boardContainer.iterate(this.addInteractionToBoardTiles);
 
         // Add a container for the units
+        // this.unitsBoard = this.add.container(0, 0);
         this.unitsBoard = this.add.container(0, 0);
 
         // TODO: Wait for Socket.IO to return both selected armies
@@ -208,9 +216,14 @@ class PlayScene extends Phaser.Scene {
                     // Will have to take into account friendly units in the Play Scene
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
-                            questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push(CONSTANTS.TOP);
+                            console.log(tileOfInterest.path);
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push(questionedTile); //CONSTANTS.TOP);
                             tilesOfInterest.push(questionedTile);
+                        } else {
+                            console.log('tile included already');
                         }
                     }
                 }
@@ -219,8 +232,10 @@ class PlayScene extends Phaser.Scene {
                     questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
-                            questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push(CONSTANTS.RIGHT);
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push(questionedTile); //CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -230,8 +245,10 @@ class PlayScene extends Phaser.Scene {
                     questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
-                            questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push(CONSTANTS.DOWN);
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push(questionedTile); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -241,8 +258,10 @@ class PlayScene extends Phaser.Scene {
                     questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
                     if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
-                            questionedTile.path = tileOfInterest.path;
-                            questionedTile.path.push(CONSTANTS.LEFT);
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push(questionedTile); // CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -252,6 +271,7 @@ class PlayScene extends Phaser.Scene {
 
         tilesOfInterest.forEach(tileOfInterest => {
             if (tileOfInterest != tile) {
+                questionedTile.inRange = true;
                 tileOfInterest.setTint(CONSTANTS.YELLOW_TINT);
             }
         });
@@ -268,9 +288,70 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
+    moveUnit(currentTile) {
+        this.currentTile = currentTile;
+        const unit = currentTile.unit;
+        // console.log(unit);
+
+        // let currentTile = this.selectedFromTile;
+        this.targetTile = this.selectedToTile.path.shift();
+
+        
+        this.tweens.add({
+            targets: unit, 
+            x: this.targetTile.x, 
+            y: this.targetTile.y, 
+            duration: 1000, 
+            yoyo: false, 
+            repeat: 0,
+            onStart: function () {},// console.log('onStart'); console.log(arguments); },
+            onComplete: function () { 
+                // console.log('onComplete'); 
+                // console.log(arguments); 
+                const unit = arguments[1][0];
+                const scene = unit.scene;
+                scene.currentTile.unit = null;
+                scene.targetTile.unit = unit;
+                // console.log(scene.targetTile.unit.tint.z);
+                // console.log(scene.targetTile.unit.character.z);
+                // console.log(scene.targetTile.z);
+                scene.targetTile.unit.z = scene.targetTile.z;
+                // scene.targetTile.unit.tint.setDepth(scene.targetTile.depth);
+                // scene.targetTile.unit.character.setDepth(scene.targetTile.depth);
+                unit.tile = scene.targetTile;
+
+                // This works, need to use .sort to sort them by depth
+                // scene.unitsBoard.sendToBack(unit);
+                scene.unitsBoard.sort('z');//, (a, b) => {
+                //     a.z > b.z ? 1 : -1;
+                // });
+                console.log(scene.unitsBoard.list);
+
+                if (scene.selectedToTile.path.length > 0) {
+                    scene.moveUnit(scene.targetTile);
+                } else {
+                    // TODO: unlock scene
+                    scene.clearPaths();
+                    // scene.removeAllHighlights();
+                }
+            },
+        }); 
+            //onStart: function()
+            //onComplete: function()
+    }
+
+    clearPaths() {
+        this.generatedBoard.tiles.forEach((tile) => {
+            tile.inRange = false;
+            tile.path = [];
+        });
+
+        this.removeAllHighlights();
+    }
+
     // Iterate over all tiles and remove the tint
     removeAllHighlights() {
-        console.log(this.generatedBoard);
+        // console.log(this.generatedBoard);
         this.generatedBoard.tiles.forEach((tile) => {
             tile.clearTint();
         });

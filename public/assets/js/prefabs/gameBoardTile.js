@@ -8,6 +8,9 @@ class GameBoardTile extends Tile {
         this.on(CONSTANTS.POINTER_OUT, this.pointerout);
         this.on(CONSTANTS.POINTER_DOWN, this.pointerdown);
         
+        // Player number used for turn order
+        this.playerNumber;
+        
         // Whether or not we are about to do special stuff to the tile
         this.active = false;
         this.inRange = false;
@@ -17,25 +20,43 @@ class GameBoardTile extends Tile {
     }
 
     pointerover() {
+        if (this.scene.phase === CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
+            if (this.scene.selectedFromtTile) {  // there is a selected tile
+                if (this === this.scene.selectedFromTile) { // it's this tile
+
+                } else { // selected tile is another tile
+                    this.setTint(CONSTANTS.GREEN_TINT);
+                }
+            } else {
+
+            }
+        }
     } 
 
     pointerout() {
     }
 
     pointerdown() {
-        if (this === this.scene.selectedTileFrom) {
-        //    this.active = false;
-            this.scene.selectedTileFrom = null;
-            this.scene.removeAllHighlights();
-        
+        if (this.scene.selectedFromTile) {   
+            if (this === this.scene.selectedFromTile) {
+            //    this.active = false;
+                this.scene.selectedFromTile = null;
+                this.scene.removeAllHighlights();
+            
+            } else {
+                console.log('move unit');
+                this.scene.selectedToTile = this;
+                // TODO: lock scene
+                this.scene.moveUnit(this.scene.selectedFromTile);
+            }    
         } else {
             if (this.unit) {
-                this.scene.selectedTileFrom = this;
+                this.scene.selectedFromTile = this;
 
                 this.setTint(CONSTANTS.RED_TINT);
                 // Highlight all tiles within unit's range
                 this.scene.highlightTilesInRange(this);
             }
-        }    
+        }
     }
 }
