@@ -20,23 +20,62 @@ class GameBoardTile extends Tile {
     }
 
     pointerover() {
-        if (this.scene.phase === CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
-            if (this.scene.selectedFromtTile) {  // there is a selected tile
-                if (this === this.scene.selectedFromTile) { // it's this tile
+        if (this.scene.phase != CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
+            return;
+        }
 
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {  // Selection phase
+            if (this.scene.selectedFromTile) {  // there is a selected tile
+                if (this === this.scene.selectedFromTile) { // it's this tile
+                    this.setTint(CONSTANTS.RED_TINT);
                 } else { // selected tile is another tile
-                    this.setTint(CONSTANTS.GREEN_TINT);
+                    if (this.unit) {
+                        this.setTint(CONSTANTS.GREEN_TINT);
+                    } else {
+                        if (this.inRange) {
+                            this.setTint(CONSTANTS.ORANGE_TINT);
+                        }
+                    }
                 }
             } else {
-
+                if (this.unit) {
+                    this.setTint(CONSTANTS.GREEN_TINT);
+                }
             }
         }
     } 
 
     pointerout() {
+        if (this.scene.phase != CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
+            return;
+        }
+
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {  // Selection phase
+            if (this.scene.selectedFromTile) {  // there is a selected tile
+                if (this === this.scene.selectedFromTile) { // it's this tile
+                    this.setTint(CONSTANTS.RED_TINT);
+                } else {
+                    if (this.inRange) {
+                        if (this.scene.selectedToTile === this) {
+                            this.setTint(CONSTANTS.ORANGE_TINT);
+                        } else {
+                            this.setTint(CONSTANTS.YELLOW_TINT);
+                        }
+                    } else {
+                        this.clearTint();
+                    }
+                }
+            } else {
+                this.clearTint();
+            }
+        }
     }
 
     pointerdown() {
+        if (this.scene.phase != CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
+            return;
+        }
+
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {  // Selection phase
             if (this.scene.selectedFromTile) { // tile from selected
                 if (this === this.scene.selectedFromTile) { // this unit; remove the selection

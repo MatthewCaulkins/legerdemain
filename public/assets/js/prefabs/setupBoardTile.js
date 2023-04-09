@@ -20,13 +20,10 @@ class SetupBoardTile extends Tile {
                 // If it is there is no selected unit or it isn't on this tile
                 if (!this.scene.boardTile) {//Selected === false) {// || this.scene.boardTile != this) {
                     this.setTint(CONSTANTS.GREEN_TINT);
+                    console.log(this.selectGridCounterpart);
+                    this.selectGridCounterpart.setTint(CONSTANTS.GREEN_TINT);
                 } else {
-                    if (this.scene.boardTile != this) {
-                        this.setTint(CONSTANTS.GREEN_TINT);
-                        this.selectGridCounterpart.setTint(CONSTANTS.GREEN_TINT);
-                    } else {
-                        this.setTint(CONSTANTS.RED_TINT);
-                    }
+                    this.setTint(CONSTANTS.RED_TINT);
                 }
             } else {
                 if (!this.scene.boardTile) {
