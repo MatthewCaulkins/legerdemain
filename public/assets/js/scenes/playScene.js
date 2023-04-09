@@ -224,7 +224,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push(questionedTile); //CONSTANTS.TOP);
+                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile}); //CONSTANTS.TOP);
                             tilesOfInterest.push(questionedTile);
                         } else {
                             console.log('tile included already');
@@ -239,7 +239,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push(questionedTile); //CONSTANTS.RIGHT);
+                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile}); //CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -252,7 +252,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push(questionedTile); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.DOWN, tile: questionedTile}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -265,7 +265,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push(questionedTile); // CONSTANTS.LEFT);
+                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile}); // CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -298,7 +298,11 @@ class PlayScene extends Phaser.Scene {
         // console.log(unit);
 
         // let currentTile = this.selectedFromTile;
-        this.targetTile = this.selectedToTile.path.shift();
+        const path = this.selectedToTile.path.shift();
+        const direction = path.direction;
+        // TODO: set direction frames
+
+        this.targetTile = path.tile;
 
         
         this.tweens.add({

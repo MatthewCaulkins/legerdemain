@@ -42,7 +42,8 @@ class GameBoardTile extends Tile {
                 if (this === this.scene.selectedFromTile) { // this unit; remove the selection
                 //    this.active = false;
                     this.scene.selectedFromTile = null;
-                    this.scene.removeAllHighlights();
+                    this.scene.clearPaths();
+                    // this.scene.removeAllHighlights();
                 } else { // Another space
                     if (this.inRange) { // space is in range
                         console.log('move unit');
