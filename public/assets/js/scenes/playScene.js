@@ -10,6 +10,7 @@ class PlayScene extends Phaser.Scene {
         model.currentScene = this;
         this.phase = CONSTANTS.ARMY_SELECT_PHASE;
         this.playerTurn;
+        this.playerAction;
 
         // Tiles for movement and attack
         this.selectedFromTile = null;
@@ -119,6 +120,9 @@ class PlayScene extends Phaser.Scene {
 
     startGame() {
         this.phase = CONSTANTS.GAME_PHASE;
+
+        // TODO: set active player
+        this.playerAction = CONSTANTS.SELECTION_ACTION;
 
         this.armyName.setVisible(false);
         this.acceptButton.setVisible(false);
@@ -271,7 +275,7 @@ class PlayScene extends Phaser.Scene {
 
         tilesOfInterest.forEach(tileOfInterest => {
             if (tileOfInterest != tile) {
-                questionedTile.inRange = true;
+                tileOfInterest.inRange = true;
                 tileOfInterest.setTint(CONSTANTS.YELLOW_TINT);
             }
         });
@@ -301,7 +305,7 @@ class PlayScene extends Phaser.Scene {
             targets: unit, 
             x: this.targetTile.x, 
             y: this.targetTile.y, 
-            duration: 1000, 
+            duration: 500, 
             yoyo: false, 
             repeat: 0,
             onStart: function () {},// console.log('onStart'); console.log(arguments); },
@@ -346,6 +350,9 @@ class PlayScene extends Phaser.Scene {
             tile.path = [];
         });
 
+        this.selectedToTile = null;
+        this.selectedFromTile = null;
+        this.playerAction = CONSTANTS.SELECTION_ACTION;
         this.removeAllHighlights();
     }
 

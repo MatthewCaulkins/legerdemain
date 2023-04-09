@@ -37,25 +37,29 @@ class GameBoardTile extends Tile {
     }
 
     pointerdown() {
-        if (this.scene.selectedFromTile) {   
-            if (this === this.scene.selectedFromTile) {
-            //    this.active = false;
-                this.scene.selectedFromTile = null;
-                this.scene.removeAllHighlights();
-            
-            } else {
-                console.log('move unit');
-                this.scene.selectedToTile = this;
-                // TODO: lock scene
-                this.scene.moveUnit(this.scene.selectedFromTile);
-            }    
-        } else {
-            if (this.unit) {
-                this.scene.selectedFromTile = this;
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {  // Selection phase
+            if (this.scene.selectedFromTile) { // tile from selected
+                if (this === this.scene.selectedFromTile) { // this unit; remove the selection
+                //    this.active = false;
+                    this.scene.selectedFromTile = null;
+                    this.scene.removeAllHighlights();
+                } else { // Another space
+                    if (this.inRange) { // space is in range
+                        console.log('move unit');
+                        this.scene.selectedToTile = this;
+                        this.scene.playerAction = CONSTANTS.MOVEMENT_ACTION;
+                        // TODO: lock scene
+                        this.scene.moveUnit(this.scene.selectedFromTile);
+                    }
+                }    
+            } else { // no unit selected
+                if (this.unit) { // this tile has a unit; set it to selected from tile
+                    this.scene.selectedFromTile = this;
 
-                this.setTint(CONSTANTS.RED_TINT);
-                // Highlight all tiles within unit's range
-                this.scene.highlightTilesInRange(this);
+                    this.setTint(CONSTANTS.RED_TINT);
+                    // Highlight all tiles within unit's range
+                    this.scene.highlightTilesInRange(this);
+                }
             }
         }
     }
