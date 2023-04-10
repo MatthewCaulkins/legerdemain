@@ -19,8 +19,20 @@ class ArmyDeployment {
             if (tile.unit) {
                 tile.unit.destroy();
                 tile.unit = null;
+                if (this.selectGrid) {
+                    tile.selectGridCounterpart = null;
+                }
             }
-        })
+        });
+
+        if (this.selectGrid) {
+            console.log(this.selectGrid);
+            this.selectGrid.tiles.forEach(tile => {
+                tile.clearTint();
+                tile.unit.alpha = 1;
+                tile.unitsBoardCounterpart = null;
+            });
+        }
     }
 
     populateBoard() {
@@ -70,7 +82,7 @@ class ArmyDeployment {
             if (incrementCounter) {
                 this.scene.unitsPlaced[this.army] ++;
                 this.scene.updateCounter();
-                this.scene.hideDetailsView();
+                this.scene.hideStats();
             }
         }
     }

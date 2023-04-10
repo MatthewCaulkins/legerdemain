@@ -6,7 +6,7 @@ class Sword extends Unit {
         super(config);
 
         this.type = CONSTANTS.SWORD;
-        this.description = 'Can dash to attack an extra tile away in a straight line';
+        this.description = 'Can dash to attack 2 space away in a straight line';
         this.health = 30;
         this.defense = .05;
         this.offense = 18;

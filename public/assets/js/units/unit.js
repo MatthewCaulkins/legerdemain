@@ -34,7 +34,6 @@ class Unit extends Phaser.GameObjects.Container {
         // this.depth = this.tile.depth;
         // this.tint.setDepth(0);
         // this.character.setDepth(1);
-        this.z = this.tile.z;
         // this.tint.z = 0;
         // this.character.z = 1;
 
@@ -46,6 +45,7 @@ class Unit extends Phaser.GameObjects.Container {
         // Move this container to the tile it is on
         this.x = this.tile.x;
         this.y = this.tile.y;
+        this.z = this.tile.z;
         this.tile.unit = this;
 
         // console.log('The dimensions of this container are ');
@@ -66,6 +66,8 @@ class Unit extends Phaser.GameObjects.Container {
         // this.f = this.anim.startFrame;
 
         // Universal attributes used by sub-classes
+        this.currentHealth;
+        
         this.description;
         this.health;
         this.defense;
@@ -88,7 +90,7 @@ class Unit extends Phaser.GameObjects.Container {
             y: this.y - (.6 * height)
         });
         this.healthBar.setPercent(1);
-        this.healthBar.setDepth(this.depth);
+        this.healthBar.setDepth(this.z);
 
         this.healthBar.container.setVisible(false);
         this.healthBar.bar.setVisible(false);

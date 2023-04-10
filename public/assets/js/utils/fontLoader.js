@@ -1,5 +1,5 @@
 WebFontConfig = {
-    google: { families: ['Bungee'] }
+    google: {families: ['Bungee', 'Oswald', 'Raleway']}
 };
 (function() {
     var wf = document.createElement('script');

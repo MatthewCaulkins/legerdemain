@@ -57,6 +57,18 @@ class Controller {
             emitter.emit(CONSTANTS.ARMY_SAVED_NOTICE);
         });
 
+        // Delete this army
+        emitter.on(CONSTANTS.DELETE_ARMY, async (data) => {
+            console.log('delete Army');
+            game.player.armies[data.armyId] = null;
+            console.log(game.player);
+            this.socket.emit(CONSTANTS.DELETE_ARMY, data);
+        });
+
+        this.socket.on(CONSTANTS.ARMY_DELETED, () => {
+            emitter.emit(CONSTANTS.ARMY_DELETED_NOTICE);
+        });
+
         // Disconnect a player and delete their ID
         this.socket.on(CONSTANTS.DISCONNECT_PLAYER, (socketId) => {
             console.log('Player disconnected');

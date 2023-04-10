@@ -38,6 +38,10 @@ class SetupScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(12, this.counter);
 
+        // this.createDetailsView();
+        this.unitStats = new UnitStats(this);
+        this.alignmentGrid.positionItemAtIndex(72, this.unitStats);
+
         // stores all created phaser texts
         // let createdTexts = {};
         
@@ -260,7 +264,7 @@ class SetupScene extends Phaser.Scene {
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
         // The button to delete army
-        this.acceptButton = new Button({
+        this.clearButton = new Button({
             scene: this, 
             key: 'tile',
             text: 'Clear',
@@ -277,11 +281,16 @@ class SetupScene extends Phaser.Scene {
         this.noticeText.setVisible(false);
 
         this.alignmentGrid.positionItemAtIndex(60, this.noticeText);
-        this.createDetailsView();
 
         // Setup notice events
         emitter.on(CONSTANTS.ARMY_SAVED_NOTICE, () => {
             this.noticeText.text = CONSTANTS.ARMY_SAVED_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.ARMY_DELETED_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.ARMY_DELETED_NOTICE_TEXT;
             this.noticeText.setVisible(true);
 
             this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
@@ -339,7 +348,7 @@ class SetupScene extends Phaser.Scene {
         // This will let me iterate over all items inside this container
         // this.boardContainer.iterate(this.rollTile);
         if (!this.boardTile && !this.selectGridTile) {
-            this.hideDetailsView();
+            this.hideStats();
         }
     }
 
@@ -432,8 +441,18 @@ class SetupScene extends Phaser.Scene {
     }
 
     clearArmy() {
-        // TODO: make this delete this army from the database
-        console.log('CLEAR ARMY BUTTON');
+        // TODO: make this clear the board and remove from game.players data
+        console.log('clear army hit');
+        this.armyDeployment[this.currentArmy].clearGameBoard();
+
+        const data = {
+            playerId: this.game.player.playerId,
+            armyId: this.currentArmy
+        };
+        emitter.emit(CONSTANTS.DELETE_ARMY, data);
+
+        this.unitsPlaced[this.currentArmy] = 0;
+        this.updateCounter();
     }
 
     loadHomeScene() {
@@ -819,68 +838,70 @@ class SetupScene extends Phaser.Scene {
         this.counter.text = `${this.unitsPlaced[this.currentArmy]} / 10`;
     }
 
-    createDetailsView() {
-        this.type = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(80, this.type);
+    // createDetailsView() {
+    //     this.type = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(80, this.type);
 
-        this.description = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(91, this.description);
+    //     this.description = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(91, this.description);
 
-        this.health = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(102, this.health);
+    //     this.health = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(102, this.health);
         
-        this.offense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(103, this.offense);
+    //     this.offense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(103, this.offense);
         
-        this.defense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(104, this.defense);
+    //     this.defense = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(104, this.defense);
 
-        this.range = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(105, this.range);
+    //     this.range = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(105, this.range);
         
-        this.movement = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(113, this.movement);
+    //     this.movement = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(113, this.movement);
         
-        this.dodge = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(114, this.dodge);
+    //     this.dodge = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(114, this.dodge);
 
-        this.block = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(115, this.block);
+    //     this.block = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(115, this.block);
 
-        this.cooldown = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.alignmentGrid.positionItemAtIndex(116, this.cooldown);
+    //     this.cooldown = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+    //     this.alignmentGrid.positionItemAtIndex(116, this.cooldown);
         
-        this.stats = [
-            this.type, this.description, this.health, this.defense, this.offense,
-            this.range, this.movement, this.dodge, this.block, this.cooldown
-        ];
-    }
+    //     this.stats = [
+    //         this.type, this.description, this.health, this.defense, this.offense,
+    //         this.range, this.movement, this.dodge, this.block, this.cooldown
+    //     ];
+    // }
 
     updateDetailsView(unit) {
-        if (unit) {
-            this.type.text = `${unit.type}`;
-            this.description.text = `${unit.description}`;
-            this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
-            this.defense.text = `${CONSTANTS.DEFENSE}: ${100 * unit.defense}%`;
-            this.offense.text = `${CONSTANTS.OFFENSE}: ${unit.offense}`;
-            this.range.text = `${CONSTANTS.RANGE}: ${unit.range}`;
-            this.movement.text = `${CONSTANTS.MOVEMENT}: ${unit.movement}`;
-            this.dodge.text = `${CONSTANTS.DODGE}: ${100 * unit.dodge}%`;
-            this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
-            this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1 after move and attack]`;
+        this.unitStats.updateStats(unit);
+        // if (unit) {
+        //     this.type.text = `${unit.type}`;
+        //     this.description.text = `${unit.description}`;
+        //     this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
+        //     this.defense.text = `${CONSTANTS.DEFENSE}: ${100 * unit.defense}%`;
+        //     this.offense.text = `${CONSTANTS.OFFENSE}: ${unit.offense}`;
+        //     this.range.text = `${CONSTANTS.RANGE}: ${unit.range}`;
+        //     this.movement.text = `${CONSTANTS.MOVEMENT}: ${unit.movement}`;
+        //     this.dodge.text = `${CONSTANTS.DODGE}: ${100 * unit.dodge}%`;
+        //     this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
+        //     this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1 after move and attack]`;
 
-            this.stats.forEach(stat => {
-                stat.setVisible(true);
-            })
-        }
+        //     this.stats.forEach(stat => {
+        //         stat.setVisible(true);
+        //     })
+        // }
     }
 
-    hideDetailsView() {
-        if (this.stats) {
-            this.stats.forEach(stat => {
-                stat.setVisible(false);
-            });
-        }
+    hideStats() {
+        this.unitStats.hideStats();
+        // if (this.stats) {
+        //     this.stats.forEach(stat => {
+        //         stat.setVisible(false);
+        //     });
+        // }
     }
 
     // // Set the highlight to all tiles in range

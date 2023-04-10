@@ -33,7 +33,7 @@ class PlayScene extends Phaser.Scene {
             tileWidth: 75,
             tileHeight: 75,
             mapRows: 11,
-            mapColumns: 11,
+            mapColumns: 10,
             scale: .70,
             scene: this,
             container: this.boardContainer,

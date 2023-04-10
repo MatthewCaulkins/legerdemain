@@ -155,6 +155,15 @@ io.on('connection', async function (socket) {
         // return done(null, user);
     });
 
+    // Delete an army
+    socket.on('deleteArmy', async (data) => {
+        const playerId = data.playerId;
+        const armyId = data.armyId;
+
+        await ArmyModel.findOneAndDelete({playerId, armyId});
+        socket.emit('armyDeleted');
+    });
+
 
     socket.on('disconnect', () => {
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code

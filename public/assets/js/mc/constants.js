@@ -37,9 +37,8 @@ class Constants {
 
         // Text styles
         this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };
-        this.LIGHT_TEXT_STYLE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 12 };
-        this.HUD_STYLE = { fontFamily: 'Bungee', color: this.WHITE, fontSize: 24, fontStyle: 'bold' };
-        this.INPUT_STYPE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 60, fontStyle: 'bold' };
+        this.LIGHT_TEXT_STYLE = { fontFamily: 'Raleway', color: this.WHITE, fontSize: 12 };
+        this.HUD_STYLE = { fontFamily: 'Oswald', color: this.WHITE, fontSize: 20, fontStyle: 'bold' };
         
 
         // Scenes
@@ -50,10 +49,13 @@ class Constants {
         // Events
         this.ACCEPT_ARMY = 'acceptArmy';
         this.ACCEPT_BOARD_PLACEMENT = 'acceptBoardPlacement';
+        this.ARMY_DELETED = 'armyDeleted';
         this.ARMY_SAVED = 'armySaved';
         this.BACK_TO_HOME = 'backToHome';
+        this.CLEAR_ARMY = 'clearArmy';
         this.CREATE_HUD = 'createHUD';
         this.CURRENT_PLAYERS = 'currentPlayers';
+        this.DELETE_ARMY = 'deleteArmy';
         this.DISCONNECT_PLAYER = 'disconnectPlayer';
         this.GAME_LOADED = 'gameLoaded';
         this.GAME_SCREEN_REACHED = 'gameScreenReached';
@@ -141,6 +143,8 @@ class Constants {
         // Setup scene notices
         this.ARMY_SAVED_NOTICE = 'armySavedNotice';
         this.ARMY_SAVED_NOTICE_TEXT = 'Army Saved';
+        this.ARMY_DELETED_NOTICE = 'armyDeletedNotice';
+        this.ARMY_DELETED_NOTICE_TEXT = 'Army Deleted';
         this.NEED_UNITS_NOTICE = 'needUnitsNotice';
         this.NEED_UNITS_NOTICE_TEXT = 'Your army needs at least 1 unit';
         this.NEED_NAME_NOTICE = 'needNameNotice';
