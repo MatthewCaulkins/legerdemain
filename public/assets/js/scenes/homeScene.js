@@ -5,6 +5,7 @@ class HomeScene extends Phaser.Scene {
 
     preload() {
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
+        this.load.image(CONSTANTS.MATCHMAKING_TILE, 'assets/img/board.png');
         
         // Image (eventually Sprite sheets) for characters
         this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');

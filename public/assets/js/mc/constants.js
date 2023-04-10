@@ -97,6 +97,7 @@ class Constants {
         this.TILE = 'tile';
         this.ORB = 'orb';
         this.ARROW = 'arrow';
+        this.MATCHMAKING_TILE = 'matchmakingTile';
 
         // Units
         this.AXE = 'axe';
