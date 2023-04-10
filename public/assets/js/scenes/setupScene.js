@@ -13,6 +13,7 @@ class SetupScene extends Phaser.Scene {
         // Tiles currently active
         this.boardTile = null; 
         this.selectGridTile = null;
+        this.hoverTile = null;
 
         this.currentArmy = 0;
         this.totalArmies = 4;
@@ -347,9 +348,13 @@ class SetupScene extends Phaser.Scene {
     update() {
         // This will let me iterate over all items inside this container
         // this.boardContainer.iterate(this.rollTile);
-        if (!this.boardTile && !this.selectGridTile) {
-            this.hideStats();
-        }
+        // if (this.hoverTile) {
+        //     updateDetailsView(this.hoverTile.unit);
+        // } else if (this.selectGridTile) {
+        //     updateDetailsView(this.selectGridTile.unit);
+        // } else {
+        //     this.hideStats();
+        // }
     }
 
     shiftArmy() {

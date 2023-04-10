@@ -14,6 +14,11 @@ class SetupBoardTile extends Tile {
     }
 
     pointerover() {
+        if (this.unit) {
+            this.scene.hoverTile = this;
+            this.scene.updateDetailsView(this.scene.hoverTile.unit);
+        }
+        
         if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             
             if (this.unit) { // If there is a unit on this tile
@@ -41,6 +46,13 @@ class SetupBoardTile extends Tile {
     } 
 
     pointerout() {
+        this.scene.hoverTile = null;
+        if (this.scene.selectGridTile) {
+            this.scene.updateDetailsView(this.scene.selectGridTile.unit);
+        } else {
+            this.scene.hideStats();
+        }
+
         if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             if (this != this.scene.boardTile) {
                 this.clearTint();
@@ -75,7 +87,10 @@ class SetupBoardTile extends Tile {
                         console.log(this.scene.armyDeployment);
                         this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile);
                         this.setTint(CONSTANTS.GREEN_TINT);
-                        this.scene.updateDetailsView(this.unit);
+                        
+                        this.scene.hoverTile = this;
+                        this.scene.updateDetailsView(this.scene.hoverTile.unit);
+                        // this.scene.updateDetailsView(this.unit);
                     }
                 } else { // switch the unit to here
                     
@@ -136,7 +151,7 @@ class SetupBoardTile extends Tile {
 
                                 this.selectGridCounterpart.setTint(CONSTANTS.RED_TINT);
                                 this.scene.selectGridTile = this.selectGridCounterpart;
-                                this.scene.updateDetailsView(this.unit);
+                                // this.scene.updateDetailsView(this.unit);
                             } else {
                                 if (this.scene.selectGridTile.unitsBoardCounterpart != this) {
                                     this.setTint(CONSTANTS.GREEN_TINT);
@@ -150,6 +165,8 @@ class SetupBoardTile extends Tile {
                                     this.scene.selectGridTile.unitsBoardCounterpart = this;
                                     this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile, false);
 
+                                    this.scene.hoverTile = this;
+                                    this.scene.updateDetailsView(this.scene.hoverTile.unit);
                                     // this.scene.unitsPlaced[this.scene.currentArmy] --;
                                     // this.scene.updateCounter();
                                 } 

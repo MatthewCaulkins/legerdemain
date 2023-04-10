@@ -11,6 +11,9 @@ class GridTile extends Tile {
     }
 
     pointerover() {
+        this.scene.hoverTile = this;
+        this.scene.updateDetailsView(this.scene.hoverTile.unit);
+
         if (!this.scene.selectGridTile) { // Is a previously activated tile
             if (this.unitsBoardCounterpart) {
                 this.setTint(CONSTANTS.GREEN_TINT);
@@ -38,6 +41,13 @@ class GridTile extends Tile {
     }
 
     pointerout() {
+        this.scene.hoverTile = null;
+        if (this.scene.selectGridTile) {
+            this.scene.updateDetailsView(this.scene.selectGridTile.unit);
+        } else {
+            this.scene.hideStats();
+        }
+
         if (!this.scene.selectGridTile) {
             if (!this.unitsBoardCounterpart) {
                 this.clearTint();
@@ -79,12 +89,12 @@ class GridTile extends Tile {
                     this.unitsBoardCounterpart.unit.y -= 3;
                     this.unitsBoardCounterpart.unit.alpha = .5;
 
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                 } else {
                     this.scene.selectGridTile = this;
                     this.setTint(CONSTANTS.RED_TINT);
 
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                 }
             } else {
                 if (this.unitsBoardCounterpart) {
@@ -97,14 +107,14 @@ class GridTile extends Tile {
                     this.scene.boardTile = this.unitsBoardCounterpart;
                     this.scene.selectGridTile = this;
                     
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                 }
             }
         } else { // There is a grid tile selected
             if (this.scene.selectGridTile != this) { // Another tile was selected, switch to this one
                 if (this.scene.boardTile) { // If the other tile has someone on the board
                     this.scene.selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                     this.scene.boardTile.unit.alpha = 1;
                     this.scene.boardTile.unit.y += 3;
                     this.scene.boardTile.clearTint();
@@ -113,7 +123,7 @@ class GridTile extends Tile {
                     this.scene.selectGridTile.clearTint();
 
                     this.scene.selectGridTile = this;
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
 
                     this.unit.alpha = .5;
                 }
@@ -129,10 +139,10 @@ class GridTile extends Tile {
                     this.scene.boardTile.unit.alpha = .5;    
                     
 
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                 } else { // If not
 
-                    this.scene.updateDetailsView(this.unit);
+                    //this.scene.updateDetailsView(this.unit);
                 }
                
                
@@ -154,7 +164,7 @@ class GridTile extends Tile {
 
                     // this.scene.unitsPlaced[this.scene.currentArmy] --;
                     this.scene.updateCounter();
-                    this.scene.updateDetailsView(this.unit);
+                //    this.scene.updateDetailsView(this.unit);
                 //    this.boardTileSelected = false;
                 } else {    // if it doesn't - activate it, release this
                     //this.unit.alpha = 1;
@@ -162,7 +172,7 @@ class GridTile extends Tile {
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
                     
-                    this.scene.updateDetailsView(this.unit);
+                 //   this.scene.updateDetailsView(this.unit);
                 }
             }
         }
