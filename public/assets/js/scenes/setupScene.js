@@ -187,6 +187,7 @@ class SetupScene extends Phaser.Scene {
                 container: this.selectGridContainer[army],
                 units: game.player.units,
                 player: game.player,
+                army: army
             }
             this.selectGrid[army] = new SelectUnitsGrid(selectGridConfig);
             this.alignmentGrid.positionItemAtIndex(17, this.selectGridContainer[army]);
@@ -231,12 +232,17 @@ class SetupScene extends Phaser.Scene {
 
 
         // // Hide the other layers
+        this.currentArmy = 0;
+        console.log('active army' + this.currentArmy);
+        this.armyOrbs[0].setActive(this.currentArmy);
+
         for (let i = 1; i < this.totalArmies; i++) {
             // this.unitsPlaced[i].setVisible(false);
             this.boardContainer[i].setVisible(false);
             // this.generatedBoard[i].setVisible(false);
             this.unitsBoard[i].setVisible(false);
             this.selectGridContainer[i].setVisible(false);
+            this.armyOrbs[i].setActive(this.currentArmy);
             // this.selectGrid[i].setVisible(false);
         }
 
@@ -330,12 +336,8 @@ class SetupScene extends Phaser.Scene {
 
         // Add the details view
 
-        
-        this.currentArmy = 0;
-        console.log('active army' + this.currentArmy);
-
         // Add army selection arrows
-        this.armyOrbs[this.currentArmy].play('active');
+       // this.armyOrbs[this.currentArmy].play('active');
         
         this.leftArrow = new ScrollArrow(this, 'left');
         this.rightArrow = new ScrollArrow(this, 'right');
@@ -358,6 +360,7 @@ class SetupScene extends Phaser.Scene {
     }
 
     shiftArmy() {
+        console.log('Shift army' + this.armyName);
         for (let i = 0; i < this.totalArmies; i++) {
             this.boardContainer[i].setVisible(false);
             // this.generatedBoard[i].setVisible = false;

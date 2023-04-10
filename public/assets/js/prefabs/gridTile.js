@@ -1,6 +1,8 @@
 class GridTile extends Tile {
     constructor(config) {
         super(config);
+
+        this.army = config.army;
         this.unitsBoardCounterpart = null;
 
         this.setRotation(CONSTANTS.GRID_ORIENTATION);
@@ -19,10 +21,10 @@ class GridTile extends Tile {
                 this.setTint(CONSTANTS.GREEN_TINT);
                 this.unitsBoardCounterpart.setTint(CONSTANTS.GREEN_TINT);
             } else { // non-active tile
-                if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) {
+            //    if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) {
                     this.setTint(CONSTANTS.GREEN_TINT);
                     this.unit.alpha = .5;
-                }
+            //    }
             }
         } else {
             if (this.scene.selectGridTile == this) {
@@ -79,7 +81,7 @@ class GridTile extends Tile {
 
     pointerdown() {
         if (!this.scene.selectGridTile) {  // If no grid selected
-            if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) { // If units less than 10
+            //if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) { // If units less than 10
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.RED_TINT);
                     this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
@@ -96,20 +98,20 @@ class GridTile extends Tile {
 
                     //this.scene.updateDetailsView(this.unit);
                 }
-            } else {
-                if (this.unitsBoardCounterpart) {
-                    this.setTint(CONSTANTS.RED_TINT);
-                    this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
-                    this.unitsBoardCounterpart.unit.y -= 3;
-                    this.unitsBoardCounterpart.unit.alpha = .5;
+            // } else {
+            //     if (this.unitsBoardCounterpart) {
+            //         this.setTint(CONSTANTS.RED_TINT);
+            //         this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);
+            //         this.unitsBoardCounterpart.unit.y -= 3;
+            //         this.unitsBoardCounterpart.unit.alpha = .5;
 
-                    //this.scene.boardTileSelected = true;
-                    this.scene.boardTile = this.unitsBoardCounterpart;
-                    this.scene.selectGridTile = this;
+            //         //this.scene.boardTileSelected = true;
+            //         this.scene.boardTile = this.unitsBoardCounterpart;
+            //         this.scene.selectGridTile = this;
                     
-                    //this.scene.updateDetailsView(this.unit);
-                }
-            }
+            //         //this.scene.updateDetailsView(this.unit);
+            //     }
+            // }
         } else { // There is a grid tile selected
             if (this.scene.selectGridTile != this) { // Another tile was selected, switch to this one
                 if (this.scene.boardTile) { // If the other tile has someone on the board
@@ -162,7 +164,7 @@ class GridTile extends Tile {
                     this.scene.boardTile = null;
                     this.scene.selectGridTile = null;
 
-                    // this.scene.unitsPlaced[this.scene.currentArmy] --;
+                    this.scene.unitsPlaced[this.army] --;
                     this.scene.updateCounter();
                 //    this.scene.updateDetailsView(this.unit);
                 //    this.boardTileSelected = false;

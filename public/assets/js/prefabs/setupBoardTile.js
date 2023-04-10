@@ -18,7 +18,7 @@ class SetupBoardTile extends Tile {
             this.scene.hoverTile = this;
             this.scene.updateDetailsView(this.scene.hoverTile.unit);
         }
-        
+
         if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             
             if (this.unit) { // If there is a unit on this tile
@@ -32,7 +32,7 @@ class SetupBoardTile extends Tile {
                 }
             } else {
                 if (!this.scene.boardTile) {
-                    if (this.scene.selectGridTile) {
+                    if (this.scene.selectGridTile && this.scene.unitsPlaced[this.army] < 10) {
                         this.setTint(CONSTANTS.GREEN_TINT);
                     } else {
 
@@ -85,11 +85,16 @@ class SetupBoardTile extends Tile {
 
                         console.log(this.army);
                         console.log(this.scene.armyDeployment);
-                        this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile);
-                        this.setTint(CONSTANTS.GREEN_TINT);
-                        
-                        this.scene.hoverTile = this;
-                        this.scene.updateDetailsView(this.scene.hoverTile.unit);
+
+                        if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) {
+                            this.scene.armyDeployment[this.army].addUnitToSetupBoard(this, this.scene.selectGridTile);
+                            this.setTint(CONSTANTS.GREEN_TINT);
+                            
+                            this.scene.hoverTile = this;
+                            this.scene.updateDetailsView(this.scene.hoverTile.unit);
+                        } else {
+                            console.log("TOO MANY UNITS");
+                        }
                         // this.scene.updateDetailsView(this.unit);
                     }
                 } else { // switch the unit to here

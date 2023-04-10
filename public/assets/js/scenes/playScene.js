@@ -33,7 +33,7 @@ class PlayScene extends Phaser.Scene {
             tileWidth: 75,
             tileHeight: 75,
             mapRows: 11,
-            mapColumns: 10,
+            mapColumns: 11,
             scale: .70,
             scene: this,
             container: this.boardContainer,
@@ -105,7 +105,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     shiftArmy() {
-        console.log(this.armyName);
         this.armyName.text = game.player.armies[this.currentArmy].name;
         this.armyDeployment.armyUnits = game.player.armies[this.currentArmy];
         this.armyDeployment.clearGameBoard();

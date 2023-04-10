@@ -27,10 +27,10 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
         // Set scale
         this.scale = scale;
 
-        let callback = this.shiftArmyRight();
+        //let callback = this.shiftArmyRight;
         if (direction === CONSTANTS.LEFT) {
             this.scaleX = -1;
-            callback = this.shiftArmyLeft();
+            //callback = this.shiftArmyLeft;
         }
 
 
