@@ -79,6 +79,11 @@ class HomeScene extends Phaser.Scene {
 
         emitter.emit(CONSTANTS.GAME_LOADED);
         emitter.once(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
+
+        
+        // TODO: add matchmaking tile container
+        this.matchmakingContainer = new MatchmakingTile(this);
+        this.alignmentGrid.positionItemAtIndex(34, this.matchmakingContainer);
     }
 
     // Change scenes

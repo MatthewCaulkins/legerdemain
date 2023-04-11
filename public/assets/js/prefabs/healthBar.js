@@ -1,8 +1,6 @@
 class HealthBar extends Phaser.GameObjects.Container {
     constructor(config) {
         super(config.scene);
-
-        this.scene = config.scene;
         
         // make the container
         this.container = this.scene.add.graphics();
@@ -16,7 +14,6 @@ class HealthBar extends Phaser.GameObjects.Container {
         this.container.x = -config.width / 2;
         this.container.y = -config.height / 2;
 
-        this.scene.add.existing(this);
 
         this.x = config.x;
         this.y = config.y;
@@ -30,6 +27,8 @@ class HealthBar extends Phaser.GameObjects.Container {
 
         this.bar.x = -config.width / 2 + 1;
         this.bar.y = -config.height / 2 + 1;
+
+        this.scene.add.existing(this);
     }
 
     setPercent(percent) {

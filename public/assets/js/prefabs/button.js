@@ -32,9 +32,9 @@ class Button extends Phaser.GameObjects.Container {
 
         if(this.event) {
             this.image.setInteractive();
-            this.image.on('pointerdown', this.onPointerdown, this);
-            this.image.on('pointerover', this.onPointerover, this);            
-            this.image.on('pointerout', this.onPointerout, this);
+            this.image.on(CONSTANTS.POINTER_DOWN, this.onPointerdown, this);
+            this.image.on(CONSTANTS.POINTER_OVER, this.onPointerover, this);            
+            this.image.on(CONSTANTS.POINTER_OUT, this.onPointerout, this);
         }
     }
 

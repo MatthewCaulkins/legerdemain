@@ -94,6 +94,8 @@ class PlayScene extends Phaser.Scene {
             index: 41
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
+
+        // TODO: Add Attack/ Move/ Direction/ Wait buttons
     }
 
     update() {}
