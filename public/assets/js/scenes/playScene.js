@@ -27,7 +27,7 @@ class PlayScene extends Phaser.Scene {
 
         // Create the container for the board and units
         this.boardContainer = this.add.container(0, 0);
-        this.boardContainer.setInteractive();
+        // this.boardContainer.setInteractive();
 
         const boardConfig = {
             tileWidth: 75,
