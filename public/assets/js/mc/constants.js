@@ -17,10 +17,11 @@ class Constants {
         // Text inputs
         this.ARMY_NAME = 'armyName';
 
-        // Board Orientations
+        // Tile Orientations
         this.BOARD_ORIENTATION = 0.785398;
         this.GRID_ORIENTATION = 0;
 
+        // Hex codes
         this.WHITE = '#ffffff';
         this.BLACK = '#000000';
 

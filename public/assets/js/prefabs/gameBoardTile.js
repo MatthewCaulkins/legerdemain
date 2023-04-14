@@ -84,6 +84,16 @@ class GameBoardTile extends Tile {
                     this.scene.clearPaths();
                     // this.scene.removeAllHighlights();
                 } else { // Another space
+                    if (this.unit) { // Space has one of your units on it
+                        console.log('switch to this tile');
+
+                        this.scene.clearPaths();
+                        // Highlight all tiles within unit's range
+
+                        this.scene.selectedFromTile = this;
+                        this.setTint(CONSTANTS.RED_TINT);
+                        this.scene.highlightTilesInRange(this);
+                    }
                     if (this.inRange) { // space is in range
                         console.log('move unit');
                         this.scene.selectedToTile = this;

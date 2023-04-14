@@ -364,7 +364,7 @@ class PlayScene extends Phaser.Scene {
 
         this.selectedToTile = null;
         this.selectedFromTile = null;
-        this.playerAction = CONSTANTS.SELECTION_ACTION;
+        //this.playerAction = CONSTANTS.SELECTION_ACTION;
         this.removeAllHighlights();
     }
 
