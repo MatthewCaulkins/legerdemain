@@ -66,12 +66,12 @@ body {
  * Input fields
  */
  #input-box {    
-    width: 350px;
+    width: 330px;
     height: 45px;
-    padding: 5px 20px;
+    padding: 5px 15px;
     position: absolute;
-    top: 72%;
-    left: calc(24% - 4px);
+    top: 73%;
+    left: calc(25% - 13px);
     box-sizing: border-box;
     border-radius: 10px;
     background: #eceeee;

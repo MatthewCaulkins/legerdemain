@@ -16,6 +16,9 @@ class Shield extends Unit {
         this.block = .4;
         this.cooldown = 2;
 
+        this.currentHealth = this.health;
+        this.currentCooldown = 0;
+        
         // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
         super.setTint(CONSTANTS.BLUE_TINT);
     }

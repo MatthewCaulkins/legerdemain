@@ -101,6 +101,14 @@ class Unit extends Phaser.GameObjects.Container {
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
     }
 
+    showHealthbar() {
+        this.healthBar.bar.setVisible(true);
+    }
+
+    hideHealthbar() {
+        this.healthBar.bar.setVisible(false);
+    }
+
     // Set the tint for the player's army
     setTint(tint) {
         this.tint.setTint(tint);

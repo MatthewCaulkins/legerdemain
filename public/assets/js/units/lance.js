@@ -15,6 +15,9 @@ class Lance extends Unit {
         this.dodge = .15;
         this.block = .35;
         this.cooldown = 1;
+        
+        this.currentHealth = this.health;
+        this.currentCooldown = 0;
 
         let animeConfig = {
             key: CONSTANTS.LANCE_RIGHT_IDLE,
@@ -66,5 +69,9 @@ class Lance extends Unit {
 
     rotateCharacter() {
 
+    }
+
+    attack() {
+        
     }
 }

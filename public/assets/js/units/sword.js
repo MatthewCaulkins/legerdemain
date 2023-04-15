@@ -16,6 +16,9 @@ class Sword extends Unit {
         this.block = .25;
         this.cooldown = 1;
         
+        this.currentHealth = this.health;
+        this.currentCooldown = 0;
+        
         // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
         super.setTint(CONSTANTS.GREEN_TINT);
     }

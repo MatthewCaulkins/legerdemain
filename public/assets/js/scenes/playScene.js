@@ -7,10 +7,15 @@ class PlayScene extends Phaser.Scene {
     }
 
     create() {
+        console.log('Player');
+        console.log(game.player);
+        console.log(game.player.armies.length);
+
         model.currentScene = this;
         this.phase = CONSTANTS.ARMY_SELECT_PHASE;
         this.playerTurn;
         this.playerAction;
+        this.activeActionButton;
 
         // Tiles for movement and attack
         this.selectedFromTile = null;
@@ -49,10 +54,18 @@ class PlayScene extends Phaser.Scene {
 
         // TODO: Wait for Socket.IO to return both selected armies
 
-        
+        // Only have armies that are created
+        console.log(game.player.armies);
+        this.playerArmies = [];
+        game.player.armies.forEach(army => {
+            this.playerArmies.push(army);
+        })
+
+        console.log(this.playerArmies);
+
         const armyDeploymentConfig = {
             scene: this,
-            armyUnits: game.player.armies[this.currentArmy],  
+            armyUnits: this.playerArmies[this.currentArmy],  
             generatedBoard: this.generatedBoard,
             unitsBoard: this.unitsBoard,
         }
@@ -60,16 +73,17 @@ class PlayScene extends Phaser.Scene {
 
         
         // Add arrows to pick army
-        this.armyName = this.add.text(0, 0, game.player.armies[this.currentArmy].name, CONSTANTS.HUD_STYLE);
+        this.armyName = this.add.text(0, 0, this.playerArmies[this.currentArmy].name, CONSTANTS.HUD_STYLE);
         this.armyName.setOrigin(.5, .5);
-
-        this.leftArrow = new ScrollArrow(this, 'left', .5);
-        this.rightArrow = new ScrollArrow(this, 'right', .5);
-
-        this.alignmentGrid.positionItemAtIndex(17, this.leftArrow);
         this.alignmentGrid.positionItemAtIndex(19, this.armyName);
-        this.alignmentGrid.positionItemAtIndex(21, this.rightArrow);
 
+        if (this.playerArmies.length > 1) {
+            this.leftArrow = new ScrollArrow(this, 'left', .5);
+            this.rightArrow = new ScrollArrow(this, 'right', .5);
+
+            this.alignmentGrid.positionItemAtIndex(17, this.leftArrow);
+            this.alignmentGrid.positionItemAtIndex(21, this.rightArrow);
+        }
 
         // The button to get back to the home page
         this.quitButton = new Button({
@@ -86,7 +100,7 @@ class PlayScene extends Phaser.Scene {
         // The button to accept this setup
         this.acceptButton = new Button({
             scene: this, 
-            key: 'tile',
+            key: CONSTANTS.TILE,
             text: 'Accept',
             textConfig: CONSTANTS.TEXT_STYLE,
             event: CONSTANTS.ACCEPT_ARMY,
@@ -94,21 +108,26 @@ class PlayScene extends Phaser.Scene {
             index: 41
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
-
-        // TODO: Add Attack/ Move/ Direction/ Wait buttons
     }
 
     update() {}
 
+
     quitGame() {
+        // Remove event listeners
+        emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
+        emitter.removeListener(CONSTANTS.QUIT_GAME);
+
         // Save the board placements to the database
         game.scene.start(CONSTANTS.HOME_SCENE);
         game.scene.stop(CONSTANTS.PLAY_SCENE);
     }
 
     shiftArmy() {
-        this.armyName.text = game.player.armies[this.currentArmy].name;
-        this.armyDeployment.armyUnits = game.player.armies[this.currentArmy];
+        console.log(this.playerArmies);
+        console.log(this.currentArmy);
+        this.armyName.text = this.playerArmies[this.currentArmy].name;
+        this.armyDeployment.armyUnits = this.playerArmies[this.currentArmy];
         this.armyDeployment.clearGameBoard();
         this.armyDeployment.populateBoard();
     }
@@ -124,11 +143,30 @@ class PlayScene extends Phaser.Scene {
 
         // TODO: set active player
         this.playerAction = CONSTANTS.SELECTION_ACTION;
+        
+        this.armyName.destroy();
+        this.acceptButton.destroy();
+        this.leftArrow.destroy();
+        this.rightArrow.destroy(); 
+        
+        // TODO: Add Attack/ Move/ Direction/ Wait buttons
+        this.addActionButtons();
 
-        this.armyName.setVisible(false);
-        this.acceptButton.setVisible(false);
-        this.leftArrow.setVisible(false);
-        this.rightArrow.setVisible(false); 
+        // Add unit stats component
+        this.unitStats = new UnitStats(this);
+        this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
+    }
+
+    addActionButtons() {
+        const config = {
+            scene: this, 
+            playerNum: 1,
+        }
+
+        this.actionButtonContainer = new ActionButtonContainer(config);
+        this.alignmentGrid.positionItemAtIndex(18, this.actionButtonContainer);
+        // this.actionButtonContainer.x += this.alignmentGrid.cellWidth / 2;
+        this.actionButtonContainer.y -= this.alignmentGrid.cellHeight / 2;
     }
     // onPointerdown() {
     //     // const x = this.x;
@@ -190,6 +228,15 @@ class PlayScene extends Phaser.Scene {
 
     //     // character.y = this.y;
     // }
+
+    
+    updateDetailsView(unit) {
+        this.unitStats.updateStats(unit);
+    }
+
+    hideStats() {
+        this.unitStats.hideStats();
+    }
 
 
     // Set the highlight to all tiles in range

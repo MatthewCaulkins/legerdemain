@@ -2,6 +2,10 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
     constructor(scene, direction, scale = 1) {
         super(scene, 0, 0, CONSTANTS.ARROW);
 
+        this.playerArmies = scene.scene.key === CONSTANTS.PLAY_SCENE ? scene.playerArmies.length : 3;
+
+        console.log(this.playerArmies);
+
         let config = {
             key: CONSTANTS.OFF,
             frames: scene.anims.generateFrameNumbers(CONSTANTS.ARROW, { start: 0, end: 0, first: 0 }),
@@ -60,7 +64,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
 
     shiftArmyLeft() {
         this.scene.currentArmy --;
-        this.scene.currentArmy = this.scene.currentArmy < 0 ? 3 : this.scene.currentArmy;
+        this.scene.currentArmy = this.scene.currentArmy < 0 ? this.playerArmies : this.scene.currentArmy;
         // if (this.scene.scene.key === CONSTANTS.SETUP_SCENE) {
         this.scene.shiftArmy();
         // } else {
@@ -70,7 +74,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
 
     shiftArmyRight() {
         this.scene.currentArmy ++;
-        this.scene.currentArmy = this.scene.currentArmy > 3 ? 0 : this.scene.currentArmy;
+        this.scene.currentArmy = this.scene.currentArmy > this.playerArmies ? 0 : this.scene.currentArmy;
         // if (this.scene.scene.key === CONSTANTS.SETUP_SCENE) {
         this.scene.shiftArmy();
         // } else {

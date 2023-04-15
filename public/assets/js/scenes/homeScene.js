@@ -6,6 +6,7 @@ class HomeScene extends Phaser.Scene {
     preload() {
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
         this.load.image(CONSTANTS.MATCHMAKING_TILE, 'assets/img/board.png');
+        this.load.image(CONSTANTS.ACTION_BUTTON_CONTAINER, 'assets/img/actionButtonContainer.png');
         
         // Image (eventually Sprite sheets) for characters
         this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');
@@ -15,10 +16,14 @@ class HomeScene extends Phaser.Scene {
             // Characters
         this.load.spritesheet(CONSTANTS.LANCE, 'assets/img/characterHolder.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
         this.load.spritesheet(CONSTANTS.LANCE_TINT, 'assets/img/characterTint.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
-            // Scene Assets
-        this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 77, frameHeight: 150, endFrame: 2});
-        this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 33, frameHeight: 32, endFrame: 2});
 
+            // Scene Assets
+        this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 50, frameHeight: 99, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 33, frameHeight: 32, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.ACTION_BUTTON, 'assets/img/attackButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.MOVE_BUTTON, 'assets/img/moveButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.DIRECTION_BUTTON, 'assets/img/directionButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.WAIT_BUTTON, 'assets/img/waitButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
         
         // this.AXE = 'axe';
         // this.AXE_TINT = 'axeTint';
@@ -88,16 +93,21 @@ class HomeScene extends Phaser.Scene {
 
     // Change scenes
     loadPlayScene() {
+        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+        emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
+        emitter.removeListener(CONSTANTS.CREATE_HUD);
+
         game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 
     loadSetupScene() {
-        if (!this.ended) {
-            game.scene.start(CONSTANTS.SETUP_SCENE);
-            game.scene.stop(CONSTANTS.HOME_SCENE);
-            // this.ended = true;
-        }
+        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+        emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
+        emitter.removeListener(CONSTANTS.CREATE_HUD);
+
+        game.scene.start(CONSTANTS.SETUP_SCENE);
+        game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 
     // Show players

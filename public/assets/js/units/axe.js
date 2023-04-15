@@ -16,6 +16,9 @@ class Axe extends Unit {
         this.block = .2;
         this.cooldown = 1;
 
+        this.currentHealth = this.health;
+        this.currentCooldown = 0;
+
         // let animeConfig = {
         //     key: CONSTANTS.AXE_TOP_IDLE,
         //     frames: scene.anims.generateFrameNumbers(CONSTANTS.ORB, { start: 0, end: 0, first: 0 }),

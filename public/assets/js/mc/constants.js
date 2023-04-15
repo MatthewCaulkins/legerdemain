@@ -4,16 +4,6 @@ class Constants {
         this.DODGE = 'dodge';
         this.MOVE_UNIT = 'moveUnit';
 
-        // Orb frames
-        this.EMPTY = 'empty';
-        this.FILLED = 'filled';
-        this.ACTIVE = 'active';
-
-        // Army Arrow frames
-        this.ON = 'on';
-        this.HOVER = 'hover';
-        this.OFF = 'off';
-
         // Text inputs
         this.ARMY_NAME = 'armyName';
 
@@ -86,7 +76,7 @@ class Constants {
         this.SELECTION_ACTION = 'selectionAction';
         this.MOVEMENT_ACTION = 'movementAction';
         this.DIRECTION_ACTION = 'directionAction';
-        this.ATTACK_ACTION = 'attackAction';
+        this.ACTION_ACTION = 'actionAction';
 
         // Directions
         this.TOP = 'top';
@@ -98,7 +88,40 @@ class Constants {
         this.TILE = 'tile';
         this.ORB = 'orb';
         this.ARROW = 'arrow';
+        this.ACTION_BUTTON_CONTAINER = 'actionButtonContainer';
         this.MATCHMAKING_TILE = 'matchmakingTile';
+        this.ACTION_BUTTON = 'actionButton';
+        this.MOVE_BUTTON = 'moveButton';
+        this.DIRECTION_BUTTON = 'direcetionButton';
+        this.WAIT_BUTTON = 'waitButton';
+
+        // Orb frames
+        this.EMPTY = 'empty';
+        this.FILLED = 'filled';
+        this.ACTIVE = 'active';
+
+        // Army arrow frames
+        this.ON = 'on';
+        this.HOVER = 'hover';
+        this.OFF = 'off';
+
+        // Play button frames
+        this.ACTION_BUTTON_ON = 'actionButtonOn';
+        this.ACTION_BUTTON_HOVER = 'actionButtonHover';
+        this.ACTION_BUTTON_ACTIVE = 'actionButtonActive';
+        this.ACTION_BUTTON_OFF = 'actionButtonOff';
+        this.MOVE_BUTTON_ON = 'moveButtonOn';
+        this.MOVE_BUTTON_HOVER = 'moveButtonHover';
+        this.MOVE_BUTTON_ACTIVE = 'moveButtonActive';
+        this.MOVE_BUTTON_OFF = 'moveButtonOff';
+        this.DIRECTION_BUTTON_ON = 'directionButtonOn';
+        this.DIRECTION_BUTTON_HOVER = 'directionButtonHover';
+        this.DIRECTION_BUTTON_ACTIVE = 'directionButtonActive';
+        this.DIRECTION_BUTTON_OFF = 'directionButtonOff';
+        this.WAIT_BUTTON_ON = 'waitButtonOn';
+        this.WAIT_BUTTON_HOVER = 'waitButtonHover';
+        this.WAIT_BUTTON_ACTIVE = 'waitButtonActive';
+        this.WAIT_BUTTON_OFF = 'waitButtonOff';
 
         // Units
         this.AXE = 'axe';

@@ -34,10 +34,10 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid.showCellIndex();
 
         // Add placement counter
-        this.counter = this.add.text(0, 0, '0 / 10', CONSTANTS.HUD_STYLE);
-        this.counter.setOrigin(.5, .5);
+        this.counter = this.add.text(0, 0, 'Army Size: 0 / 10', CONSTANTS.HUD_STYLE);
+        // this.counter.setOrigin(.5, .5);
 
-        this.alignmentGrid.positionItemAtIndex(12, this.counter);
+        this.alignmentGrid.positionItemAtIndex(79, this.counter);
 
         // this.createDetailsView();
         this.unitStats = new UnitStats(this);
@@ -254,7 +254,7 @@ class SetupScene extends Phaser.Scene {
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.BACK_TO_HOME,
             alignmentGrid: this.alignmentGrid,
-            index: 100
+            index: 12
         });
         emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene);
 
@@ -266,7 +266,7 @@ class SetupScene extends Phaser.Scene {
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
             alignmentGrid: this.alignmentGrid,
-            index: 101
+            index: 100
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
 
@@ -278,43 +278,12 @@ class SetupScene extends Phaser.Scene {
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.CLEAR_ARMY,
             alignmentGrid: this.alignmentGrid,
-            index: 102
+            index: 101
         });
         emitter.on(CONSTANTS.CLEAR_ARMY, this.clearArmy.bind(this));
 
-        // Add Save Notice
-        this.noticeText = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-        this.noticeText.setOrigin(.5, .5);
-        this.noticeText.setVisible(false);
-
-        this.alignmentGrid.positionItemAtIndex(60, this.noticeText);
-
-        // Setup notice events
-        emitter.on(CONSTANTS.ARMY_SAVED_NOTICE, () => {
-            this.noticeText.text = CONSTANTS.ARMY_SAVED_NOTICE_TEXT;
-            this.noticeText.setVisible(true);
-
-            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
-        });
-        emitter.on(CONSTANTS.ARMY_DELETED_NOTICE, () => {
-            this.noticeText.text = CONSTANTS.ARMY_DELETED_NOTICE_TEXT;
-            this.noticeText.setVisible(true);
-
-            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
-        });
-        emitter.on(CONSTANTS.NEED_UNITS_NOTICE, () => {
-            this.noticeText.text = CONSTANTS.NEED_UNITS_NOTICE_TEXT;
-            this.noticeText.setVisible(true);
-
-            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
-        });
-        emitter.on(CONSTANTS.NEED_NAME_NOTICE, () => {
-            this.noticeText.text = CONSTANTS.NEED_NAME_NOTICE_TEXT;
-            this.noticeText.setVisible(true);
-
-            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
-        });
-
+        // Add Notice
+        this.addNoticeElement();
         // Shift army logic
         // this.leftArrow.setInteractive();
         // this.leftArrow.on(CONSTANTS.POINTER_OVER, () => {
@@ -359,8 +328,42 @@ class SetupScene extends Phaser.Scene {
         // }
     }
 
+    addNoticeElement() {
+        this.noticeText = this.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        this.noticeText.setOrigin(.5, .5);
+        this.noticeText.setVisible(false);
+
+        this.alignmentGrid.positionItemAtIndex(60, this.noticeText);
+
+        // Setup notice events
+        emitter.on(CONSTANTS.ARMY_SAVED_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.ARMY_SAVED_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.ARMY_DELETED_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.ARMY_DELETED_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.NEED_UNITS_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.NEED_UNITS_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+        emitter.on(CONSTANTS.NEED_NAME_NOTICE, () => {
+            this.noticeText.text = CONSTANTS.NEED_NAME_NOTICE_TEXT;
+            this.noticeText.setVisible(true);
+
+            this.time.addEvent({delay: 2000, callback: this.hidenoticeText, callbackScope: this, loop: false});
+        });
+    }
+
     shiftArmy() {
-        console.log('Shift army' + this.armyName);
+        console.log('Shift army' + this.armyName + ' current army: ' + this.currentArmy);
         for (let i = 0; i < this.totalArmies; i++) {
             this.boardContainer[i].setVisible(false);
             // this.generatedBoard[i].setVisible = false;
@@ -464,10 +467,21 @@ class SetupScene extends Phaser.Scene {
     }
 
     loadHomeScene() {
+        emitter.removeListener(CONSTANTS.NEED_NAME_NOTICE);
+        emitter.removeListener(CONSTANTS.NEED_UNITS_NOTICE);
+        emitter.removeListener(CONSTANTS.ARMY_DELETED_NOTICE);
+        emitter.removeListener(CONSTANTS.ARMY_SAVED_NOTICE);
+        emitter.removeListener(CONSTANTS.CLEAR_ARMY);
+        emitter.removeListener(CONSTANTS.ACCEPT_BOARD_PLACEMENT);
+        emitter.removeListener(CONSTANTS.BACK_TO_HOME);
+
+        
         let element = document.getElementById('input-box');
         if (element && element.style.display === 'block') {
             element.style.display = 'none';
         }
+
+        console.log('back to home');
 
         game.scene.start(CONSTANTS.HOME_SCENE);
         game.scene.stop(CONSTANTS.SETUP_SCENE);
@@ -843,7 +857,7 @@ class SetupScene extends Phaser.Scene {
     // }
 
     updateCounter() {
-        this.counter.text = `${this.unitsPlaced[this.currentArmy]} / 10`;
+        this.counter.text = `Army Size: ${this.unitsPlaced[this.currentArmy]} / 10`;
     }
 
     // createDetailsView() {

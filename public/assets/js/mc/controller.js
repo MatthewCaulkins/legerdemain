@@ -48,6 +48,7 @@ class Controller {
 
         // Save this army
         emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
+            console.log('save army');
             game.player.armies[data.armyId] = data;
             this.socket.emit(CONSTANTS.SAVE_ARMY, data);
         });
@@ -60,7 +61,10 @@ class Controller {
         // Delete this army
         emitter.on(CONSTANTS.DELETE_ARMY, async (data) => {
             console.log('delete Army');
-            game.player.armies[data.armyId] = null;
+
+            game.player.armies = game.player.armies.filter(army => {
+                return army.armyId != data.armyId;
+            })
             console.log(game.player);
             this.socket.emit(CONSTANTS.DELETE_ARMY, data);
         });
