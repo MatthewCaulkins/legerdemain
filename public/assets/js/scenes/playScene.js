@@ -452,8 +452,14 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
-    moveUnit(currentTile) {
+    startMoveUnit(currentTile) {
         this.playerAction = CONSTANTS.MID_ACTION;
+
+        this.removeAllHighlights(this.selectedToTile.path);
+        this.moveUnit(currentTile);
+    }
+
+    moveUnit(currentTile) {
         this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
         // TODO: Clear everything but the path
 
@@ -465,16 +471,33 @@ class PlayScene extends Phaser.Scene {
         // let currentTile = this.selectedFromTile;
         const path = this.selectedToTile.path.shift();
         const direction = path.direction;
+
+        unit.setDirection(direction);
+
         // TODO: set direction frames
-        if (direction === CONSTANTS.TOP) {
-           unit.character.play(CONSTANTS.LANCE_TOP_IDLE);
-           unit.tint.play(CONSTANTS.LANCE_TINT_TOP_IDLE);
-        } else if (direction === CONSTANTS.RIGHT) {
-           unit.character.play(CONSTANTS.LANCE_RIGHT_IDLE);
-           unit.tint.play(CONSTANTS.LANCE_TINT_RIGHT_IDLE);
-        }
+        // switch (direction) {
+        //     case CONSTANTS.TOP:
+        //         unit.character.play(unit.topIdle);
+        //         unit.tint.play(unit.topTintIdle);
+        //         break;
+        //     case CONSTANTS.RIGHT:
+        //         unit.character.play(unit.rightIdle);
+        //         unit.tint.play(unit.rightTintIdle);
+        //         break;
+        //     case CONSTANTS.BOTTOM:
+        //         unit.character.play(unit.bottomIdle);
+        //         unit.tint.play(unit.bottomTintIdle);
+        //         break;
+        //     case CONSTANTS.LEFT:
+        //         unit.character.play(unit.leftIdle);
+        //         unit.tint.play(unit.leftTintIdle);
+        //         break;
+        // }
 
         this.targetTile = path.tile;
+
+        // Remove tints as the character moves
+        this.currentTile.clearTint();
 
         
         this.tweens.add({
@@ -514,6 +537,8 @@ class PlayScene extends Phaser.Scene {
                     scene.clearPaths();
                     
                     scene.playerAction = CONSTANTS.SELECTION_ACTION;
+
+                    unit.tile.setTint(CONSTANTS.BLUE_TINT);
                     // scene.removeAllHighlights();
                 }
             },
@@ -522,23 +547,48 @@ class PlayScene extends Phaser.Scene {
             //onComplete: function()
     }
 
-    clearPaths() {
+    clearPaths(clearSelections = true) {
+        console.log('clearPaths');
         this.generatedBoard.tiles.forEach((tile) => {
             tile.inRange = false;
             tile.path = [];
         });
 
-        this.selectedToTile = null;
-        this.selectedFromTile = null;
+        if (clearSelections) {
+            this.selectedToTile = null;
+            this.selectedFromTile = null;
+        }
+
         //this.playerAction = CONSTANTS.SELECTION_ACTION;
         this.removeAllHighlights();
     }
 
     // Iterate over all tiles and remove the tint
-    removeAllHighlights() {
+    removeAllHighlights(exclude = null) {
         // console.log(this.generatedBoard);
+        console.log('Path');
+        console.log(exclude);
+                
+
         this.generatedBoard.tiles.forEach((tile) => {
-            tile.clearTint();
+            let clear = true;
+            if (exclude) {
+                exclude.forEach(excludeTile => {
+                    if (excludeTile.tile === tile) {
+                        clear = false;
+                    }                    
+                });
+
+                if (clear) {
+                    tile.clearTint();
+                }
+            } else {
+                //console.log('This should clear');
+                if (this.selectedFromTile != tile && (tile.unit === null || this.turnUnit != tile.unit)) {
+                    //console.log('Tile is not important');
+                    tile.clearTint();
+                }
+            }
         });
     }
 

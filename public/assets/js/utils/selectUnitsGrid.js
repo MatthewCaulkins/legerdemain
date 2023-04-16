@@ -108,6 +108,7 @@ class SelectUnitsGrid {
                     this.tiles[n] = tile;
 
                     unitConfig.tile = tile;
+                    unitConfig.direction = CONSTANTS.BOTTOM;
 
                     unitType = this.units[n];
                     switch(unitType) {

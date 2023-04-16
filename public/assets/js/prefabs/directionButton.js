@@ -5,7 +5,7 @@ class DirectionButton extends Phaser.GameObjects.Image {
         this.direction = config.direction;
         this.unit = config.unit;
 
-        config.scene.add.existing(this);
+        this.scene.add.existing(this);
 
         this.setInteractive();
         this.on(CONSTANTS.POINTER_OVER, this.pointerOver, this);
@@ -16,6 +16,8 @@ class DirectionButton extends Phaser.GameObjects.Image {
     pointerOver() {
         console.log('direction pointer over');
         this.setTint(CONSTANTS.GREEN_TINT);
+
+        this.unit.setDirection(this.direction, false);
         // TODO: set the units direction
     }
 
@@ -26,6 +28,9 @@ class DirectionButton extends Phaser.GameObjects.Image {
 
     pointerDown() {
         console.log('direction pointer down');
+        this.scene.actionButtonContainer.directionButton.setUsed();
+        this.scene.turnUnit.directions.setVisible(false);
 
+        this.unit.setDirection(this.direction);
     }
 }

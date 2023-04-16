@@ -152,13 +152,13 @@ class Constants {
         // Unit animation frames
         this.LANCE_TOP_IDLE = 'lanceTopIdle';
         this.LANCE_RIGHT_IDLE = 'lanceRightIdle';
-        this.LANCE_DOWN_IDLE = 'lanceDownIdle';
+        this.LANCE_BOTTOM_IDLE = 'lanceBottomIdle';
         this.LANCE_LEFT_IDLE = 'lanceLeftIdle';
 
         // Unit tint animation frames
         this.LANCE_TINT_TOP_IDLE = 'lanceTintTopIdle';
         this.LANCE_TINT_RIGHT_IDLE = 'lanceTintRightIdle';
-        this.LANCE_TINT_DOWN_IDLE = 'lanceTibtDownIdle';
+        this.LANCE_TINT_BOTTOM_IDLE = 'lanceTintBottomIdle';
         this.LANCE_TINT_LEFT_IDLE = 'lanceTintLeftIdle';
 
         // Stats

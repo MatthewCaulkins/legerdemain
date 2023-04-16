@@ -78,7 +78,7 @@ class Unit extends Phaser.GameObjects.Container {
         this.block;
         this.cooldown;
 
-        this.orientation;
+        this.currentDirection;
 
 
         // Add the healthbar for this unit
@@ -108,6 +108,7 @@ class Unit extends Phaser.GameObjects.Container {
         this.add(this.directions);
         this.directions.setDepth(this.z);
 
+        
         // this.character.play()
         // this.depth = y + 64;
 
@@ -165,6 +166,36 @@ class Unit extends Phaser.GameObjects.Container {
 
         //     scene.time.delayedCall(delay * 1000, this.changeFrame, [], this);
         // }
+
+    }
+
+    setDirection(direction, save = true) {
+        switch(direction) {
+            case CONSTANTS.TOP:
+                this.tint.play(this.topTintIdle);
+                this.character.play(this.topIdle);                
+                break;
+            case CONSTANTS.RIGHT:
+                this.tint.play(this.rightTintIdle);
+                this.character.play(this.rightIdle);
+                break;
+            case CONSTANTS.BOTTOM:
+                this.tint.play(this.bottomTintIdle);
+                this.character.play(this.bottomIdle);                
+                break;
+            case CONSTANTS.LEFT:
+                this.tint.play(this.leftTintIdle);
+                this.character.play(this.leftIdle);
+                break;
+        }
+
+        if (save) {
+            this.currentDirection = direction;
+        }
+    }
+
+    resetDirection() {
+        this.setDirection(this.currentDirection);
     }
 
     resetAnimation ()

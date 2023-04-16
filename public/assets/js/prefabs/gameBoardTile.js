@@ -24,7 +24,15 @@ class GameBoardTile extends Tile {
             return;
         }
 
-        if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.ACTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
+            if (this.unit) {
+                if (this.scene.turnUnit && this.scene.turnUnitLocked) {
+
+                } else {
+                    this.setTint(CONSTANTS.GREEN_TINT);
+                }
+            }
+        } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
             if (this.scene.selectedFromTile) {  // there is a selected tile
                 if (this === this.scene.selectedFromTile) { // it's this tile
                     this.setTint(CONSTANTS.RED_TINT);
@@ -47,6 +55,14 @@ class GameBoardTile extends Tile {
         if (this.unit) {
             console.log(this.unit);
             this.scene.updateDetailsView(this.unit);
+
+            if (this.unit === this.scene.turnUnit) {
+                if (this.scene.turnUnitLocked) {
+                    this.setTint(CONSTANTS.BLUE_TINT);
+                } else {
+                    this.setTint(CONSTANTS.RED_TINT);
+                }
+            }
         }
     } 
 
@@ -55,10 +71,22 @@ class GameBoardTile extends Tile {
             return;
         }
 
-        if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.ACTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
+            if (this.unit) {
+                if (this.scene.turnUnit && this.scene.turnUnit.tile === this) {
+
+                } else { 
+                    this.clearTint();
+                }
+            }
+        } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
             if (this.scene.selectedFromTile) {  // there is a selected tile
                 if (this === this.scene.selectedFromTile) { // it's this tile
-                    this.setTint(CONSTANTS.RED_TINT);
+                    if (this.scene.turnUnitLocked) {
+                        this.setTint(CONSTANTS.BLUE_TINT);
+                    } else {
+                        this.setTint(CONSTANTS.RED_TINT);
+                    }
                 } else {
                     if (this.inRange) {
                         if (this.scene.selectedToTile === this) {
@@ -77,6 +105,14 @@ class GameBoardTile extends Tile {
         
         if (this.unit) {
             this.scene.hideStats(this.unit);
+
+            if (this.unit === this.scene.turnUnit) {
+                if (this.scene.turnUnitLocked) {
+                    this.setTint(CONSTANTS.BLUE_TINT);
+                } else {
+                    this.setTint(CONSTANTS.RED_TINT);
+                }
+            }
         }
     }
 
@@ -85,25 +121,52 @@ class GameBoardTile extends Tile {
             return;
         }
 
-        if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {
+            console.log('selection pointer down');
+            if (this.unit) {
+                if (!this.scene.turnUnitLocked) {
+                    if (this.scene.turnUnit) {
+                        this.scene.turnUnit.tile.clearTint();
+                    }
+
+                    this.scene.clearPaths(false);
+
+                    if (this.scene.selectedFromTile === this) {
+                        console.log('A');
+                        this.scene.turnUnit = null;
+                        this.scene.selectedFromTile = null;
+                        this.setTint(CONSTANTS.GREEN_TINT);
+                    } else {
+                        console.log('B');
+                        this.scene.turnUnit = this.unit;
+                        this.scene.selectedFromTile = this;
+                        this.setTint(CONSTANTS.RED_TINT);
+                    }
+                }
+            }
+        } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Movement phase
             if (this.scene.selectedFromTile) { // tile from selected
                 
                 if (this === this.scene.selectedFromTile) { // this unit; remove the selection
-                    if (!this.scene.turnUnit) {
+                    if (!this.scene.turnUnitLocked) {
                 //    this.active = false;
+                        this.setTint(CONSTANTS.GREEN_TINT);
+                        this.scene.turnUnit = null;
                         this.scene.selectedFromTile = null;
                         this.scene.clearPaths();
                     }
                     // this.scene.removeAllHighlights();
                 } else { // Another space
-                    if (!this.scene.turnUnit) {
+                    if (!this.scene.turnUnitLocked) {
                         if (this.unit) { // Space has one of your units on it
                             console.log('switch to this tile');
 
                             this.scene.clearPaths();
+                            this.scene.turnUnit.tile.clearTint();
                             // Highlight all tiles within unit's range
 
                             this.scene.selectedFromTile = this;
+                            this.scene.turnUnit = this.unit;
                             this.setTint(CONSTANTS.RED_TINT);
                             this.scene.highlightTilesInMovementRange(this);                   
                         }
@@ -112,16 +175,18 @@ class GameBoardTile extends Tile {
                         console.log('move unit');
                         this.scene.selectedToTile = this;
                         this.scene.turnUnit = this.scene.selectedFromTile.unit;
+                        this.scene.turnUnitLocked = true;
                         // this.scene.playerAction = CONSTANTS.MOVEMENT_ACTION;
                         // TODO: lock scene
                         
                         this.scene.activeActionButton = null;
-                        this.scene.moveUnit(this.scene.selectedFromTile);
+                        this.scene.startMoveUnit(this.scene.selectedFromTile);
                     }
                 }    
             } else { // no unit selected
                 if (this.unit) { // this tile has a unit; set it to selected from tile
                     this.scene.selectedFromTile = this;
+                    this.scene.turnUnit = this.unit;
 
                     this.setTint(CONSTANTS.RED_TINT);
                     // Highlight all tiles within unit's range

@@ -100,7 +100,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.BOW:
@@ -108,7 +109,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.CONTROL:
@@ -116,7 +118,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.DAGGER:
@@ -124,7 +127,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.HEALING:
@@ -132,7 +136,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.LANCE:
@@ -140,7 +145,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.SHIELD:
@@ -148,7 +154,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.SORCERY:
@@ -156,7 +163,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
             case CONSTANTS.SWORD:
@@ -164,7 +172,8 @@ class ArmyDeployment {
                     scene: this.scene, 
                     player: game.player,
                     tile: boardTile,
-                    container: this.unitsBoard
+                    container: this.unitsBoard,
+                    direction: CONSTANTS.RIGHT
                 });
             break;
         }
