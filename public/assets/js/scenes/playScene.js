@@ -13,9 +13,9 @@ class PlayScene extends Phaser.Scene {
 
         model.currentScene = this;
         this.phase = CONSTANTS.ARMY_SELECT_PHASE;
-        this.playerTurn;
-        this.playerAction;
-        this.activeActionButton;
+        this.playerTurn = 0;
+        this.playerAction = '';
+        this.activeActionButton = null;
 
         // Unit this turn only focuses on
         this.turnUnit = null;
@@ -150,8 +150,11 @@ class PlayScene extends Phaser.Scene {
         
         this.armyName.destroy();
         this.acceptButton.destroy();
-        this.leftArrow.destroy();
-        this.rightArrow.destroy(); 
+
+        if (this.playerArmies.length > 1) {
+            this.leftArrow.destroy();
+            this.rightArrow.destroy(); 
+        }
         
         // TODO: Add Attack/ Move/ Direction/ Wait buttons
         this.addActionButtons();
@@ -308,7 +311,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.DOWN, tile: questionedTile}); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -409,7 +412,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.DOWN, tile: questionedTile}); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -456,18 +459,19 @@ class PlayScene extends Phaser.Scene {
 
         this.currentTile = currentTile;
         const unit = currentTile.unit;
-        // console.log(unit);
+        console.log(unit);
+        console.log(unit.character);
 
         // let currentTile = this.selectedFromTile;
         const path = this.selectedToTile.path.shift();
         const direction = path.direction;
         // TODO: set direction frames
         if (direction === CONSTANTS.TOP) {
-            unit.character.play(CONSTANTS.LANCE_TOP_IDLE);
-            unit.tint.play(CONSTANTS.LANCE_TINT_TOP_IDLE);
+           unit.character.play(CONSTANTS.LANCE_TOP_IDLE);
+           unit.tint.play(CONSTANTS.LANCE_TINT_TOP_IDLE);
         } else if (direction === CONSTANTS.RIGHT) {
-            unit.character.play(CONSTANTS.LANCE_RIGHT_IDLE);
-            unit.tint.play(CONSTANTS.LANCE_TINT_RIGHT_IDLE);
+           unit.character.play(CONSTANTS.LANCE_RIGHT_IDLE);
+           unit.tint.play(CONSTANTS.LANCE_TINT_RIGHT_IDLE);
         }
 
         this.targetTile = path.tile;

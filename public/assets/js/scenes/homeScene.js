@@ -7,6 +7,12 @@ class HomeScene extends Phaser.Scene {
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
         this.load.image(CONSTANTS.MATCHMAKING_TILE, 'assets/img/board.png');
         this.load.image(CONSTANTS.ACTION_BUTTON_CONTAINER, 'assets/img/actionButtonContainer.png');
+
+        // Direction buttons
+        this.load.image(CONSTANTS.TOP_DIRECTION_BUTTON, 'assets/img/topDirectionButton.png');
+        this.load.image(CONSTANTS.RIGHT_DIRECTION_BUTTON, 'assets/img/rightDirectionButton.png');
+        this.load.image(CONSTANTS.BOTTOM_DIRECTION_BUTTON, 'assets/img/bottomDirectionButton.png');
+        this.load.image(CONSTANTS.LEFT_DIRECTION_BUTTON, 'assets/img/leftDirectionButton.png');
         
         // Image (eventually Sprite sheets) for characters
         this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');
@@ -14,8 +20,8 @@ class HomeScene extends Phaser.Scene {
 
         // Sprite sheets
             // Characters
-        this.load.spritesheet(CONSTANTS.LANCE, 'assets/img/characterHolder.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
-        this.load.spritesheet(CONSTANTS.LANCE_TINT, 'assets/img/characterTint.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
+        this.load.spritesheet(CONSTANTS.LANCE, 'assets/img/lance.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
+        this.load.spritesheet(CONSTANTS.LANCE_TINT, 'assets/img/lanceTint.png', {frameWidth: 150, frameHeight: 150, endFrame: 1});
 
             // Scene Assets
         this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 50, frameHeight: 99, endFrame: 2});

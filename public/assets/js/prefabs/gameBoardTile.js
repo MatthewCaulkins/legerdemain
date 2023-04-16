@@ -114,6 +114,8 @@ class GameBoardTile extends Tile {
                         this.scene.turnUnit = this.scene.selectedFromTile.unit;
                         // this.scene.playerAction = CONSTANTS.MOVEMENT_ACTION;
                         // TODO: lock scene
+                        
+                        this.scene.activeActionButton = null;
                         this.scene.moveUnit(this.scene.selectedFromTile);
                     }
                 }    

@@ -31,7 +31,6 @@ class Constants {
         this.LIGHT_TEXT_STYLE = { fontFamily: 'Raleway', color: this.WHITE, fontSize: 12 };
         this.HUD_STYLE = { fontFamily: 'Oswald', color: this.WHITE, fontSize: 20, fontStyle: 'bold' };
         
-
         // Scenes
         this.HOME_SCENE = 'HomeScene';
         this.PLAY_SCENE = 'PlayScene';
@@ -81,9 +80,15 @@ class Constants {
 
         // Directions
         this.TOP = 'top';
-        this.DOWN = 'down';
+        this.BOTTOM = 'bottom';
         this.LEFT = 'left';
         this.RIGHT = 'right';
+
+        // Direction buttons
+        this.TOP_DIRECTION_BUTTON = 'topDirectionButton';
+        this.RIGHT_DIRECTION_BUTTON = 'rightDirectionButton';
+        this.BOTTOM_DIRECTION_BUTTON = 'bottomDirectionButton';
+        this.LEFT_DIRECTION_BUTTON = 'leftDirectionButton';
 
         // Prefabs
         this.TILE = 'tile';

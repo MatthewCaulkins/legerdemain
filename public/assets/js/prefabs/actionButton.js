@@ -102,6 +102,7 @@ class ActionButton extends Phaser.GameObjects.Container {
             // Clear last active button
             if (this.scene.activeActionButton) {
                 this.scene.activeActionButton.activated = false;
+                console.log(this.scene.activeActionButton);
                 this.scene.activeActionButton.sprite.play(this.scene.activeActionButton.onKey);
 
                 // Clear all highlights and such
@@ -125,6 +126,8 @@ class ActionButton extends Phaser.GameObjects.Container {
             this.activated = false;
             this.sprite.play(this.hoverKey);
             this.scene.activeActionButton = null;
+
+            this.scene.clearPaths();
         }
         
         console.log(this.scene.playerAction);

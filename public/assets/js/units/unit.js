@@ -86,14 +86,27 @@ class Unit extends Phaser.GameObjects.Container {
             scene: this.scene,
             width: 100,
             height: 10,
-            x: this.x,
-            y: this.y - (.6 * height)
+            x: 0,
+            y: 0 - (.6 * height),
         });
+        this.add(this.healthBar);
+
         this.healthBar.setPercent(1);
         this.healthBar.setDepth(this.z);
 
         this.healthBar.container.setVisible(false);
         this.healthBar.bar.setVisible(false);
+
+
+        // Add directions
+        
+        this.directions = new DirectionButtonContainer({
+            scene: this.scene,
+            unit: this,
+            scale: .7
+        });
+        this.add(this.directions);
+        this.directions.setDepth(this.z);
 
         // this.character.play()
         // this.depth = y + 64;
