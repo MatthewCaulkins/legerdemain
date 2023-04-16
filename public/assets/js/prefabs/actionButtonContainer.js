@@ -81,4 +81,25 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
         this.setSize(227, 271);
         config.scene.add.existing(this);
     }
+
+    setUsed(buttonName) {
+        let button = null;
+
+        switch(buttonName) {
+            case CONSTANTS.MOVE_BUTTON:
+                button = this.movementButton;
+                break;
+            case CONSTANTS.ACTION_BUTTON:
+                button = this.actionButton;
+                break;
+            case CONSTANTS.DIRECTION_BUTTON:
+                button = this.directionButton;
+                break;
+            case CONSTANTS.WAIT_BUTTON:
+                button = this.waitButton;
+                break;
+        }
+
+        button.setUsed();
+    }
 }

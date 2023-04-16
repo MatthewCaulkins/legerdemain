@@ -195,11 +195,21 @@ class SetupScene extends Phaser.Scene {
             // this.selectGridContainer[army].iterate(this.addInteractionToGridTiles);
             // const armyUnits = game.player.armies[army];
 
+            console.log(game.player.armies)
+            const armyUnits = game.player.armies.find(playerArmy => {
+                console.log(playerArmy);
+                console.log(army);
+                if (playerArmy) {
+                    return playerArmy.armyId === army;
+                }
+            });
+            console.log(armyUnits);
+            
             // Army Deployment
             const armyDeploymentConfig = {
                 scene: this,
                 army: army,
-                armyUnits: game.player.armies[army],
+                armyUnits: armyUnits,
                 selectGrid: this.selectGrid[army],
                 generatedBoard: this.generatedBoard[army],
                 unitsBoard: this.unitsBoard[army],
@@ -236,6 +246,13 @@ class SetupScene extends Phaser.Scene {
         console.log('active army' + this.currentArmy);
         this.armyOrbs[0].setActive(this.currentArmy);
 
+        const selectedArmy = game.player.armies.find(army => {
+            if (army) {
+                return army.armyId === this.currentArmy;
+            }
+        });
+        this.armyNameInput.value = selectedArmy ? selectedArmy.name : '';
+
         for (let i = 1; i < this.totalArmies; i++) {
             // this.unitsPlaced[i].setVisible(false);
             this.boardContainer[i].setVisible(false);
@@ -256,7 +273,7 @@ class SetupScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene);
+        emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene, this);
 
         // The button to get Save out the army
         this.acceptButton = new Button({
@@ -268,8 +285,8 @@ class SetupScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             index: 100
         });
-        emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement.bind(this));
-
+        emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement, this);
+        
         // The button to delete army
         this.clearButton = new Button({
             scene: this, 
@@ -401,7 +418,12 @@ class SetupScene extends Phaser.Scene {
         }
 
         // Update UI
-        this.armyNameInput.value = game.player.armies[this.currentArmy] ? game.player.armies[this.currentArmy].name : '';
+        const selectedArmy = game.player.armies.find(army => {
+            if (army) {
+                return army.armyId === this.currentArmy;
+            }
+        });
+        this.armyNameInput.value = selectedArmy ? selectedArmy.name : '';
         this.updateCounter();
     }
 
@@ -464,6 +486,8 @@ class SetupScene extends Phaser.Scene {
 
         this.unitsPlaced[this.currentArmy] = 0;
         this.updateCounter();
+
+        this.armyNameInput.value = '';
     }
 
     loadHomeScene() {
@@ -475,6 +499,12 @@ class SetupScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.ACCEPT_BOARD_PLACEMENT);
         emitter.removeListener(CONSTANTS.BACK_TO_HOME);
 
+        console.log(this.clearButton);
+        if (this.clearButton) {
+            this.clearButton.remove();
+            this.acceptButton.remove();
+            this.homeButton.remove();
+        }
         
         let element = document.getElementById('input-box');
         if (element && element.style.display === 'block') {

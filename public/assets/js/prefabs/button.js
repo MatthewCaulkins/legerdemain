@@ -57,4 +57,9 @@ class Button extends Phaser.GameObjects.Container {
         this.image.clearTint();
         this.fired = false;
     }
+
+    remove() {
+        emitter.removeListener(this.event);
+        this.destroy();
+    }
 }

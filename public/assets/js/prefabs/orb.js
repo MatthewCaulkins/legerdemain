@@ -31,7 +31,12 @@ class Orb extends Phaser.GameObjects.Sprite {
 
     setActive(armyNum) {
         if (this.armyNum != armyNum) {
-            if (game.player.armies[this.armyNum] && game.player.armies[this.armyNum].units.length > 0) {
+            const army = game.player.armies.find(army => {
+                if (army) {
+                    return army.armyId === this.armyNum;
+                }
+            });
+            if (army && army.units.length > 0) {
                 this.play(CONSTANTS.FILLED);
             } else {
                 this.play(CONSTANTS.EMPTY);

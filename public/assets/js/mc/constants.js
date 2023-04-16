@@ -73,6 +73,7 @@ class Constants {
         this.PLAYER_TWO_PHASE = 'playerTwoPhase';
 
         // Player actions
+        this.MID_ACTION = 'midAction';
         this.SELECTION_ACTION = 'selectionAction';
         this.MOVEMENT_ACTION = 'movementAction';
         this.DIRECTION_ACTION = 'directionAction';

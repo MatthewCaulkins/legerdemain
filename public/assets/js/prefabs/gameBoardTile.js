@@ -20,11 +20,6 @@ class GameBoardTile extends Tile {
     }
 
     pointerover() {
-        if (this.unit) {
-            console.log(this.unit);
-            this.scene.updateDetailsView(this.unit);
-        }
-
         if (this.scene.phase != CONSTANTS.GAME_PHASE) { // Only do actions during game phase   
             return;
         }
@@ -47,6 +42,11 @@ class GameBoardTile extends Tile {
                     this.setTint(CONSTANTS.GREEN_TINT);
                 }
             }
+        }
+        
+        if (this.unit) {
+            console.log(this.unit);
+            this.scene.updateDetailsView(this.unit);
         }
     } 
 
@@ -75,7 +75,9 @@ class GameBoardTile extends Tile {
             }
         }
         
-        this.scene.hideStats();
+        if (this.unit) {
+            this.scene.hideStats(this.unit);
+        }
     }
 
     pointerdown() {
@@ -85,25 +87,31 @@ class GameBoardTile extends Tile {
 
         if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
             if (this.scene.selectedFromTile) { // tile from selected
+                
                 if (this === this.scene.selectedFromTile) { // this unit; remove the selection
+                    if (!this.scene.turnUnit) {
                 //    this.active = false;
-                    this.scene.selectedFromTile = null;
-                    this.scene.clearPaths();
+                        this.scene.selectedFromTile = null;
+                        this.scene.clearPaths();
+                    }
                     // this.scene.removeAllHighlights();
                 } else { // Another space
-                    if (this.unit) { // Space has one of your units on it
-                        console.log('switch to this tile');
+                    if (!this.scene.turnUnit) {
+                        if (this.unit) { // Space has one of your units on it
+                            console.log('switch to this tile');
 
-                        this.scene.clearPaths();
-                        // Highlight all tiles within unit's range
+                            this.scene.clearPaths();
+                            // Highlight all tiles within unit's range
 
-                        this.scene.selectedFromTile = this;
-                        this.setTint(CONSTANTS.RED_TINT);
-                        this.scene.highlightTilesInRange(this);
+                            this.scene.selectedFromTile = this;
+                            this.setTint(CONSTANTS.RED_TINT);
+                            this.scene.highlightTilesInMovementRange(this);                   
+                        }
                     }
                     if (this.inRange) { // space is in range
                         console.log('move unit');
                         this.scene.selectedToTile = this;
+                        this.scene.turnUnit = this.scene.selectedFromTile.unit;
                         // this.scene.playerAction = CONSTANTS.MOVEMENT_ACTION;
                         // TODO: lock scene
                         this.scene.moveUnit(this.scene.selectedFromTile);
@@ -115,9 +123,11 @@ class GameBoardTile extends Tile {
 
                     this.setTint(CONSTANTS.RED_TINT);
                     // Highlight all tiles within unit's range
-                    this.scene.highlightTilesInRange(this);
+                    this.scene.highlightTilesInMovementRange(this);
                 }
             }
+        } else if (this.scene.playerAction === CONSTANTS.ACTION_ACTION) {
+            this.scene.highlightTilesInActionRange(this);
         }
     }
 }

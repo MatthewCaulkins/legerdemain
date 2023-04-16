@@ -9,7 +9,9 @@ class ArmyDeployment {
         // Specific to setup scene
         this.selectGrid = config.selectGrid;
 
-        if (this.armyUnits) {
+        console.log(this.armyUnits);
+        if (this.armyUnits && this.armyUnits.units.length > 0) {
+            console.log('got here');
             this.populateBoard();
         }
     }
@@ -36,6 +38,7 @@ class ArmyDeployment {
     }
 
     populateBoard() {
+        console.log(this.armyUnits.units);
         this.armyUnits.units.forEach(unit => {
             if (this.selectGrid) { // Setup scene
                 let n = 0;

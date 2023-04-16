@@ -17,6 +17,10 @@ class PlayScene extends Phaser.Scene {
         this.playerAction;
         this.activeActionButton;
 
+        // Unit this turn only focuses on
+        this.turnUnit = null;
+        this.turnUnitLocked = false;
+
         // Tiles for movement and attack
         this.selectedFromTile = null;
         this.selectedToTile = null;
@@ -155,6 +159,8 @@ class PlayScene extends Phaser.Scene {
         // Add unit stats component
         this.unitStats = new UnitStats(this);
         this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
+
+        // Add game controller
     }
 
     addActionButtons() {
@@ -232,15 +238,17 @@ class PlayScene extends Phaser.Scene {
     
     updateDetailsView(unit) {
         this.unitStats.updateStats(unit);
+        unit.showHealthbar();
     }
 
-    hideStats() {
+    hideStats(unit) {
         this.unitStats.hideStats();
+        unit.hideHealthbar();
     }
 
 
     // Set the highlight to all tiles in range
-    highlightTilesInRange(tile) {
+    highlightTilesInMovementRange(tile) {
         // Get the range
         const unit = tile.unit;
         const movement = unit.movement;
@@ -340,7 +348,112 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
+    // Set the highlight to all tiles in range
+    highlightTilesInActionRange(tile) {
+        // Get the range
+        const unit = tile.unit;
+        const range = unit.range;
+        const generatedBoard = tile.scene.generatedBoard;
+        // const scene = tile.scene;
+        // const number = tile.number;
+        let questionedTile;
+
+        tile.path = [];
+
+        const tilesOfInterest = [tile];
+
+        console.log(generatedBoard);
+        for (let i = 0; i < range; i++) {
+            tilesOfInterest.forEach(tileOfInterest => {
+
+                // console.log(tileOfInterest);
+
+                // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+                if (tileOfInterest.column - 1 >= 0) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+
+                    // console.log(questionedTile);
+
+                    // Will have to take into account friendly units in the Play Scene
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            console.log(tileOfInterest.path);
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile}); //CONSTANTS.TOP);
+                            tilesOfInterest.push(questionedTile);
+                        } else {
+                            console.log('tile included already');
+                        }
+                    }
+                }
+                
+                if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile}); //CONSTANTS.RIGHT);
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+
+                if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push({direction: CONSTANTS.DOWN, tile: questionedTile}); // CONSTANTS.DOWN);
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+                
+                if (tileOfInterest.row - 1 >= 0) {
+                    questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
+                    if (questionedTile.unit === null) {
+                        if (!tilesOfInterest.includes(questionedTile)) {
+                            tileOfInterest.path.forEach(path => {
+                                questionedTile.path.push(path);
+                            })
+                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile}); // CONSTANTS.LEFT);
+                            tilesOfInterest.push(questionedTile);
+                        }
+                    }
+                }
+            });
+        }
+
+        tilesOfInterest.forEach(tileOfInterest => {
+            if (tileOfInterest != tile) {
+                tileOfInterest.inRange = true;
+                tileOfInterest.setTint(CONSTANTS.YELLOW_TINT);
+            }
+        });
+
+        // for (let i = 0; i < scene.boardContainer.mapRows; i++) {
+        //     for (let j = 0; j < scene.boardContainer.mapColumns; j++) {
+        //         const boardTile = scene.boardContainer.board[j][i];
+
+        //         if (number - range < boardTile.number < number + range) {
+        //             boardTile.inRange = true;
+        //             boardTile.setTint(CONSTANTS.YELLOW_TINT);
+        //         }
+        //     }
+        // }
+    }
+
     moveUnit(currentTile) {
+        this.playerAction = CONSTANTS.MID_ACTION;
+        this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
+        // TODO: Clear everything but the path
+
         this.currentTile = currentTile;
         const unit = currentTile.unit;
         // console.log(unit);
@@ -395,6 +508,8 @@ class PlayScene extends Phaser.Scene {
                 } else {
                     // TODO: unlock scene
                     scene.clearPaths();
+                    
+                    scene.playerAction = CONSTANTS.SELECTION_ACTION;
                     // scene.removeAllHighlights();
                 }
             },

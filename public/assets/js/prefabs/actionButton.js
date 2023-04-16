@@ -54,53 +54,86 @@ class ActionButton extends Phaser.GameObjects.Container {
 
         // Make the tile interactive and oriented
         this.sprite.setInteractive();
-        this.sprite.on(CONSTANTS.POINTER_OVER, () => {
-            // If this is players turn
-                // If this is currently selected
-            // If this action has been taken
-            // else
-            if (!this.activated) {
-                this.sprite.play(this.hoverKey);
-            } else {
-                this.sprite.play(this.activeKey);
-            }
-        });
-        this.sprite.on(CONSTANTS.POINTER_OUT, () => {
-            // If this is players turn
-                // If this is currently selected
-            // If this action has been taken
-            // Else
-            if (!this.activated) {
-                this.sprite.play(this.onKey);
-            } else {
-                this.sprite.play(this.activeKey);
-            }
-        });
-        this.sprite.on(CONSTANTS.POINTER_DOWN, () => {
-            if (this.scene.playerAction != this.phase) {
-                this.activated = true;
-                this.scene.playerAction = this.phase;
-                this.sprite.play(this.activeKey);
-            } else {
-                this.activated = false;
-                this.scene.playerAction = null;
-                this.sprite.play(this.hoverKey);
-            }
-            // If this is players turn
-                // If already selected
-                // If another is selected
-            // If this action has been taken
-            // else
-            this.sprite.play(this.activeKey);
-        });
-        // this.sprite.on(CONSTANTS.POINTER_UP, () => {
-        //     // If this is players turn
-        //         // If this is currently selected
-        //     // If this action has been taken
-        //     // else
-        //     this.sprite.play(this.onKey);
-        // });
+        this.sprite.on(CONSTANTS.POINTER_OVER, this.pointerOver, this);
+        this.sprite.on(CONSTANTS.POINTER_OUT, this.pointerOut, this);
+        this.sprite.on(CONSTANTS.POINTER_DOWN, this.pointerDown, this);
         this.reset();
+    }
+
+    pointerOver() {
+        if (this.used) return;
+
+        // If this is players turn
+            // If this is currently selected
+        // If this action has been taken
+        // else
+        if (!this.activated) {
+            this.sprite.play(this.hoverKey);
+        } else {
+            this.sprite.play(this.activeKey);
+        }
+    }
+
+    pointerOut() {
+        if (this.used) return;
+
+        // If this is players turn
+            // If this is currently selected
+        // If this action has been taken
+        // Else
+        if (this.scene.activeActionButton != this) {
+            this.sprite.play(this.onKey);
+        } else {
+            this.sprite.play(this.activeKey);
+        }
+    }
+
+    pointerDown() {
+        if (this.used) return;
+
+        console.log(this.scene);
+        console.log(this.phase);
+
+        if (this.scene.activeActionButton != this) {
+            this.sprite.play(this.activeKey);
+            this.activated = true;
+            this.scene.playerAction = this.phase;
+
+            // Clear last active button
+            if (this.scene.activeActionButton) {
+                this.scene.activeActionButton.activated = false;
+                this.scene.activeActionButton.sprite.play(this.scene.activeActionButton.onKey);
+
+                // Clear all highlights and such
+                this.scene.clearPaths();
+
+                if (this.scene.selectedFromTile || this.scene.turnUnit) {
+                    const tile = this.scene.turnUnit ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
+                    if (this.phase === CONSTANTS.ACTION_ACTION) {
+                        this.scene.highlightTilesInActionRange(tile)
+                    } else if (this.phase === CONSTANTS.DIRECTION_ACTION) {
+
+                    } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
+                        this.scene.highlightTilesInMovementRange(tile);
+                    }
+                }
+            }
+
+            this.scene.activeActionButton = this;
+        } else {
+            this.scene.playerAction === '';
+            this.activated = false;
+            this.sprite.play(this.hoverKey);
+            this.scene.activeActionButton = null;
+        }
+        
+        console.log(this.scene.playerAction);
+    }
+
+    setUsed() {
+        this.sprite.play(this.offKey);
+        this.activated = false;
+        this.used = true;
     }
 
     reset() {

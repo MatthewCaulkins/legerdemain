@@ -3,6 +3,7 @@ class Controller {
         emitter.on('gameLoaded', this.connectSocket);
         
         this.otherPlayers = {};
+        this.events = [];
     }
 
     // Pay attention to the socket for every new player
@@ -47,11 +48,15 @@ class Controller {
         });
 
         // Save this army
-        emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
-            console.log('save army');
-            game.player.armies[data.armyId] = data;
-            this.socket.emit(CONSTANTS.SAVE_ARMY, data);
-        });
+        if (!controller.events.includes(CONSTANTS.SAVE_ARMY)) {
+            emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
+                console.log('save army');
+                game.player.armies[data.armyId] = data;
+                this.socket.emit(CONSTANTS.SAVE_ARMY, data);
+            });
+
+            controller.events.push(CONSTANTS.SAVE_ARMY);
+        }
 
         // Return when army is saved
         this.socket.on(CONSTANTS.ARMY_SAVED, () => {
@@ -59,15 +64,19 @@ class Controller {
         });
 
         // Delete this army
-        emitter.on(CONSTANTS.DELETE_ARMY, async (data) => {
-            console.log('delete Army');
+        if (!controller.events.includes(CONSTANTS.DELETE_ARMY)) {
+            emitter.on(CONSTANTS.DELETE_ARMY, async (data) => {
+                console.log('delete Army');
 
-            game.player.armies = game.player.armies.filter(army => {
-                return army.armyId != data.armyId;
-            })
-            console.log(game.player);
-            this.socket.emit(CONSTANTS.DELETE_ARMY, data);
-        });
+                game.player.armies = game.player.armies.filter(army => {
+                    return army.armyId != data.armyId;
+                })
+                console.log(game.player);
+                this.socket.emit(CONSTANTS.DELETE_ARMY, data);
+            });
+
+            controller.events.push(CONSTANTS.DELETE_ARMY);
+        }
 
         this.socket.on(CONSTANTS.ARMY_DELETED, () => {
             emitter.emit(CONSTANTS.ARMY_DELETED_NOTICE);
