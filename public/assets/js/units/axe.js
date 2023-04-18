@@ -20,6 +20,7 @@ class Axe extends Unit {
         this.currentCooldown = 0;
 
         // Frame keys
+        // Frame keys
         this.topIdle = CONSTANTS.LANCE_TOP_IDLE;
         this.rightIdle = CONSTANTS.LANCE_RIGHT_IDLE;
         this.bottomIdle = CONSTANTS.LANCE_BOTTOM_IDLE;

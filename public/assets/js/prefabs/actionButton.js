@@ -62,6 +62,7 @@ class ActionButton extends Phaser.GameObjects.Container {
 
     pointerOver() {
         if (this.used) return;
+        if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
         // If this is players turn
             // If this is currently selected
@@ -76,6 +77,7 @@ class ActionButton extends Phaser.GameObjects.Container {
 
     pointerOut() {
         if (this.used) return;
+        if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
         // If this is players turn
             // If this is currently selected
@@ -90,6 +92,7 @@ class ActionButton extends Phaser.GameObjects.Container {
 
     pointerDown() {
         if (this.used) return;
+        if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
         console.log(this.scene);
         console.log(this.phase);
@@ -157,7 +160,7 @@ class ActionButton extends Phaser.GameObjects.Container {
             this.sprite.play(this.hoverKey);
             this.scene.activeActionButton = null;
 
-            this.scene.clearPaths();
+            this.scene.clearPaths(false);
         }
         
         console.log(this.scene.playerAction);

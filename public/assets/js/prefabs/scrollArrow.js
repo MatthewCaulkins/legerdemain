@@ -2,7 +2,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
     constructor(scene, direction, scale = 1) {
         super(scene, 0, 0, CONSTANTS.ARROW);
 
-        this.playerArmies = scene.scene.key === CONSTANTS.PLAY_SCENE ? scene.playerArmies.length : 3;
+        this.playerArmies = scene.scene.key === CONSTANTS.PLAY_SCENE ? scene.playerArmies.length - 1 : 3;
 
         console.log(this.playerArmies);
 

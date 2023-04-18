@@ -378,7 +378,7 @@ class PlayScene extends Phaser.Scene {
                     // console.log(questionedTile);
 
                     // Will have to take into account friendly units in the Play Scene
-                    if (questionedTile.unit === null) {
+                    // if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             console.log(tileOfInterest.path);
                             tileOfInterest.path.forEach(path => {
@@ -389,12 +389,12 @@ class PlayScene extends Phaser.Scene {
                         } else {
                             console.log('tile included already');
                         }
-                    }
+                    // }
                 }
                 
                 if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
                     questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
-                    if (questionedTile.unit === null) {
+                    // if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
@@ -402,12 +402,12 @@ class PlayScene extends Phaser.Scene {
                             questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile}); //CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
-                    }
+                    // }
                 }
 
                 if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
                     questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
-                    if (questionedTile.unit === null) {
+                    // if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
@@ -415,12 +415,12 @@ class PlayScene extends Phaser.Scene {
                             questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
-                    }
+                    // }
                 }
                 
                 if (tileOfInterest.row - 1 >= 0) {
                     questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
-                    if (questionedTile.unit === null) {
+                    // if (questionedTile.unit === null) {
                         if (!tilesOfInterest.includes(questionedTile)) {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
@@ -428,7 +428,7 @@ class PlayScene extends Phaser.Scene {
                             questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile}); // CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
-                    }
+                    // }
                 }
             });
         }
@@ -518,6 +518,7 @@ class PlayScene extends Phaser.Scene {
                 // console.log(scene.targetTile.unit.tint.z);
                 // console.log(scene.targetTile.unit.character.z);
                 // console.log(scene.targetTile.z);
+                scene.selectedFromTile = scene.targetTile;
                 scene.targetTile.unit.z = scene.targetTile.z;
                 // scene.targetTile.unit.tint.setDepth(scene.targetTile.depth);
                 // scene.targetTile.unit.character.setDepth(scene.targetTile.depth);
@@ -549,6 +550,7 @@ class PlayScene extends Phaser.Scene {
 
     clearPaths(clearSelections = true) {
         console.log('clearPaths');
+        console.log('clear selections: ' + clearSelections);
         this.generatedBoard.tiles.forEach((tile) => {
             tile.inRange = false;
             tile.path = [];
