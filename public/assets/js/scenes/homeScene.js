@@ -127,9 +127,9 @@ class HomeScene extends Phaser.Scene {
         // TODO: add matchmaking tile container
         const matcmakingContainerConfig = {
             scene: this,
-            x: 100, 
+            x: 110,
             y: 200,
-            width: gameWidth - 200,
+            width: gameWidth - 220,
             height: gameHeight - 400
         };
         this.matchmakingTileContainer = new MatchmakingTileContainer(matcmakingContainerConfig);

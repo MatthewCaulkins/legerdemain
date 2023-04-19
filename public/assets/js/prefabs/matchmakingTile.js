@@ -1,6 +1,6 @@
 class MatchmakingTile extends Phaser.GameObjects.Container {
     constructor(config) { 
-        super(config.scene, 0, 0);
+        super(config.scene, config.x, config.y);
 
         this.id = config.matchmakingId;
 
