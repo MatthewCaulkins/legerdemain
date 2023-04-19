@@ -1,8 +1,8 @@
 class MatchmakingTile extends Phaser.GameObjects.Container {
-    constructor(scene) { 
-        super(scene, 0, 0);
+    constructor(config) { 
+        super(config.scene, 0, 0);
 
-        this.id;
+        this.id = config.matchmakingId;
 
         this.leftSide = this.scene.add.image(0, 0, CONSTANTS.MATCHMAKING_TILE);
         this.rightSide = this.scene.add.image(75, 0, CONSTANTS.MATCHMAKING_TILE);
@@ -33,7 +33,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         
         this.setSize(150, 75);
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
-        this.scene.add.existing(this);
+        config.container.add(this);
     }
     
     onLeftSidePointerover() {

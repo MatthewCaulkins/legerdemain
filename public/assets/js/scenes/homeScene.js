@@ -90,11 +90,6 @@ class HomeScene extends Phaser.Scene {
 
         emitter.emit(CONSTANTS.GAME_LOADED);
         emitter.once(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
-
-        
-        // TODO: add matchmaking tile container
-        this.matchmakingContainer = new MatchmakingTile(this);
-        this.alignmentGrid.positionItemAtIndex(34, this.matchmakingContainer);
     }
 
     // Change scenes
@@ -127,6 +122,17 @@ class HomeScene extends Phaser.Scene {
         const text = this.add.text(0, 0, `Welcome ${game.player.name}`, CONSTANTS.DARK_TEXT_STYLE);
 
         this.alignmentGrid.positionItemAtIndex(100, text);
+
+        
+        // TODO: add matchmaking tile container
+        const matcmakingContainerConfig = {
+            scene: this,
+            x: 100, 
+            y: 200,
+            width: gameWidth - 200,
+            height: gameHeight - 400
+        };
+        this.matchmakingTileContainer = new MatchmakingTileContainer(matcmakingContainerConfig);
     }
 
     // loadPlayScene(scene) {
@@ -158,6 +164,8 @@ class HomeScene extends Phaser.Scene {
         // List all players not in a game
 
     update() {
-        
+        if (this.matchmakingTileContainer) {
+            this.matchmakingTileContainer.moveContainers();
+        }
     }
 }

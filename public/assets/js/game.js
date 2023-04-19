@@ -9,8 +9,8 @@ if (isMobile == -1) {
 
 this.player; 
 
-var gameWidth = isMobile >= 0 ? window.innerWidth : (window.innerWidth > 1200 ? 1200 : window.innerWidth);
-var gameHeight = isMobile >= 0 ? window.innerHeight : (window.innerHeight > 900 ? 900 : window.innerHeight);
+var gameWidth = isMobile >= 0 ? window.innerWidth : 1200;//(window.innerWidth > 1200 ? 1200 : window.innerWidth);
+var gameHeight = isMobile >= 0 ? window.innerHeight : 900;//(window.innerHeight > 900 ? 900 : window.innerHeight);
 
 var gameConfig = {
     type: Phaser.AUTO,
