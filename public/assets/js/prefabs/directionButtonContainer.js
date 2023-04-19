@@ -3,7 +3,7 @@ class DirectionButtonContainer extends Phaser.GameObjects.Container {
         super(config.scene, -52, -85);
 
         let buttonConfig = {
-            scene: config.scene,
+            scene: this.scene,
             texture: CONSTANTS.TOP_DIRECTION_BUTTON,
             direction: CONSTANTS.TOP,
             x: 100,
@@ -14,7 +14,7 @@ class DirectionButtonContainer extends Phaser.GameObjects.Container {
         this.add(this.topDirectionButton);
 
         buttonConfig = {
-            scene: config.scene,
+            scene: this.scene,
             texture: CONSTANTS.RIGHT_DIRECTION_BUTTON,
             direction: CONSTANTS.RIGHT,
             x: 100,
@@ -25,7 +25,7 @@ class DirectionButtonContainer extends Phaser.GameObjects.Container {
         this.add(this.rightDirectionButton);
 
         buttonConfig = {
-            scene: config.scene,
+            scene: this.scene,
             texture: CONSTANTS.BOTTOM_DIRECTION_BUTTON,
             direction: CONSTANTS.BOTTOM,
             x: 25,
@@ -36,7 +36,7 @@ class DirectionButtonContainer extends Phaser.GameObjects.Container {
         this.add(this.bottomDirectionButton);
 
         buttonConfig = {
-            scene: config.scene,
+            scene: this.scene,
             texture: CONSTANTS.LEFT_DIRECTION_BUTTON,
             direction: CONSTANTS.LEFT,
             x: 25,
@@ -50,7 +50,7 @@ class DirectionButtonContainer extends Phaser.GameObjects.Container {
         this.scaleX = config.scale;
         this.scaleY = config.scale;
 
-        config.scene.add.existing(this);
+        this.scene.add.existing(this);
 
         this.setVisible(false);
     }
