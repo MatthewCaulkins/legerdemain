@@ -2,12 +2,14 @@ class Controller {
     constructor() {
         this._id = this.getCookie('_id');
 
-        emitter.on('gameLoaded', this.connectSocket);
-        
+        emitter.on(CONSTANTS.GAME_LOADED, this.connectSocket);
+
+        this.connected = false;
         this.otherPlayers = {};
         this.events = [];
 
         this.rooms = {};
+        this.currentRoom;
     }
 
     
@@ -32,6 +34,7 @@ class Controller {
         console.log(`id : ${controller._id}`);
         const self = this;
         this.socket = io();
+        controller.connected = true;
 
         this.socket.emit(CONSTANTS.GET_PLAYER_DATA, controller._id);
 
@@ -94,24 +97,42 @@ class Controller {
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, roomID);
         });
 
+        // Returning to the home page, get all rooms
+        emitter.on(CONSTANTS.GET_ROOMS, () => {
+            this.socket.emit(CONSTANTS.GET_ROOMS);
+        });
+
         // List the rooms when coming to the home screen
         this.socket.on(CONSTANTS.LIST_ROOMS, data => {
+            // Reset rooms
+            controller.rooms = {};
+
             console.log('list rooms data:');
             console.log(data);
 
             Object.keys(data).forEach(room => {
                 console.log(room);
-                emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room].id);
+                emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
             })
         });
 
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
             emitter.on(CONSTANTS.JOIN_ROOM, async (data) => {
-                console.log('save army');
-                console.log(data);
+                console.log('player joins');
+                console.log(data.player);
+                console.log(data.side);
+                console.log(data.roomID);
+
+                if (data.side === CONSTANTS.LEFT) {
+                    controller.rooms[data.roomID].player1 = data.player;
+                } else if (data.side === CONSTANTS.RIGHT) {
+                    controller.rooms[data.roomID].player2 = data.player;
+                }
+
+                console.log(controller.rooms)
                 // game.player.armies[data.armyId] = data;
-                // this.socket.emit(CONSTANTS.SAVE_ARMY, data);
+                this.socket.emit(CONSTANTS.JOIN_ROOM, data);
             });
 
             controller.events.push(CONSTANTS.JOIN_ROOM);

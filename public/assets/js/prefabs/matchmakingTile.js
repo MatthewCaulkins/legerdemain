@@ -35,6 +35,15 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
         config.container.add(this);
 
+        if (config.player1) {
+            this.player1 = config.player1;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
+        }
+        if (config.player2) {
+            this.player2 = config.player2;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
+        }
+
         // this.leftUnit = null;
         // this.rightUnit = null;
     }
@@ -54,11 +63,16 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     onLeftSidePointerdown() {
         if (this.player1 === null) {
             // TODO: Send socket event that player joined
-            this.player1 === game.player;
+            emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.LEFT, roomID: this.roomID});
+
+            this.player1 = game.player;
             console.log('left side clicked');
 
-            this.createUnit(CONSTANTS.LANCE, this.leftSide);
-            this.leftSide.unit.setRotation(-CONSTANTS.BOARD_ORIENTATION);
+            // TODO: remove player from all other matchmaking tiles
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
+        } else if (this.player1 === game.player) {
+            this.player1 = null;
+            this.leftSide.unit.destroy();
         }
     }
 
@@ -77,110 +91,117 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     onRightSidePointerdown() {
         if (this.player2 === null) {
             // TODO: Send socket event that player joined
-            this.player2 === game.player;
+            emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
+
+            this.player2 = game.player;
             console.log('right side clicked');
 
-            this.createUnit(CONSTANTS.LANCE, this.rightSide);
-
-            this.rightSide.unit.setRotation(-CONSTANTS.BOARD_ORIENTATION);
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
+        } else if (this.player2 === game.player) {
+            this.player2 = null;
+            this.rightSide.unit.destroy();
         }
     }
 
-
-
     createUnit(type, side) {
         let direction;
+        let boardSide;
 
-        if (side === this.leftSide) {
+        if (side === CONSTANTS.LEFT) {
+            boardSide = this.leftSide;
             direction = CONSTANTS.RIGHT;
-        } else {
+        }
+        if (side === CONSTANTS.RIGHT) {
+            boardSide = this.rightSide;
             direction = CONSTANTS.LEFT;
         }
         // console.log(type);
         // console.log(boardTile);
         switch(type) {
             case CONSTANTS.AXE:
-                side.unit = new Axe({
+                boardSide.unit = new Axe({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.BOW:
-                side.unit = new Bow({
+                boardSide.unit = new Bow({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.CONTROL:
-                side.unit = new Control({
+                boardSide.unit = new Control({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.DAGGER:
-                side.unit = new Dagger({
+                boardSide.unit = new Dagger({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.HEALING:
-                side.unit = new Healing({
+                boardSide.unit = new Healing({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.LANCE:
-                side.unit = new Lance({
+                boardSide.unit = new Lance({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.SHIELD:
-                side.unit = new Shield({
+                boardSide.unit = new Shield({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.SORCERY:
-                side.unit = new Sorcery({
+                boardSide.unit = new Sorcery({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
             case CONSTANTS.SWORD:
-                side.unit = new Sword({
+                boardSide.unit = new Sword({
                     scene: this.scene, 
                     player: game.player,
-                    tile: side,
+                    tile: boardSide,
                     container: this,
                     direction: direction
                 });
             break;
         }
+
+        boardSide.unit.setRotation(-CONSTANTS.BOARD_ORIENTATION);
     }
 
     startGame() {

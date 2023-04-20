@@ -151,6 +151,12 @@ io.on('connection', async function (socket) {
     // List rooms
     socket.on('getRooms', data => {
         socket.emit('listRooms', rooms);
+    });
+
+    // Join a room 
+    socket.on('joinRoom', (data) => {
+        console.log('Player joins a room ');
+        console.log(data.roomID);
     })
 
     // Save armies

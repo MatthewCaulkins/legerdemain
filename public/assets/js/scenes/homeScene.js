@@ -51,7 +51,7 @@ class HomeScene extends Phaser.Scene {
         // this.SWORD_TINT = 'swordTint';
     }
 
-    create() {
+    create() {        
         model.currentScene = this;
         this.scene = this;
         
@@ -88,8 +88,12 @@ class HomeScene extends Phaser.Scene {
             this.createHUD();
         }
 
-        emitter.emit(CONSTANTS.GAME_LOADED);
-        emitter.once(CONSTANTS.CREATE_HUD, this.createHUD.bind(this));
+        if (!controller.connected) {
+            emitter.emit(CONSTANTS.GAME_LOADED);
+        } else {
+            emitter.emit(CONSTANTS.GET_ROOMS);
+        }
+        emitter.once(CONSTANTS.CREATE_HUD, this.createHUD, this);
     }
 
     // Change scenes
@@ -97,6 +101,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
+        emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
 
         game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
@@ -106,6 +111,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
+        emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
 
         game.scene.start(CONSTANTS.SETUP_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
