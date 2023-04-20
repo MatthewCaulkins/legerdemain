@@ -15,99 +15,100 @@ class Unit extends Phaser.GameObjects.Container {
         //this.scene.boardContainer.add(this.tint);
         //this.scene.boardContainer.add(this.character);
 
+        if (this.scene.scene.key === CONSTANTS.HOME_SCENE) {
 
-        this.scene = config.scene;
-        this.player = config.player;
-        this.tint = tint;
-        this.character = character;
-        this.tile = config.tile;
-        this.tintTexture = config.tintTexture;
-        this.characterTexture = config.characterTexture;
-        this.container = config.container;
+        } else {
+            this.player = config.player;
+            this.tint = tint;
+            this.character = character;
+            this.tile = config.tile;
+            this.tintTexture = config.tintTexture;
+            this.characterTexture = config.characterTexture;
+            this.container = config.container;
 
-        // Set the unit's container
-        this.container.add(this);
-        // this.container.add(this.tint);
-        // this.container.add(this.character);
+            // Set the unit's container
+            this.container.add(this);
+            // this.container.add(this.tint);
+            // this.container.add(this.character);
 
-        // Set the depth to the same as the tile the unit is on
-        // this.depth = this.tile.depth;
-        // this.tint.setDepth(0);
-        // this.character.setDepth(1);
-        // this.tint.z = 0;
-        // this.character.z = 1;
+            // Set the depth to the same as the tile the unit is on
+            // this.depth = this.tile.depth;
+            // this.tint.setDepth(0);
+            // this.character.setDepth(1);
+            // this.tint.z = 0;
+            // this.character.z = 1;
 
-        // Set this units display size
-        const width = character.displayWidth;
-        const height = character.displayHeight;
-        this.setSize(width, height);
+            // Set this units display size
+            const width = character.displayWidth;
+            const height = character.displayHeight;
+            this.setSize(width, height);
 
-        // Move this container to the tile it is on
-        this.x = this.tile.x;
-        this.y = this.tile.y;
-        this.z = this.tile.z;
-        this.tile.unit = this;
+            // Move this container to the tile it is on
+            this.x = this.tile.x;
+            this.y = this.tile.y;
+            this.z = this.tile.z;
+            this.tile.unit = this;
 
-        // console.log('The dimensions of this container are ');
-        // console.log(width);
-        // console.log(height);
-        // console.log('The position of this container is');
-        // console.log(this.x);
-        // console.log(this.y);
-        // TODO: Change these to sprites eventually
-        // this.startX = x;
-        // this.startY = y;
-        // this.distance = distance;
+            // console.log('The dimensions of this container are ');
+            // console.log(width);
+            // console.log(height);
+            // console.log('The position of this container is');
+            // console.log(this.x);
+            // console.log(this.y);
+            // TODO: Change these to sprites eventually
+            // this.startX = x;
+            // this.startY = y;
+            // this.distance = distance;
 
-        // this.motion = motion;
-        // this.anim = anims[motion];
-        // this.direction = directions[direction];
-        // this.speed = 0.15;
-        // this.f = this.anim.startFrame;
+            // this.motion = motion;
+            // this.anim = anims[motion];
+            // this.direction = directions[direction];
+            // this.speed = 0.15;
+            // this.f = this.anim.startFrame;
 
-        // Universal attributes used by sub-classes
-        this.currentHealth;
-        
-        this.description;
-        this.health;
-        this.defense;
-        this.offense;
-        this.range;
-        this.movement;
-        this.dodge;
-        this.block;
-        this.cooldown;
+            // Universal attributes used by sub-classes
+            this.currentHealth;
+            
+            this.description;
+            this.health;
+            this.defense;
+            this.offense;
+            this.range;
+            this.movement;
+            this.dodge;
+            this.block;
+            this.cooldown;
 
-        this.currentDirection;
-
-
-        // Add the healthbar for this unit
-        this.healthBar = new HealthBar({
-            scene: this.scene,
-            width: 100,
-            height: 10,
-            x: 0,
-            y: 0 - (.6 * height),
-        });
-        this.add(this.healthBar);
-
-        this.healthBar.setPercent(1);
-        this.healthBar.setDepth(this.z);
-
-        this.healthBar.container.setVisible(false);
-        this.healthBar.bar.setVisible(false);
+            this.currentDirection;
 
 
-        // Add directions
-        
-        this.directions = new DirectionButtonContainer({
-            scene: this.scene,
-            unit: this,
-            scale: .7
-        });
-        this.add(this.directions);
-        this.directions.setDepth(this.z);
+            // Add the healthbar for this unit
+            this.healthBar = new HealthBar({
+                scene: this.scene,
+                width: 100,
+                height: 10,
+                x: 0,
+                y: 0 - (.6 * height),
+            });
+            this.add(this.healthBar);
 
+            this.healthBar.setPercent(1);
+            this.healthBar.setDepth(this.z);
+
+            this.healthBar.container.setVisible(false);
+            this.healthBar.bar.setVisible(false);
+
+
+            // Add directions
+            
+            this.directions = new DirectionButtonContainer({
+                scene: this.scene,
+                unit: this,
+                scale: .7
+            });
+            this.add(this.directions);
+            this.directions.setDepth(this.z);
+        }
         
         // this.character.play()
         // this.depth = y + 64;

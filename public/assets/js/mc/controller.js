@@ -1,33 +1,64 @@
 class Controller {
     constructor() {
+        this._id = this.getCookie('_id');
+
         emitter.on('gameLoaded', this.connectSocket);
         
         this.otherPlayers = {};
         this.events = [];
+
+        this.rooms = {};
+    }
+
+    
+    getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 
     // Pay attention to the socket for every new player
     connectSocket() {
+        console.log('connect to socket');
+        console.log(`id : ${controller._id}`);
         const self = this;
         this.socket = io();
 
+        this.socket.emit(CONSTANTS.GET_PLAYER_DATA, controller._id);
+
         // When a new player connects, get a list of all active players
         this.socket.on(CONSTANTS.CURRENT_PLAYERS, players => {
+            console.log(players);
             game.player = players.pop();
             emitter.emit(CONSTANTS.CREATE_HUD);
 
             console.log('Connected');
+            console.log(game.player);
             console.log(controller.otherPlayers);
 
             Object.keys(players).forEach(id => {
                 for (const [key, value] of Object.entries(players[id])) {
+                    console.log(`key ${key}`);
+                    console.log(`value ${value}`);
+
                     if (key != game.player.socketId) {
+                        console.log('Add player to list of other players');
                         controller.otherPlayers[key] = value;
                     }
                 }
             });
 
             // Return that data is loaded
+            console.log(controller.otherPlayers);
             this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED, game.player.playerId);
         });
 
@@ -42,6 +73,7 @@ class Controller {
         // Add a new player to the object
         this.socket.on(CONSTANTS.NEW_PLAYER, player => {
             console.log('New Player Connected');
+            console.log(player);
             console.log(controller.otherPlayers);
 
             controller.otherPlayers[player.socketId] = player;
@@ -56,6 +88,25 @@ class Controller {
             });
 
             controller.events.push(CONSTANTS.SAVE_ARMY);
+        }
+
+        // Add a new room
+        this.socket.on(CONSTANTS.CREATE_NEW_ROOM, roomID => {
+            console.log('New Room Created');
+
+            emitter.emit(CONSTANTS.CREATE_NEW_ROOM, roomID);
+        });
+
+        // Have player join a room
+        if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
+            emitter.on(CONSTANTS.JOIN_ROOM, async (data) => {
+                console.log('save army');
+                console.log(data);
+                // game.player.armies[data.armyId] = data;
+                // this.socket.emit(CONSTANTS.SAVE_ARMY, data);
+            });
+
+            controller.events.push(CONSTANTS.JOIN_ROOM);
         }
 
         // Return when army is saved
@@ -85,6 +136,7 @@ class Controller {
         // Disconnect a player and delete their ID
         this.socket.on(CONSTANTS.DISCONNECT_PLAYER, (socketId) => {
             console.log('Player disconnected');
+            console.log(socketId);
             console.log(controller.otherPlayers);
 
             delete controller.otherPlayers[socketId];

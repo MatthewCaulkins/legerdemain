@@ -44,11 +44,14 @@ class Constants {
         this.BACK_TO_HOME = 'backToHome';
         this.CLEAR_ARMY = 'clearArmy';
         this.CREATE_HUD = 'createHUD';
+        this.CREATE_NEW_ROOM = 'createNewRoom';
         this.CURRENT_PLAYERS = 'currentPlayers';
         this.DELETE_ARMY = 'deleteArmy';
         this.DISCONNECT_PLAYER = 'disconnectPlayer';
         this.GAME_LOADED = 'gameLoaded';
         this.GAME_SCREEN_REACHED = 'gameScreenReached';
+        this.GET_PLAYER_DATA = 'getPlayerData';
+        this.JOIN_ROOM = 'joinRoom';
         this.LOAD_PLAY_SCENE = 'loadPlayScene';
         this.LOAD_SETUP_SCENE = 'loadSetupScene';
         this.NEW_PLAYER = 'newPlayer';

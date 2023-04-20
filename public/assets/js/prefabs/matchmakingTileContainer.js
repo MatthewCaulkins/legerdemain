@@ -6,8 +6,12 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         const height = config.height;
 
         super(config.scene, x, y);
-
         this.setSize(width, height);
+
+        this.multiplier = 240;
+        this.offset = 100; 
+        this.row = 0;
+        this.column = 0;
         // this.setOrigin(0, 0);
 
         // Add Background so it's easy to find
@@ -25,66 +29,52 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         // Add to the scene
         this.scene.add.existing(this);
 
-        // Keep a record of all active games
-        this.matchmakingContainers = {};
+        // TODO: Create all active rooms
 
-        // TODO: make this triggered by socket io and given a room ID
+
+            // Keep a record of all active games
+            // this.rooms = {};
+
+            // TODO: make this triggered by socket io and given a room ID
+            // let roomID = 1;
+
+            // if (!controller.events.includes(CONSTANTS.CREATE_NEW_ROOM)) {
+            emitter.on(CONSTANTS.CREATE_NEW_ROOM, roomID => {
+                // console.log('create a new room');
+                this.createNewRoom(roomID);
+            });
+
+            //     controller.events.push(CONSTANTS.CREATE_NEW_ROOM);
+            // }
+    }
+
+    createNewRoom(roomID) {
         let matchmakingConfig = {
             scene: this.scene,
             container: this,
-            matchmakingId: 1,
-            x: 100,
-            y: 100
+            roomID: roomID,
+            x: this.offset + (this.multiplier * this.column),
+            y: this.offset + (this.multiplier * this.row)
         };
-        this.matchmakingContainers['container1'] = new MatchmakingTile(matchmakingConfig);
+        controller.rooms[roomID] = new MatchmakingTile(matchmakingConfig);
 
-        matchmakingConfig = {
-            scene: this.scene,
-            container: this,
-            matchmakingId: 2,
-            x: 100,
-            y: 340
-        };
-        this.matchmakingContainers['container2'] = new MatchmakingTile(matchmakingConfig);
+        const rooms = Object.keys(controller.rooms).length;
+        this.column = Math.floor(rooms / 2);
+        this.row = rooms % 2;
 
-        matchmakingConfig = {
-            scene: this.scene,
-            container: this,
-            matchmakingId: 2,
-            x: 340,
-            y: 100
-        };
-        this.matchmakingContainers['container3'] = new MatchmakingTile(matchmakingConfig);
-
-        matchmakingConfig = {
-            scene: this.scene,
-            container: this,
-            matchmakingId: 2,
-            x: 580,
-            y: 100
-        };
-        this.matchmakingContainers['container4'] = new MatchmakingTile(matchmakingConfig);
-        
-        matchmakingConfig = {
-            scene: this.scene,
-            container: this,
-            matchmakingId: 2,
-            x: 820,
-            y: 100
-        };
-        this.matchmakingContainers['container5'] = new MatchmakingTile(matchmakingConfig);
+        // console.log(controller.rooms);
     }
 
-    moveContainers() {
-        // console.log('move container '+ this.matchmakingContainers['container1'].x);
-        // this.matchmakingContainers['container1'].x -= 5;
-        // this.matchmakingContainers['container1'].y -= 5;
+    // moveContainers() {
+    //     // console.log('move container '+ this.rooms['container1'].x);
+    //     // this.rooms['container1'].x -= 5;
+    //     // this.rooms['container1'].y -= 5;
 
-        // if (this.matchmakingContainers['container1'].x < -150) {
-        //     this.matchmakingContainers['container1'].x = gameWidth;
-        // }
-        // if (this.matchmakingContainers['container1'].y < -150) {
-        //     this.matchmakingContainers['container1'].y = gameHeight;
-        // }
-    }
+    //     // if (this.rooms['container1'].x < -150) {
+    //     //     this.rooms['container1'].x = gameWidth;
+    //     // }
+    //     // if (this.rooms['container1'].y < -150) {
+    //     //     this.rooms['container1'].y = gameHeight;
+    //     // }
+    // }
 }

@@ -54,10 +54,14 @@ function signIn() {
             console.log(data);
             
             // Send the player data to our game frontend and wait for acceptance before loading the game scene
-            socket.emit('playerData', {name: data.user.name, units: data.user.units, _id: data.user._id});
-            socket.on('playerDataCollected', () => {
-                window.location.replace('/game.html');
-            })
+            // Store info as a cookie?
+            // document.cookie = `playerId=${data.user._id};`;
+        //    socket.emit('playerData', {name: data.user.name, units: data.user.units, _id: data.user._id});
+        //    socket.on('playerDataCollected', () => {
+            
+            document.cookie = `_id=${data.user._id}`;
+            window.location.replace('/game.html');
+        //    })
         },
         error: function (response) {
             window.alert(JSON.stringify(response));

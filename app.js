@@ -12,6 +12,7 @@ const passwordRoutes = require('./routes/password');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const ArmyModel = require('./models/armyModel');
+const UserModel = require('./models/userModel');
 
 // setup mongo connection
 const uri = process.env.MONGO_CONNECTION_URL;
@@ -37,7 +38,9 @@ const io = require('socket.io')(server);
 // Will want to store this to the database later
 let players = {};
 let currentPlayer;
-let screen = 'home';
+// let screen = 'home';
+let rooms = {};
+let roomID = 0;
 
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
@@ -83,50 +86,64 @@ app.use((err, req, res, next) => {
 io.on('connection', async function (socket) {
     console.log('a user connected');
 
-    // players[socket.id] = {
-    //     rotation: 0,
-    //     x: Math.floor(Math.random() * 700) + 50,
-    //     y: Math.floor(Math.random() * 500) + 50,
-    //     playerId: socket.id,
-    //     team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
-    // };
-
-    // Gather our player data and then respond that the game can load
-    socket.on('playerData', (data) => {
-        currentPlayer = {
-            name: data.name,
-            units: data.units,
-            playerId: data._id,
-            socketId: socket.id
-        };
-        players[currentPlayer.socketId] = currentPlayer;
-
-        screen = 'introScreen';
+    socket.on('getPlayerData', async(id) => {
+        console.log(`id: ${id}`);
+        await UserModel.findOne({ id })
+            .then(async (data) => {
+                currentPlayer = {
+                    name: data.name,
+                    units: data.units,
+                    playerId: data._id,
+                    socketId: socket.id
+                };
+                players[socket.id] = currentPlayer;
+        
+                socket.emit('currentPlayers', [players, currentPlayer]);
+        
+                // update all other players of the new player  - sends to all sockets
+                socket.broadcast.emit('newPlayer', currentPlayer);
+            });
+    });
+    // });
+    // // Gather our player data and then respond that the game can load
+    // socket.on('playerData', (data) => {
+        
+        // screen = 'introScreen';
 
         // console.log('load the game scene');
-        socket.emit('playerDataCollected');
-    });
+        // socket.emit('playerDataCollected');
+    // });
 
-    if (screen === 'introScreen') {
-        console.log('connect To Game');
+    // if (screen === 'introScreen') {
+        // console.log('connect To Game');
 
-        const otherPlayers = socket.sockets;
+        // const otherPlayers = socket.sockets;
 
         // send players object to new player  - only to this new socket, array of all players and then this player
-        socket.emit('currentPlayers', [players, currentPlayer]);
+    // socket.emit('currentPlayers', players);
 
-        // update all other players of the new player  - sends to all sockets
-        socket.broadcast.emit('newPlayer', currentPlayer);
-    }
+    //     // update all other players of the new player  - sends to all sockets
+    // socket.broadcast.emit('newPlayer', currentPlayer);
+    // }
 
+    
     // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
     socket.on('gameScreenReached', async (playerId) => {
-        screen = 'gameScreen';
+        // screen = 'gameScreen';
 
         await ArmyModel.find({playerId})
             .then(async (result) => {
                 socket.emit('playerArmies', result);
         });
+
+        // If this is the first time, create 6 rooms
+        if (Object.keys(rooms).length === 0) {
+            do {
+                socket.emit('createNewRoom', roomID);
+                rooms[roomID] = {id: roomID, player1: null, player2: null};
+                roomID ++;
+            } while (Object.keys(rooms).length < 8);
+        }
     });
 
 
@@ -147,13 +164,9 @@ io.on('connection', async function (socket) {
                     await ArmyModel.updateOne({playerId, armyId}, {name, units});
                 }
         }); 
-        // console.log(army);
-       // 
-        // console.log('added army');
-
         socket.emit('armySaved');
-        // return done(null, user);
     });
+
 
     // Delete an army
     socket.on('deleteArmy', async (data) => {
@@ -167,10 +180,10 @@ io.on('connection', async function (socket) {
 
     socket.on('disconnect', () => {
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
-        if (screen !== 'introScreen') {
+        // if (screen !== 'introScreen') {
             // remove this player from our players object
-            delete players[currentPlayer.socketId];
-        }
+        delete players[currentPlayer.socketId];
+        // }
         
         // emit a message to all players to remove this player
         console.log('user disconnected');

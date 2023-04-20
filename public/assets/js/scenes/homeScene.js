@@ -164,8 +164,8 @@ class HomeScene extends Phaser.Scene {
         // List all players not in a game
 
     update() {
-        if (this.matchmakingTileContainer) {
-            this.matchmakingTileContainer.moveContainers();
-        }
+        // if (this.matchmakingTileContainer) {
+        //     this.matchmakingTileContainer.moveContainers();
+        // }
     }
 }
