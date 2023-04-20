@@ -61,14 +61,11 @@ class Controller {
             console.log(controller.otherPlayers);
             this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED, game.player.playerId);
         });
-
-
         // Get players armies
         this.socket.on(CONSTANTS.PLAYER_ARMIES, armies => {
             // Object.keys(armies).forEach(army => {
             game.player.armies = armies;
         });
-
 
         // Add a new player to the object
         this.socket.on(CONSTANTS.NEW_PLAYER, player => {
@@ -95,6 +92,17 @@ class Controller {
             console.log('New Room Created');
 
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, roomID);
+        });
+
+        // List the rooms when coming to the home screen
+        this.socket.on(CONSTANTS.LIST_ROOMS, data => {
+            console.log('list rooms data:');
+            console.log(data);
+
+            Object.keys(data).forEach(room => {
+                console.log(room);
+                emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room].id);
+            })
         });
 
         // Have player join a room

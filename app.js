@@ -143,9 +143,15 @@ io.on('connection', async function (socket) {
                 rooms[roomID] = {id: roomID, player1: null, player2: null};
                 roomID ++;
             } while (Object.keys(rooms).length < 8);
+        } else {
+            socket.emit('listRooms', rooms);
         }
     });
 
+    // List rooms
+    socket.on('getRooms', data => {
+        socket.emit('listRooms', rooms);
+    })
 
     // Save armies
     socket.on('saveArmy', async (data) => {

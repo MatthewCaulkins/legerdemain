@@ -51,7 +51,9 @@ class Constants {
         this.GAME_LOADED = 'gameLoaded';
         this.GAME_SCREEN_REACHED = 'gameScreenReached';
         this.GET_PLAYER_DATA = 'getPlayerData';
+        this.GET_ROOMS = 'getRooms';
         this.JOIN_ROOM = 'joinRoom';
+        this.LIST_ROOMS = 'listRooms';
         this.LOAD_PLAY_SCENE = 'loadPlayScene';
         this.LOAD_SETUP_SCENE = 'loadSetupScene';
         this.NEW_PLAYER = 'newPlayer';
