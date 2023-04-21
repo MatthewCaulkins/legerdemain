@@ -53,6 +53,7 @@ class Constants {
         this.GET_PLAYER_DATA = 'getPlayerData';
         this.GET_ROOMS = 'getRooms';
         this.JOIN_ROOM = 'joinRoom';
+        this.LEAVE_ROOM = 'leaveRoom';
         this.LIST_ROOMS = 'listRooms';
         this.LOAD_PLAY_SCENE = 'loadPlayScene';
         this.LOAD_SETUP_SCENE = 'loadSetupScene';

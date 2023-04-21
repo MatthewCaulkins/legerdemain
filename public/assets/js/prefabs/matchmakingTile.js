@@ -61,20 +61,21 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     }
 
     onLeftSidePointerdown() {
+        console.log(game.player.playerId);
         if (this.player1 === null) {
             // TODO: Send socket event that player joined
             emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.LEFT, roomID: this.roomID});
 
-            this.player1 = game.player;
-            console.log('left side clicked');
+            // this.player1 = game.player;
+            // console.log('left side clicked');
 
             // TODO: remove player from all other matchmaking tiles
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
-        } else if (this.player1 === game.player) {
-            emitter.emit(CONSTANTS.LEAVE_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
+        } else if (this.player1.playerId === game.player.playerId) {
+            emitter.emit(CONSTANTS.LEAVE_ROOM, {player: game.player, side: CONSTANTS.LEFT, roomID: this.roomID});
             
-            this.player1 = null;
-            this.leftSide.unit.destroy();
+            // this.player1 = null;
+            // this.leftSide.unit.destroy();
         }
     }
 
@@ -95,15 +96,15 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             // TODO: Send socket event that player joined
             emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
 
-            this.player2 = game.player;
-            console.log('right side clicked');
+            // this.player2 = game.player;
+            // console.log('right side clicked');
 
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
-        } else if (this.player2 === game.player) {
+        } else if (this.player2.playerId === game.player.playerId) {
             emitter.emit(CONSTANTS.LEAVE_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
 
-            this.player2 = null;
-            this.rightSide.unit.destroy();
+            // this.player2 = null;
+            // this.rightSide.unit.destroy();
         }
     }
 

@@ -88,7 +88,7 @@ io.on('connection', async function (socket) {
 
     socket.on('getPlayerData', async(id) => {
         console.log(`id: ${id}`);
-        await UserModel.findOne({ id })
+        await UserModel.findOne({ _id : id })
             .then(async (data) => {
                 currentPlayer = {
                     name: data.name,
@@ -164,9 +164,27 @@ io.on('connection', async function (socket) {
             rooms[data.roomID].player2 = data.player;
         }
 
+        // TODO: Make this so it only updates that one room instead of relisting all of them
         socket.broadcast.emit('listRooms', rooms);
+        socket.emit('listRooms', rooms);
 
         // TODO: If both slots are full start a game
+    });
+
+    // Leave a room
+    socket.on('leaveRoom', (data) => {
+        console.log('Player leaves a room ');
+        console.log(data.roomID);
+
+        if (data.side === 'left') {
+            rooms[data.roomID].player1 = null;
+        } else if (data.side === 'right') {
+            rooms[data.roomID].player2 = null;
+        }
+
+        // TODO: Make this so it only updates that one room instead of relisting all of them
+        socket.broadcast.emit('listRooms', rooms);
+        socket.emit('listRooms', rooms);
     });
 
     // Save armies

@@ -50,6 +50,13 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
     }
 
     createNewRoom(roomID, player1, player2) {
+        const rooms = Object.keys(controller.rooms).length;
+        console.log(rooms);
+        this.column = rooms === 0 ? 0 : Math.floor(rooms / 2);
+        console.log(this.column);
+        this.row = rooms % 2;
+        console.log(this.row);
+
         let matchmakingConfig = {
             scene: this.scene,
             container: this,
@@ -60,13 +67,6 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
             player2: player2
         };
         controller.rooms[roomID] = new MatchmakingTile(matchmakingConfig);
-
-        const rooms = Object.keys(controller.rooms).length;
-        console.log(rooms);
-        this.column = Math.floor(rooms / 2);
-        console.log(this.column);
-        this.row = rooms % 2;
-        console.log(this.row);
 
         if (player1) {
             controller.rooms[roomID].createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
