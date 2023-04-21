@@ -92,10 +92,12 @@ class Controller {
         }
 
         // Add a new room
-        this.socket.on(CONSTANTS.CREATE_NEW_ROOM, roomID => {
+        this.socket.on(CONSTANTS.CREATE_NEW_ROOM, data => {
             console.log('New Room Created');
 
-            emitter.emit(CONSTANTS.CREATE_NEW_ROOM, roomID);
+            controller.rooms[data.roomID] = data;
+            console.log(controller.rooms);
+            emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data);
         });
 
         // Returning to the home page, get all rooms
@@ -114,7 +116,7 @@ class Controller {
             Object.keys(data).forEach(room => {
                 console.log(room);
                 emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
-            })
+            });
         });
 
         // Have player join a room
@@ -145,6 +147,17 @@ class Controller {
 
             controller.events.push(CONSTANTS.JOIN_ROOM);
         }
+
+        // Add a player to the room
+        this.socket.on('addPlayerToRoom', (data) => {
+
+
+            if (data.side === CONSTANTS.LEFT) {
+                controller.rooms[data.roomID].player1 = data.player;
+            } else if (data.side === CONSTANTS.RIGHT) {
+                controller.rooms[data.roomID].player2 = data.player;
+            }
+        });
 
         // Have a player leave a room
         if (!controller.events.includes(CONSTANTS.LEAVE_ROOM)) {

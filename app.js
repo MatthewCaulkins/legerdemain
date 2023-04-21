@@ -136,11 +136,11 @@ io.on('connection', async function (socket) {
                 socket.emit('playerArmies', result);
         });
 
-        // If this is the first time, create 6 rooms
+        // If this is the first time, create 8 rooms
         if (Object.keys(rooms).length === 0) {
             do {
-                socket.emit('createNewRoom', roomID);
-                rooms[roomID] = {id: roomID, player1: null, player2: null};
+                rooms[roomID] = {roomID: roomID, player1: null, player2: null};
+                socket.emit('createNewRoom', rooms[roomID]);
                 roomID ++;
             } while (Object.keys(rooms).length < 8);
         } else {
@@ -149,7 +149,7 @@ io.on('connection', async function (socket) {
     });
 
     // List rooms
-    socket.on('getRooms', data => {
+    socket.on('getRooms', () => {
         socket.emit('listRooms', rooms);
     });
 
@@ -157,7 +157,17 @@ io.on('connection', async function (socket) {
     socket.on('joinRoom', (data) => {
         console.log('Player joins a room ');
         console.log(data.roomID);
-    })
+
+        if (data.side === 'left') {
+            rooms[data.roomID].player1 = data.player;
+        } else if (data.side === 'right') {
+            rooms[data.roomID].player2 = data.player;
+        }
+
+        socket.broadcast.emit('listRooms', rooms);
+
+        // TODO: If both slots are full start a game
+    });
 
     // Save armies
     socket.on('saveArmy', async (data) => {
