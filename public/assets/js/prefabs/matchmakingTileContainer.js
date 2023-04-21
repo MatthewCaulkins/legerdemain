@@ -74,7 +74,6 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         if (player2) {
             controller.rooms[roomID].createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
         }
-        // console.log(controller.rooms);
     }
 
     
