@@ -71,6 +71,8 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             // TODO: remove player from all other matchmaking tiles
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
         } else if (this.player1 === game.player) {
+            emitter.emit(CONSTANTS.LEAVE_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
+            
             this.player1 = null;
             this.leftSide.unit.destroy();
         }
@@ -98,6 +100,8 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
 
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
         } else if (this.player2 === game.player) {
+            emitter.emit(CONSTANTS.LEAVE_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
+
             this.player2 = null;
             this.rightSide.unit.destroy();
         }
