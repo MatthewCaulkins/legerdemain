@@ -64,6 +64,7 @@ class Controller {
             console.log(controller.otherPlayers);
             this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED, game.player.playerId);
         });
+
         // Get players armies
         this.socket.on(CONSTANTS.PLAYER_ARMIES, armies => {
             // Object.keys(armies).forEach(army => {
@@ -124,18 +125,47 @@ class Controller {
                 console.log(data.side);
                 console.log(data.roomID);
 
+                // Remove the player from other rooms
+                if (controller.currentRoom != null) {
+
+                }
+
                 if (data.side === CONSTANTS.LEFT) {
                     controller.rooms[data.roomID].player1 = data.player;
                 } else if (data.side === CONSTANTS.RIGHT) {
                     controller.rooms[data.roomID].player2 = data.player;
                 }
 
-                console.log(controller.rooms)
+                console.log(controller.rooms);
+                controller.currentRoom = controller.rooms[data.roomID];
+                console.log(controller.currentRoom);
                 // game.player.armies[data.armyId] = data;
                 this.socket.emit(CONSTANTS.JOIN_ROOM, data);
             });
 
             controller.events.push(CONSTANTS.JOIN_ROOM);
+        }
+
+        // Have a player leave a room
+        if (!controller.events.includes(CONSTANTS.LEAVE_ROOM)) {
+            emitter.on(CONSTANTS.LEAVE_ROOM, async (data) => {
+                // console.log('player leaves');
+                // console.log(data.player);
+                // console.log(data.side);
+                // console.log(data.roomID);
+
+                // if (data.side === CONSTANTS.LEFT) {
+                //     controller.rooms[data.roomID].player1 = data.player;
+                // } else if (data.side === CONSTANTS.RIGHT) {
+                //     controller.rooms[data.roomID].player2 = data.player;
+                // }
+
+                // console.log(controller.rooms)
+                // // game.player.armies[data.armyId] = data;
+                // this.socket.emit(CONSTANTS.LEAVE_ROOM, data);
+            });
+
+            controller.events.push(CONSTANTS.LEAVE_ROOM);
         }
 
         // Return when army is saved
