@@ -158,6 +158,17 @@ io.on('connection', async function (socket) {
         console.log('Player joins a room ');
         console.log(data.roomID);
 
+        // Remove player from all other rooms
+        Object.keys(rooms).forEach(room => {
+            if (rooms[room].player1 && rooms[room].player1.playerId === data.player.playerId) {
+                rooms[room].player1 = null;
+            }
+            if (rooms[room].player2 && rooms[room].player2.playerId === data.player.playerId) {
+                rooms[room].player2 = null;
+            }
+        })
+
+
         if (data.side === 'left') {
             rooms[data.roomID].player1 = data.player;
         } else if (data.side === 'right') {

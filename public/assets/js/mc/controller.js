@@ -9,7 +9,7 @@ class Controller {
         this.events = [];
 
         this.rooms = {};
-        this.currentRoom;
+        // this.currentRoom;
     }
 
     
@@ -121,9 +121,14 @@ class Controller {
             console.log(data);
 
             Object.keys(data).forEach(room => {
-                console.log(room);
+                console.log(data[room]);
                 emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
             });
+
+            // Get the new room reference after units have been added
+            // if (controller.currentRoom) {
+            //     controller.currentRoom = controller.rooms[controller.currentRoom.roomID];
+            // }
         });
 
         // Have player join a room
@@ -133,19 +138,30 @@ class Controller {
                 console.log(data);
 
                 // Remove the player from other rooms
-                if (controller.currentRoom != null) {
+                // if (controller.currentRoom != null) {
+                //     console.log(controller.currentRoom);
+                //     console.log(controller.currentRoom.player1);
+                //     let side;
+                //     if (controller.currentRoom.player1.playerId === game.player.playerId){
+                //         side = CONSTANTS.LEFT;
+                //     } else if (controller.currentRoom.player2.playerId === game.player.playerId) {
+                //         side = CONSTANTS.RIGHT;
+                //     }
+                //     const leaveData = {
+                //         player: game.player, side: side, roomID: controller.currentRoom.roomID
+                //     };
+                //     emitter.emit(CONSTANTS.LEAVE_ROOM, leaveData);
+                // }
 
-                }
-
-                if (data.side === CONSTANTS.LEFT) {
-                    controller.rooms[data.roomID].player1 = data.player;
-                } else if (data.side === CONSTANTS.RIGHT) {
-                    controller.rooms[data.roomID].player2 = data.player;
-                }
+                // if (data.side === CONSTANTS.LEFT) {
+                //     controller.rooms[data.roomID].player1 = data.player;
+                // } else if (data.side === CONSTANTS.RIGHT) {
+                //     controller.rooms[data.roomID].player2 = data.player;
+                // }
 
                 console.log(controller.rooms);
-                controller.currentRoom = controller.rooms[data.roomID];
-                console.log(controller.currentRoom);
+                // controller.currentRoom = controller.rooms[data.roomID];
+                // console.log(controller.currentRoom);
                 // game.player.armies[data.armyId] = data;
                 this.socket.emit(CONSTANTS.JOIN_ROOM, data);
             });
@@ -170,14 +186,15 @@ class Controller {
                 // console.log(data.side);
                 // console.log(data.roomID);
 
-                if (data.side === CONSTANTS.LEFT) {
-                    controller.rooms[data.roomID].player1 = null;
-                } else if (data.side === CONSTANTS.RIGHT) {
-                    controller.rooms[data.roomID].player2 = null;
-                }
+                // if (data.side === CONSTANTS.LEFT) {
+                //     controller.rooms[data.roomID].player1 = null;
+                // } else if (data.side === CONSTANTS.RIGHT) {
+                //     controller.rooms[data.roomID].player2 = null;
+                // }
 
                 // console.log(controller.rooms)
                 // // game.player.armies[data.armyId] = data;
+                // controller.currentRoom = null;
                 this.socket.emit(CONSTANTS.LEAVE_ROOM, data);
             });
 
