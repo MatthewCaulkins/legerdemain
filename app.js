@@ -93,7 +93,7 @@ io.on('connection', async function (socket) {
                 currentPlayer = {
                     name: data.name,
                     units: data.units,
-                    playerId: data._id,
+                    playerId: data._id.toString(),
                     socketId: socket.id
                 };
                 players[socket.id] = currentPlayer;
@@ -166,8 +166,7 @@ io.on('connection', async function (socket) {
             if (rooms[room].player2 && rooms[room].player2.playerId === data.player.playerId) {
                 rooms[room].player2 = null;
             }
-        })
-
+        });
 
         if (data.side === 'left') {
             rooms[data.roomID].player1 = data.player;
@@ -180,6 +179,21 @@ io.on('connection', async function (socket) {
         socket.emit('listRooms', rooms);
 
         // TODO: If both slots are full start a game
+    });
+
+    // Clear all rooms from a player
+    socket.on('clearPlayerFromRooms', (data) => {
+        Object.keys(rooms).forEach(room => {
+            if (rooms[room].player1 && rooms[room].player1.playerId === data.playerId) {
+                rooms[room].player1 = null;
+            }
+            if (rooms[room].player2 && rooms[room].player2.playerId === data.playerId) {
+                rooms[room].player2 = null;
+            }
+        });
+    
+        socket.broadcast.emit('listRooms', rooms);
+        socket.emit('listRooms', rooms);
     });
 
     // Leave a room
@@ -230,15 +244,34 @@ io.on('connection', async function (socket) {
 
 
     socket.on('disconnect', () => {
+        console.log(players);
+        if (players[socket.id]) {
+            // console.log('has id');
+            // console.log(players[socket.id].playerId);
+
+            const playerId = players[socket.id].playerId;
+            Object.keys(rooms).forEach(room => {
+                if (rooms[room].player1 && rooms[room].player1.playerId === playerId) {
+                    rooms[room].player1 = null;
+                }
+                if (rooms[room].player2 && rooms[room].player2.playerId === playerId) {
+                    rooms[room].player2 = null;
+                }
+            });
+        }
+
+        socket.broadcast.emit('listRooms', rooms);
+        socket.emit('listRooms', rooms);
+
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
         // if (screen !== 'introScreen') {
             // remove this player from our players object
-        delete players[currentPlayer.socketId];
+        delete players[socket.id];
         // }
         
         // emit a message to all players to remove this player
         console.log('user disconnected');
-        io.emit('disconnectPlayer', currentPlayer.socketId);
+        io.emit('disconnectPlayer', socket.id);
     });
 });
 

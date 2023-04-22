@@ -161,10 +161,13 @@ class GameBoardTile extends Tile {
                         this.setTint(CONSTANTS.GREEN_TINT);
                     } else {
                         console.log('B');
+                    
                         this.scene.turnUnit = this.unit;
                         this.scene.selectedFromTile = this;
                         this.setTint(CONSTANTS.RED_TINT);
                     }
+                    
+                    this.scene.positionDirections(this.scene.turnUnit);
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Movement phase
@@ -189,6 +192,7 @@ class GameBoardTile extends Tile {
 
                             this.scene.selectedFromTile = this;
                             this.scene.turnUnit = this.unit;
+                            this.scene.positionDirections(this.scene.turnUnit);
                             this.setTint(CONSTANTS.RED_TINT);
                             this.scene.highlightTilesInMovementRange(this);                   
                         }
@@ -209,6 +213,7 @@ class GameBoardTile extends Tile {
                 if (this.unit) { // this tile has a unit; set it to selected from tile
                     this.scene.selectedFromTile = this;
                     this.scene.turnUnit = this.unit;
+                    this.scene.positionDirections(this.scene.turnUnit);
 
                     this.setTint(CONSTANTS.RED_TINT);
                     // Highlight all tiles within unit's range
@@ -222,6 +227,7 @@ class GameBoardTile extends Tile {
                 //    this.active = false;
                         this.setTint(CONSTANTS.GREEN_TINT);
                         this.scene.turnUnit = null;
+                        this.scene.positionDirections(this.scene.turnUnit);
                         this.scene.selectedFromTile = null;
                         this.scene.clearPaths();
                     }
@@ -235,10 +241,10 @@ class GameBoardTile extends Tile {
                             this.scene.turnUnit.tile.clearTint();
                             // Highlight all tiles within unit's range
 
-                            this.scene.selectedFromTile = this;
                             this.scene.turnUnit = this.unit;
-                            this.setTint(CONSTANTS.RED_TINT);
-                            this.scene.highlightTilesInActionRange(this);                   
+                            this.scene.positionDirections(this.scene.turnUnit);
+                            this.scene.selectedFromTile = this;
+                            this.setTint(CONSTANTS.RED_TINT);                
                         }
                     }
                 }
@@ -247,6 +253,7 @@ class GameBoardTile extends Tile {
                 if (this.unit) { // this tile has a unit; set it to selected from tile
                     this.scene.selectedFromTile = this;
                     this.scene.turnUnit = this.unit;
+                    this.scene.positionDirections(this.scene.turnUnit);
 
                     this.setTint(CONSTANTS.RED_TINT);
                     // Highlight all tiles within unit's range

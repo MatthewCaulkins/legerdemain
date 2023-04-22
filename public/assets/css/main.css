@@ -70,8 +70,8 @@ body {
     height: 45px;
     padding: 5px 15px;
     position: absolute;
-    top: 73%;
-    left: calc(25% - 13px);
+    top: calc(50% + 220px);
+    left: calc(50% - 492px);
     box-sizing: border-box;
     border-radius: 10px;
     background: #eceeee;

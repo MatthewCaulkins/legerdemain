@@ -101,13 +101,13 @@ class Unit extends Phaser.GameObjects.Container {
 
             // Add directions
             
-            this.directions = new DirectionButtonContainer({
-                scene: this.scene,
-                unit: this,
-                scale: .7
-            });
-            this.add(this.directions);
-            this.directions.setDepth(this.z);
+            // this.directions = new DirectionButtonContainer({
+            //     scene: this.scene,
+            //     unit: this,
+            //     scale: .7
+            // });
+            // this.add(this.directions);
+            // this.directions.setDepth(this.z);
         }
         
         // this.character.play()

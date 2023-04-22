@@ -43,6 +43,7 @@ class Constants {
         this.ARMY_SAVED = 'armySaved';
         this.BACK_TO_HOME = 'backToHome';
         this.CLEAR_ARMY = 'clearArmy';
+        this.CLEAR_PLAYER_FROM_ROOMS = 'clearPlayerFromRooms';
         this.CREATE_HUD = 'createHUD';
         this.CREATE_NEW_ROOM = 'createNewRoom';
         this.CURRENT_PLAYERS = 'currentPlayers';

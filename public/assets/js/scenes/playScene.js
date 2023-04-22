@@ -112,6 +112,16 @@ class PlayScene extends Phaser.Scene {
             index: 41
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
+
+        // Add direction buttons
+        this.directions = new DirectionButtonContainer({
+            scene: this,
+            // unit: this,
+            scale: .7
+        });
+        // this.add(this.directions);
+        this.directions.setDepth(this.z);
+        this.directions.setVisible(false);
     }
 
     update() {}
@@ -540,12 +550,18 @@ class PlayScene extends Phaser.Scene {
                     scene.playerAction = CONSTANTS.SELECTION_ACTION;
 
                     unit.tile.setTint(CONSTANTS.BLUE_TINT);
+
+                    scene.positionDirections(unit);
                     // scene.removeAllHighlights();
                 }
             },
         }); 
             //onStart: function()
             //onComplete: function()
+    }
+
+    positionDirections(unit) {
+        this.directions.setUnit(unit);
     }
 
     clearPaths(clearSelections = true) {

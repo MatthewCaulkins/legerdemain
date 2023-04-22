@@ -169,6 +169,13 @@ class Controller {
             controller.events.push(CONSTANTS.JOIN_ROOM);
         }
 
+        if (!controller.events.includes(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS)) {
+            emitter.on(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS, () => {
+                this.socket.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS, {playerId: game.player.playerId});
+            });
+
+            controller.events.push(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
+        }
         // // Add a player to the room
         // this.socket.on('addPlayerToRoom', (data) => {
         //     if (data.side === CONSTANTS.LEFT) {

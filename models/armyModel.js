@@ -17,7 +17,6 @@ const ArmySchema = new Schema({
     },
     armyId: {
         type: Number,
-        unique : true
     },
     avatar: {
         type: String,

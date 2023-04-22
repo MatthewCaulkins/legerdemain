@@ -104,7 +104,7 @@ class ActionButton extends Phaser.GameObjects.Container {
 
             if (this.scene.turnUnit) {
                 console.log(this.scene.turnUnit);
-                this.scene.turnUnit.directions.setVisible(false);
+                this.scene.directions.setVisible(false);
                 this.scene.turnUnit.resetDirection();
             }
             this.scene.clearPaths(false);
@@ -132,17 +132,20 @@ class ActionButton extends Phaser.GameObjects.Container {
                 // }
             }
 
-            if (this.scene.selectedFromTile || this.scene.turnUnit) {
-                const tile = this.scene.turnUnit ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
+            if (this.scene.turnUnit) { // this.scene.selectedFromTile || 
+                const tile = this.scene.turnUnit.tile;// ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
 
                 this.scene.turnUnit = tile.unit;
                 this.scene.turnUnit.resetDirection();
                 
                 if (this.phase === CONSTANTS.ACTION_ACTION) {
+                    this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.highlightTilesInActionRange(tile)
                 } else if (this.phase === CONSTANTS.DIRECTION_ACTION) {
-                    this.scene.turnUnit.directions.setVisible(true);
+                    this.scene.positionDirections(this.scene.turnUnit);
+                    this.scene.directions.setVisible(true);
                 } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
+                    this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.highlightTilesInMovementRange(tile);
                 }
             }
@@ -151,7 +154,7 @@ class ActionButton extends Phaser.GameObjects.Container {
         } else {
             if (this.scene.turnUnit) {
                 console.log(this.scene.turnUnit);
-                this.scene.turnUnit.directions.setVisible(false);
+                this.scene.directions.setVisible(false);
                 this.scene.turnUnit.resetDirection();
             }
             
