@@ -109,7 +109,7 @@ class PlayScene extends Phaser.Scene {
             textConfig: CONSTANTS.TEXT_STYLE,
             event: CONSTANTS.ACCEPT_ARMY,
             alignmentGrid: this.alignmentGrid,
-            index: 41
+            index: 30
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
 
@@ -120,8 +120,28 @@ class PlayScene extends Phaser.Scene {
             scale: .7
         });
         // this.add(this.directions);
-        this.directions.setDepth(this.z);
         this.directions.setVisible(false);
+
+        // Add event listeners for battle actions
+        emitter.on(CONSTANTS.MOVE_UNIT_CONFIRMED, (data) => {
+            console.log('Move Unit');
+            console.log(data);
+
+            let path = [];
+
+            data.path.forEach(step => {
+                const stepTile = this.generatedBoard.getTile(step.tileNum);
+                path.push({direction: step.direction, tile: stepTile});
+            })
+
+            const startTile = this.generatedBoard.getTile(data.currentTileNum);
+            const endTile = this.generatedBoard.getTile(data.selectedToTileNum);
+            endTile.path = path;
+
+            console.log(endTile);
+            // data.selectedToTile.path = data.path;
+            this.moveUnit(startTile, endTile);
+        });
     }
 
     update() {}
@@ -131,6 +151,7 @@ class PlayScene extends Phaser.Scene {
         // Remove event listeners
         emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
         emitter.removeListener(CONSTANTS.QUIT_GAME);
+        emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);
 
         // Save the board placements to the database
         game.scene.start(CONSTANTS.HOME_SCENE);
@@ -172,6 +193,14 @@ class PlayScene extends Phaser.Scene {
         // Add unit stats component
         this.unitStats = new UnitStats(this);
         this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
+
+        this.player1Name = this.add.text(0, 0, game.player.name, CONSTANTS.HUD_STYLE);
+        // this.add(this.player1Name);
+        this.alignmentGrid.positionItemAtIndex(16, this.player1Name);
+
+        // this.player2Name = this.add.text(0, 0, game.player.name, CONSTANTS.HUD_STYLE);
+        // this.add(this.player2Name);
+        // this.alignmentGrid.positionItemAtIndex(100, this.player2Name);
 
         // Add game controller
     }
@@ -293,7 +322,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile}); //CONSTANTS.TOP);
+                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile, tileNum: questionedTile.number}); //CONSTANTS.TOP);
                             tilesOfInterest.push(questionedTile);
                         } else {
                             console.log('tile included already');
@@ -308,7 +337,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile}); //CONSTANTS.RIGHT);
+                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile, tileNum: questionedTile.number}); //CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -321,7 +350,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile}); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile, tileNum: questionedTile.number}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -334,7 +363,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile}); // CONSTANTS.LEFT);
+                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile, tileNum: questionedTile.number}); // CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -464,12 +493,13 @@ class PlayScene extends Phaser.Scene {
 
     startMoveUnit(currentTile) {
         this.playerAction = CONSTANTS.MID_ACTION;
-
         this.removeAllHighlights(this.selectedToTile.path);
-        this.moveUnit(currentTile);
+
+        emitter.emit(CONSTANTS.MOVE_UNIT, {currentTileNum: currentTile.number, path: this.selectedToTile.path, selectedToTileNum: this.selectedToTile.number});
+        // this.moveUnit(currentTile);
     }
 
-    moveUnit(currentTile) {
+    moveUnit(currentTile, selectedToTile) {
         this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
         // TODO: Clear everything but the path
 
@@ -479,6 +509,7 @@ class PlayScene extends Phaser.Scene {
         console.log(unit.character);
 
         // let currentTile = this.selectedFromTile;
+        this.selectedToTile = selectedToTile;
         const path = this.selectedToTile.path.shift();
         const direction = path.direction;
 
@@ -542,7 +573,7 @@ class PlayScene extends Phaser.Scene {
                 console.log(scene.unitsBoard.list);
 
                 if (scene.selectedToTile.path.length > 0) {
-                    scene.moveUnit(scene.targetTile);
+                    scene.moveUnit(scene.targetTile, scene.selectedToTile);
                 } else {
                     // TODO: unlock scene
                     scene.clearPaths();

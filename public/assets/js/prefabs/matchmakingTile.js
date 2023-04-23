@@ -35,12 +35,34 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
         config.container.add(this);
 
+        this.player1Name = this.scene.add.text(0, 0, '______________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player1Name.x = -65;
+        this.player1Name.y = 65;
+        this.player1Name.setOrigin(0, 0);
+        this.player1Name.setRotation(CONSTANTS.MATCHMAKING_NAME_ORIENTATION);
+        this.add(this.player1Name);
+
+        this.vsText = this.scene.add.text(0, 0, 'VS', CONSTANTS.DARK_TEXT_STYLE);
+        this.vsText.x = 36;
+        this.vsText.y = 90;
+        this.vsText.setOrigin(.5, .5);
+        this.add(this.vsText);
+        
+        this.player2Name = this.scene.add.text(0, 0, '______________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player2Name.x = 120;
+        this.player2Name.y = 65;
+        this.player2Name.setOrigin(0, 0);
+        this.player2Name.setRotation(CONSTANTS.MATCHMAKING_NAME_ORIENTATION);
+        this.add(this.player2Name);
+
         if (config.player1) {
             // this.player1 = config.player1;
+            this.player1Name.text = config.player1.name;
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT, config.player1);
         }
         if (config.player2) {
             // this.player2 = config.player2;
+            this.player2Name.text = config.player2.name;
             this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT, config.player2);
         }
 

@@ -153,6 +153,12 @@ io.on('connection', async function (socket) {
         socket.emit('listRooms', rooms);
     });
 
+    // socket.on('joinRoomOtherPlayer', (data) => {
+    //     console.log('player ' + players[socket.id].playerId + ' joined a room');
+    //     socket.join(data.roomId);
+    //     socket.emit('startGame', data);
+    // });
+
     // Join a room 
     socket.on('joinRoom', (data) => {
         console.log('Player joins a room ');
@@ -162,9 +168,13 @@ io.on('connection', async function (socket) {
         Object.keys(rooms).forEach(room => {
             if (rooms[room].player1 && rooms[room].player1.playerId === data.player.playerId) {
                 rooms[room].player1 = null;
+                
+                socket.leave(room);
             }
             if (rooms[room].player2 && rooms[room].player2.playerId === data.player.playerId) {
                 rooms[room].player2 = null;
+
+                socket.leave(room);
             }
         });
 
@@ -173,13 +183,33 @@ io.on('connection', async function (socket) {
         } else if (data.side === 'right') {
             rooms[data.roomID].player2 = data.player;
         }
+        
+        console.log('player ' + players[socket.id].playerId + ' joined a room ' + data.roomID);
+        socket.join(data.roomID);
 
         // TODO: Make this so it only updates that one room instead of relisting all of them
-        socket.broadcast.emit('listRooms', rooms);
-        socket.emit('listRooms', rooms);
+        // socket.broadcast.emit('listRooms', rooms);
+        // socket.emit('listRooms', rooms);
+        io.emit('listRooms', rooms);
 
         // TODO: If both slots are full start a game
+        if (rooms[data.roomID].player1 != null && rooms[data.roomID].player2 != null) {
+            
+            // Trigger a new game for the other player
+            // if (rooms[data.roomID].player1.socketId === socket.id) {
+            //     console.log('send to player2');
+            //     io.to(rooms[data.roomID].player2.socketId).emit('joinRoomOtherPlayer', data);
+            // } else if (rooms[data.roomID].player2.socketId === socket.id) {
+            //     console.log('send to player1');
+            //     io.to(rooms[data.roomID].player1.socketId).emit('joinRoomOtherPlayer', data);
+            // }
+            
+            // Trigger a game for this player
+            // socket.join(data.roomID);
+            io.in(data.roomID).emit('startGame', data);
+        }
     });
+
 
     // Clear all rooms from a player
     socket.on('clearPlayerFromRooms', (data) => {
@@ -211,6 +241,17 @@ io.on('connection', async function (socket) {
         socket.broadcast.emit('listRooms', rooms);
         socket.emit('listRooms', rooms);
     });
+
+    // Move a unit 
+    socket.on('moveUnit', (data) => {
+
+        // TODO: save to the database
+
+
+        // Broadcast and emit the event
+        // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
+        socket.emit('moveUnitConfirmed', data);
+    })
 
     // Save armies
     socket.on('saveArmy', async (data) => {

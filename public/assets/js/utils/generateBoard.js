@@ -57,6 +57,10 @@ class GenerateBoard {
         }
     }
 
+    getTile(tileNumber) {
+        return this._tiles[tileNumber];
+    }
+
     // Bet the tiles
     get tiles() {
         return this._tiles;

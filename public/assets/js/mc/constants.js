@@ -10,6 +10,7 @@ class Constants {
         // Tile Orientations
         this.BOARD_ORIENTATION = 0.785398;
         this.GRID_ORIENTATION = 0;
+        this.MATCHMAKING_NAME_ORIENTATION = -1.5708;
 
         // Hex codes
         this.WHITE = '#ffffff';
@@ -62,6 +63,11 @@ class Constants {
         this.PLAYER_ARMIES = 'playerArmies';
         this.QUIT_GAME = 'quitGame';
         this.SAVE_ARMY = 'saveArmy';
+        this.START_GAME = 'startGame';
+
+        // Battle events
+        this.MOVE_UNIT = 'moveUnit';
+        this.MOVE_UNIT_CONFIRMED = 'moveUnitConfirmed';
 
         // Mouse events
         this.POINTER_DOWN = 'pointerdown';

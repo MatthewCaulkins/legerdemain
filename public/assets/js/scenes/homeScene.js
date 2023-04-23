@@ -84,6 +84,7 @@ class HomeScene extends Phaser.Scene {
         });
         emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
 
+        // Setup the controller and load the HUD
         if (game.player) {
             this.createHUD();
         }
@@ -94,6 +95,12 @@ class HomeScene extends Phaser.Scene {
             emitter.emit(CONSTANTS.GET_ROOMS);
         }
         emitter.once(CONSTANTS.CREATE_HUD, this.createHUD, this);
+
+        // Start a game when the room is full
+        emitter.on(CONSTANTS.START_GAME, (data) => {
+            console.log('start game triggered');
+            this.startGame(data);
+        });
     }
 
     // Change scenes
@@ -102,7 +109,8 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
-        emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS)
+        emitter.removeListener(CONSTANTS.START_GAME);
+        emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
 
         game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
@@ -113,9 +121,24 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
-        emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS)
+        emitter.removeListener(CONSTANTS.START_GAME);
+        emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
 
         game.scene.start(CONSTANTS.SETUP_SCENE);
+        game.scene.stop(CONSTANTS.HOME_SCENE);
+    }
+
+    startGame(data) {
+        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+        emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
+        emitter.removeListener(CONSTANTS.CREATE_HUD);
+        emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+        emitter.removeListener(CONSTANTS.START_GAME);
+
+        console.log('start game');
+        console.log(data);
+
+        game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 

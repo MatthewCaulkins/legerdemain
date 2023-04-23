@@ -10,6 +10,8 @@ class Controller {
 
         this.rooms = {};
         // this.currentRoom;
+
+        this.gameRoom;
     }
 
     
@@ -82,7 +84,7 @@ class Controller {
 
         // Save this army
         if (!controller.events.includes(CONSTANTS.SAVE_ARMY)) {
-            emitter.on(CONSTANTS.SAVE_ARMY, async (data) => {
+            emitter.on(CONSTANTS.SAVE_ARMY, (data) => {
                 console.log('save army');
                 game.player.armies[data.armyId] = data;
                 this.socket.emit(CONSTANTS.SAVE_ARMY, data);
@@ -101,12 +103,15 @@ class Controller {
         });
 
         // Returning to the home page, get all rooms
-        emitter.on(CONSTANTS.GET_ROOMS, () => {
-            this.socket.emit(CONSTANTS.GET_ROOMS);
-        });
+        if (!controller.events.includes(CONSTANTS.GET_ROOMS)) {
+            emitter.on(CONSTANTS.GET_ROOMS, () => {
+                this.socket.emit(CONSTANTS.GET_ROOMS);
+            });
+            controller.events.push(CONSTANTS.GET_ROOMS);
+        }
 
         // List the rooms when coming to the home screen
-        this.socket.on(CONSTANTS.LIST_ROOMS, data => {
+        this.socket.on(CONSTANTS.LIST_ROOMS, (data) => {
             console.log(controller.rooms);
             Object.keys(controller.rooms).forEach(room => {
                 controller.rooms[room].destroy();
@@ -133,7 +138,7 @@ class Controller {
 
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
-            emitter.on(CONSTANTS.JOIN_ROOM, async (data) => {
+            emitter.on(CONSTANTS.JOIN_ROOM, (data) => {
                 console.log('player joins');
                 console.log(data);
 
@@ -169,6 +174,7 @@ class Controller {
             controller.events.push(CONSTANTS.JOIN_ROOM);
         }
 
+        // Clear the player from all rooms
         if (!controller.events.includes(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS)) {
             emitter.on(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS, () => {
                 this.socket.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS, {playerId: game.player.playerId});
@@ -176,18 +182,10 @@ class Controller {
 
             controller.events.push(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
         }
-        // // Add a player to the room
-        // this.socket.on('addPlayerToRoom', (data) => {
-        //     if (data.side === CONSTANTS.LEFT) {
-        //         controller.rooms[data.roomID].player1 = data.player;
-        //     } else if (data.side === CONSTANTS.RIGHT) {
-        //         controller.rooms[data.roomID].player2 = data.player;
-        //     }
-        // });
 
         // Have a player leave a room
         if (!controller.events.includes(CONSTANTS.LEAVE_ROOM)) {
-            emitter.on(CONSTANTS.LEAVE_ROOM, async (data) => {
+            emitter.on(CONSTANTS.LEAVE_ROOM, (data) => {
                 // console.log('player leaves');
                 // console.log(data.player);
                 // console.log(data.side);
@@ -208,6 +206,29 @@ class Controller {
             controller.events.push(CONSTANTS.LEAVE_ROOM);
         }
 
+        // Start a game
+        this.socket.on(CONSTANTS.START_GAME, data => {
+            this.gameRoom = data;
+            emitter.emit(CONSTANTS.START_GAME, data);
+        });
+        
+        // Move a unit
+        if (!controller.events.includes(CONSTANTS.MOVE_UNIT)) {
+            emitter.on(CONSTANTS.MOVE_UNIT, (data) => {
+                this.socket.emit(CONSTANTS.MOVE_UNIT, data);
+            });
+
+            controller.events.push(CONSTANTS.MOVE_UNIT);
+        }
+
+        this.socket.on(CONSTANTS.MOVE_UNIT_CONFIRMED, (data) => {
+            emitter.emit(CONSTANTS.MOVE_UNIT_CONFIRMED, data);
+        })
+
+
+
+
+
         // Return when army is saved
         this.socket.on(CONSTANTS.ARMY_SAVED, () => {
             emitter.emit(CONSTANTS.ARMY_SAVED_NOTICE);
@@ -215,7 +236,7 @@ class Controller {
 
         // Delete this army
         if (!controller.events.includes(CONSTANTS.DELETE_ARMY)) {
-            emitter.on(CONSTANTS.DELETE_ARMY, async (data) => {
+            emitter.on(CONSTANTS.DELETE_ARMY, (data) => {
                 console.log('delete Army');
 
                 game.player.armies = game.player.armies.filter(army => {

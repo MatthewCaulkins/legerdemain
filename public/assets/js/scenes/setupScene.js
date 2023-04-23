@@ -276,10 +276,10 @@ class SetupScene extends Phaser.Scene {
         emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene, this);
 
         // The button to get Save out the army
-        this.acceptButton = new Button({
+        this.saveButton = new Button({
             scene: this, 
             key: 'tile',
-            text: 'Accept',
+            text: 'Save',
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
             alignmentGrid: this.alignmentGrid,
@@ -499,12 +499,12 @@ class SetupScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.ACCEPT_BOARD_PLACEMENT);
         emitter.removeListener(CONSTANTS.BACK_TO_HOME);
 
-        console.log(this.clearButton);
-        if (this.clearButton) {
+        // console.log(this.clearButton);
+        // if (this.clearButton) {
             this.clearButton.remove();
-            this.acceptButton.remove();
+            this.saveButton.remove();
             this.homeButton.remove();
-        }
+        // }
         
         let element = document.getElementById('input-box');
         if (element && element.style.display === 'block') {
