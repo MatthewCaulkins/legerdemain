@@ -8,7 +8,7 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
 
         let buttonConfig = {
             scene: config.scene,
-            playerNum: config.playerNum,
+            // playerSide: config.playerSide,
             x: 115,
             y: 45,
             key: CONSTANTS.MOVE_BUTTON,
@@ -26,7 +26,7 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
 
         buttonConfig = {
             scene: config.scene,
-            playerNum: config.playerNum,
+            // playerSide: config.playerSide,
             x: 30,
             y: 130,
             key: CONSTANTS.ACTION_BUTTON,
@@ -44,7 +44,7 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
 
         buttonConfig = {
             scene: config.scene,
-            playerNum: config.playerNum,
+            // playerSide: config.playerSide,
             x: 200,
             y: 130,
             key: CONSTANTS.DIRECTION_BUTTON,
@@ -62,7 +62,7 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
 
         buttonConfig = {
             scene: config.scene,
-            playerNum: config.playerNum,
+            // playerSide: config.playerSide,
             x: 115,
             y: 215,
             key: CONSTANTS.WAIT_BUTTON,
@@ -101,5 +101,12 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
         }
 
         button.setUsed();
+    }
+
+    reset() {
+        this.directionButton.reset();
+        this.actionButton.reset();
+        this.movementButton.reset();
+        this.waitButton.reset();
     }
 }

@@ -18,7 +18,7 @@ class Unit extends Phaser.GameObjects.Container {
         if (this.scene.scene.key === CONSTANTS.HOME_SCENE) {
 
         } else {
-            this.player = config.player;
+            this.playerId = config.playerId;
             this.tint = tint;
             this.character = character;
             this.tile = config.tile;

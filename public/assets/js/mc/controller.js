@@ -32,8 +32,8 @@ class Controller {
 
     // Pay attention to the socket for every new player
     connectSocket() {
-        console.log('connect to socket');
-        console.log(`id : ${controller._id}`);
+        // console.log('connect to socket');
+        // console.log(`id : ${controller._id}`);
         const self = this;
         this.socket = io();
         controller.connected = true;
@@ -42,18 +42,18 @@ class Controller {
 
         // When a new player connects, get a list of all active players
         this.socket.on(CONSTANTS.CURRENT_PLAYERS, players => {
-            console.log(players);
+            // console.log(players);
             game.player = players.pop();
             emitter.emit(CONSTANTS.CREATE_HUD);
 
             console.log('Connected');
             console.log(game.player);
-            console.log(controller.otherPlayers);
+            // console.log(controller.otherPlayers);
 
             Object.keys(players).forEach(id => {
                 for (const [key, value] of Object.entries(players[id])) {
-                    console.log(`key ${key}`);
-                    console.log(`value ${value}`);
+                    // console.log(`key ${key}`);
+                    // console.log(`value ${value}`);
 
                     if (key != game.player.socketId) {
                         console.log('Add player to list of other players');
@@ -95,10 +95,10 @@ class Controller {
 
         // Add a new room
         this.socket.on(CONSTANTS.CREATE_NEW_ROOM, data => {
-            console.log('New Room Created');
+            // console.log('New Room Created');
 
             controller.rooms[data.roomID] = data;
-            console.log(controller.rooms);
+            // console.log(controller.rooms);
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data);
         });
 
@@ -112,18 +112,18 @@ class Controller {
 
         // List the rooms when coming to the home screen
         this.socket.on(CONSTANTS.LIST_ROOMS, (data) => {
-            console.log(controller.rooms);
+            // console.log(controller.rooms);
             Object.keys(controller.rooms).forEach(room => {
                 controller.rooms[room].destroy();
             });
-            console.log(controller.rooms);
+            // console.log(controller.rooms);
 
             // Reset rooms
             controller.rooms = {};
-            console.log(controller.rooms);
+            // console.log(controller.rooms);
 
-            console.log('list rooms data:');
-            console.log(data);
+            // console.log('list rooms data:');
+            // console.log(data);
 
             Object.keys(data).forEach(room => {
                 console.log(data[room]);
@@ -139,8 +139,8 @@ class Controller {
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
             emitter.on(CONSTANTS.JOIN_ROOM, (data) => {
-                console.log('player joins');
-                console.log(data);
+                // console.log('player joins');
+                // console.log(data);
 
                 // Remove the player from other rooms
                 // if (controller.currentRoom != null) {
@@ -164,7 +164,7 @@ class Controller {
                 //     controller.rooms[data.roomID].player2 = data.player;
                 // }
 
-                console.log(controller.rooms);
+                // console.log(controller.rooms);
                 // controller.currentRoom = controller.rooms[data.roomID];
                 // console.log(controller.currentRoom);
                 // game.player.armies[data.armyId] = data;
@@ -208,8 +208,28 @@ class Controller {
 
         // Start a game
         this.socket.on(CONSTANTS.START_GAME, data => {
-            this.gameRoom = data;
-            emitter.emit(CONSTANTS.START_GAME, data);
+            // console.log('startgame');
+            // console.log(data);
+            controller.gameRoom = data;
+            emitter.emit(CONSTANTS.START_GAME);
+        });
+
+        // Select your army 
+        if (!controller.events.includes(CONSTANTS.SELECTED_ARMY)) {
+            emitter.on(CONSTANTS.SELECTED_ARMY, (data) => {
+                this.socket.emit(CONSTANTS.SELECTED_ARMY, data);
+            });
+            controller.events.push(CONSTANTS.SELECTED_ARMY);
+        }
+
+        // Both armies selected
+        this.socket.on(CONSTANTS.ARMIES_SELECTED, data => {
+            // console.log('armies selected');
+            // console.log(data);
+            // controller.gameRoom = data;
+            controller.gameRoom = data;
+            // console.log(controller);
+            emitter.emit(CONSTANTS.ARMIES_SELECTED);
         });
         
         // Move a unit
@@ -223,9 +243,37 @@ class Controller {
 
         this.socket.on(CONSTANTS.MOVE_UNIT_CONFIRMED, (data) => {
             emitter.emit(CONSTANTS.MOVE_UNIT_CONFIRMED, data);
+        });
+
+        // Change unit direction
+        if (!controller.events.includes(CONSTANTS.CHANGE_DIRECTION)) {
+            console.log('change directions');
+            emitter.on(CONSTANTS.CHANGE_DIRECTION, (data) => {
+                this.socket.emit(CONSTANTS.CHANGE_DIRECTION, data);
+            });
+
+            controller.events.push(CONSTANTS.CHANGE_DIRECTION);
+        }
+
+        this.socket.on(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, (data) => {
+            console.log('confirmed change direction');
+            emitter.emit(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, data);
         })
 
+        // Wait and end turn
+        if (!controller.events.includes(CONSTANTS.END_TURN)) {
+            console.log('end turn');
+            emitter.on(CONSTANTS.END_TURN, (data) => {
+                this.socket.emit(CONSTANTS.END_TURN, data);
+            });
 
+            controller.events.push(CONSTANTS.END_TURN);
+        }
+
+        this.socket.on(CONSTANTS.END_TURN_CONFIRMED, (data) => {
+            console.log('confirm end turn');
+            emitter.emit(CONSTANTS.END_TURN_CONFIRMED, data);
+        })
 
 
 
@@ -237,12 +285,12 @@ class Controller {
         // Delete this army
         if (!controller.events.includes(CONSTANTS.DELETE_ARMY)) {
             emitter.on(CONSTANTS.DELETE_ARMY, (data) => {
-                console.log('delete Army');
+                // console.log('delete Army');
 
                 game.player.armies = game.player.armies.filter(army => {
                     return army.armyId != data.armyId;
                 })
-                console.log(game.player);
+                // console.log(game.player);
                 this.socket.emit(CONSTANTS.DELETE_ARMY, data);
             });
 
@@ -255,9 +303,9 @@ class Controller {
 
         // Disconnect a player and delete their ID
         this.socket.on(CONSTANTS.DISCONNECT_PLAYER, (socketId) => {
-            console.log('Player disconnected');
-            console.log(socketId);
-            console.log(controller.otherPlayers);
+            // console.log('Player disconnected');
+            // console.log(socketId);
+            // console.log(controller.otherPlayers);
 
             delete controller.otherPlayers[socketId];
         });

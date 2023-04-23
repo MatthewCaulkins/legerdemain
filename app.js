@@ -139,7 +139,7 @@ io.on('connection', async function (socket) {
         // If this is the first time, create 8 rooms
         if (Object.keys(rooms).length === 0) {
             do {
-                rooms[roomID] = {roomID: roomID, player1: null, player2: null};
+                rooms[roomID] = {roomID: roomID, player1: null, player2: null, player1Army: null, player2Army: null};
                 socket.emit('createNewRoom', rooms[roomID]);
                 roomID ++;
             } while (Object.keys(rooms).length < 8);
@@ -168,11 +168,13 @@ io.on('connection', async function (socket) {
         Object.keys(rooms).forEach(room => {
             if (rooms[room].player1 && rooms[room].player1.playerId === data.player.playerId) {
                 rooms[room].player1 = null;
+                rooms[room].player1Army = null;
                 
                 socket.leave(room);
             }
             if (rooms[room].player2 && rooms[room].player2.playerId === data.player.playerId) {
                 rooms[room].player2 = null;
+                rooms[room].player2Army = null;
 
                 socket.leave(room);
             }
@@ -180,8 +182,10 @@ io.on('connection', async function (socket) {
 
         if (data.side === 'left') {
             rooms[data.roomID].player1 = data.player;
+            rooms[data.roomID].player1Army = null;
         } else if (data.side === 'right') {
             rooms[data.roomID].player2 = data.player;
+            rooms[data.roomID].player2Army = null;
         }
         
         console.log('player ' + players[socket.id].playerId + ' joined a room ' + data.roomID);
@@ -206,19 +210,37 @@ io.on('connection', async function (socket) {
             
             // Trigger a game for this player
             // socket.join(data.roomID);
-            io.in(data.roomID).emit('startGame', data);
+            const roomData = rooms[data.roomID];
+            io.in(data.roomID).emit('startGame', roomData);
         }
     });
 
+    // Both armies are ready to fight
+    socket.on('selectedArmy', (data) => {
+        console.log('selectedArmy');
+        console.log(data);
+
+        if (data.player === 'left') {
+            rooms[data.roomID].player1Army = data.army;
+        } else  if (data.player === 'right') {
+            rooms[data.roomID].player2Army = data.army;
+        } 
+
+        if (rooms[data.roomID].player1Army && rooms[data.roomID].player2Army) {
+            io.in(data.roomID).emit('armiesSelected', rooms[data.roomID]);
+        }
+    });
 
     // Clear all rooms from a player
     socket.on('clearPlayerFromRooms', (data) => {
         Object.keys(rooms).forEach(room => {
             if (rooms[room].player1 && rooms[room].player1.playerId === data.playerId) {
                 rooms[room].player1 = null;
+                rooms[room].player1Army = null;
             }
             if (rooms[room].player2 && rooms[room].player2.playerId === data.playerId) {
                 rooms[room].player2 = null;
+                rooms[room].player2Army = null;
             }
         });
     
@@ -233,8 +255,10 @@ io.on('connection', async function (socket) {
 
         if (data.side === 'left') {
             rooms[data.roomID].player1 = null;
+            rooms[data.roomID].player1Army = null;
         } else if (data.side === 'right') {
             rooms[data.roomID].player2 = null;
+            rooms[data.roomID].player2Army = null;
         }
 
         // TODO: Make this so it only updates that one room instead of relisting all of them
@@ -250,7 +274,36 @@ io.on('connection', async function (socket) {
 
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
-        socket.emit('moveUnitConfirmed', data);
+        io.in(data.roomID).emit('moveUnitConfirmed', data);
+        // socket.emit('moveUnitConfirmed', data);
+    });
+
+    // Change a units direction 
+    socket.on('changeDirection', (data) => {
+
+        console.log('change direction');
+        console.log(data);
+        // TODO: save to the database
+
+
+        // Broadcast and emit the event
+        // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
+        io.in(data.roomID).emit('changeDirectionConfirmed', data);
+        // socket.emit('moveUnitConfirmed', data);
+    });
+
+    // End turn 
+    socket.on('endTurn', (data) => {
+
+        console.log('end turn');
+        console.log(data);
+        // TODO: save to the database
+
+
+        // Broadcast and emit the event
+        // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
+        io.in(data.roomID).emit('endTurnConfirmed', data);
+        // socket.emit('moveUnitConfirmed', data);
     })
 
     // Save armies
@@ -294,9 +347,11 @@ io.on('connection', async function (socket) {
             Object.keys(rooms).forEach(room => {
                 if (rooms[room].player1 && rooms[room].player1.playerId === playerId) {
                     rooms[room].player1 = null;
+                    rooms[room].player1Army = null;
                 }
                 if (rooms[room].player2 && rooms[room].player2.playerId === playerId) {
                     rooms[room].player2 = null;
+                    rooms[room].player2Army = null;
                 }
             });
         }

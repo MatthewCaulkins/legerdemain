@@ -13,9 +13,24 @@ class PlayScene extends Phaser.Scene {
 
         model.currentScene = this;
         this.phase = CONSTANTS.ARMY_SELECT_PHASE;
-        this.playerTurn = 0;
+        this.playerTurn = CONSTANTS.LEFT;
         this.playerAction = '';
         this.activeActionButton = null;
+        this.playerSide = CONSTANTS.LEFT;
+
+        console.log("CONTROLLER");
+        console.log(controller);
+        if (controller.gameRoom) {
+            this.player1 = controller.gameRoom.player1;
+            this.player2 = controller.gameRoom.player2;
+        
+            // if (this.player1.playerId === game.player.playerId) {
+            //     this.playerSide = CONSTANTS.LEFT;
+            // } else 
+            if (this.player2.playerId === game.player.playerId) {
+                this.playerSide = CONSTANTS.RIGHT;
+            }
+        }
 
         // Unit this turn only focuses on
         this.turnUnit = null;
@@ -72,6 +87,7 @@ class PlayScene extends Phaser.Scene {
             armyUnits: this.playerArmies[this.currentArmy],  
             generatedBoard: this.generatedBoard,
             unitsBoard: this.unitsBoard,
+            playerSide: this.playerSide
         }
         this.armyDeployment = new ArmyDeployment(armyDeploymentConfig);
 
@@ -132,7 +148,7 @@ class PlayScene extends Phaser.Scene {
             data.path.forEach(step => {
                 const stepTile = this.generatedBoard.getTile(step.tileNum);
                 path.push({direction: step.direction, tile: stepTile});
-            })
+            });
 
             const startTile = this.generatedBoard.getTile(data.currentTileNum);
             const endTile = this.generatedBoard.getTile(data.selectedToTileNum);
@@ -142,6 +158,52 @@ class PlayScene extends Phaser.Scene {
             // data.selectedToTile.path = data.path;
             this.moveUnit(startTile, endTile);
         });
+
+        emitter.on(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, (data) => {
+            console.log('Change directions');
+            console.log(data);
+
+            const tile = this.generatedBoard.getTile(data.currentTileNum);
+
+            this.directions.setVisible(false);
+        // this.scene.turnUnit.directions.setVisible(false);
+            tile.unit.setDirection(data.direction);
+        });
+
+        
+        emitter.on(CONSTANTS.END_TURN_CONFIRMED, () => {
+            console.log('end turn');
+            this.endTurn();
+        });
+
+        // Add the opponents army
+        emitter.on(CONSTANTS.ARMIES_SELECTED, () => {
+            console.log('ARMIES SELECTED');
+            if (this.playerSide === CONSTANTS.LEFT) {
+                this.opponentArmy = controller.gameRoom.player2Army;
+                this.opponentId = controller.gameRoom.player2.playerId;
+            } else {
+                this.opponentArmy = controller.gameRoom.player1Army;
+                this.opponentId = controller.gameRoom.player1.playerId;
+            }
+
+            this.armyDeployment.opponentArmyUnits = this.opponentArmy;
+            this.armyDeployment.populateOpponentBoard(this.opponentId);
+            
+            this.startGame();
+        });
+
+        
+
+        this.player1Name = this.add.text(0, 0, controller.gameRoom.player1.name, CONSTANTS.HUD_STYLE);
+        this.player1Name.setRotation(-CONSTANTS.BOARD_ORIENTATION);
+        this.alignmentGrid.positionItemAtIndex(44, this.player1Name);
+        // this.player1Name.x += 10;
+        this.player1Name.y -= 30;
+        
+        this.player2Name = this.add.text(0, 0, controller.gameRoom.player2.name, CONSTANTS.HUD_STYLE);
+        this.player2Name.setRotation(-CONSTANTS.BOARD_ORIENTATION);
+        this.alignmentGrid.positionItemAtIndex(103, this.player2Name);
     }
 
     update() {}
@@ -152,6 +214,8 @@ class PlayScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
         emitter.removeListener(CONSTANTS.QUIT_GAME);
         emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);
+        emitter.removeListener(CONSTANTS.CHANGE_DIRECTION_CONFIRMED);
+        emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
 
         // Save the board placements to the database
         game.scene.start(CONSTANTS.HOME_SCENE);
@@ -169,16 +233,6 @@ class PlayScene extends Phaser.Scene {
 
     acceptArmy() {
         // TODO: Get both events fired to server and start game
-
-        this.startGame();
-    }
-
-    startGame() {
-        this.phase = CONSTANTS.GAME_PHASE;
-
-        // TODO: set active player
-        this.playerAction = CONSTANTS.SELECTION_ACTION;
-        
         this.armyName.destroy();
         this.acceptButton.destroy();
 
@@ -187,16 +241,26 @@ class PlayScene extends Phaser.Scene {
             this.rightArrow.destroy(); 
         }
         
+        // TODO: remove the else stuff for testing
+        // if (controller.gameRoom) {
+        emitter.emit(CONSTANTS.SELECTED_ARMY, {roomID: controller.gameRoom.roomID, player: this.playerSide, army: this.armyDeployment.armyUnits});
+        // } else {
+        //     this.startGame();
+        // }
+    }
+
+    startGame() {
+        this.phase = CONSTANTS.GAME_PHASE;
+
+        // TODO: set active player
+        this.playerAction = CONSTANTS.SELECTION_ACTION;
+        
         // TODO: Add Attack/ Move/ Direction/ Wait buttons
         this.addActionButtons();
 
         // Add unit stats component
         this.unitStats = new UnitStats(this);
         this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
-
-        this.player1Name = this.add.text(0, 0, game.player.name, CONSTANTS.HUD_STYLE);
-        // this.add(this.player1Name);
-        this.alignmentGrid.positionItemAtIndex(16, this.player1Name);
 
         // this.player2Name = this.add.text(0, 0, game.player.name, CONSTANTS.HUD_STYLE);
         // this.add(this.player2Name);
@@ -208,11 +272,15 @@ class PlayScene extends Phaser.Scene {
     addActionButtons() {
         const config = {
             scene: this, 
-            playerNum: 1,
+            // playerSide: this.playerSide,
         }
 
+        this.currentPlayerText = this.add.text(0, 0, controller.gameRoom.player1.name + "'s Turn", CONSTANTS.HUD_STYLE);
+        this.currentPlayerText.setOrigin(.5, .5);
+        this.alignmentGrid.positionItemAtIndex(19, this.currentPlayerText);
+
         this.actionButtonContainer = new ActionButtonContainer(config);
-        this.alignmentGrid.positionItemAtIndex(18, this.actionButtonContainer);
+        this.alignmentGrid.positionItemAtIndex(29, this.actionButtonContainer);
         // this.actionButtonContainer.x += this.alignmentGrid.cellWidth / 2;
         this.actionButtonContainer.y -= this.alignmentGrid.cellHeight / 2;
     }
@@ -495,7 +563,12 @@ class PlayScene extends Phaser.Scene {
         this.playerAction = CONSTANTS.MID_ACTION;
         this.removeAllHighlights(this.selectedToTile.path);
 
-        emitter.emit(CONSTANTS.MOVE_UNIT, {currentTileNum: currentTile.number, path: this.selectedToTile.path, selectedToTileNum: this.selectedToTile.number});
+        emitter.emit(CONSTANTS.MOVE_UNIT, {
+            roomID: controller.gameRoom.roomID,
+            currentTileNum: currentTile.number, 
+            path: this.selectedToTile.path, 
+            selectedToTileNum: this.selectedToTile.number
+        });
         // this.moveUnit(currentTile);
     }
 
@@ -640,6 +713,27 @@ class PlayScene extends Phaser.Scene {
             }
         });
     }
+
+    endTurn() {
+        console.log('got to end turn');
+        this.playerAction = CONSTANTS.SELECTION_ACTION;
+        this.activeActionButton = null;
+
+        this.playerTurn = this.playerTurn === CONSTANTS.LEFT ? CONSTANTS.RIGHT : CONSTANTS.LEFT;
+        this.currentPlayerText.text = this.playerTurn === CONSTANTS.LEFT ? controller.gameRoom.player1.name + "'s Turn" : controller.gameRoom.player2.name + "'s Turn";
+        this.turnUnit = null;
+        this.turnUnitLocked = false;
+
+        // Tiles for movement and attack
+        this.selectedFromTile = null;
+        this.selectedToTile = null;
+        this.targetTile = null;
+        this.currentTile = null;
+
+        this.actionButtonContainer.reset();
+        this.clearPaths();
+    }
+
 
     // rotateTile(tile) {
     //     const rotation = tile.rotation;

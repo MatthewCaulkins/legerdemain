@@ -97,9 +97,9 @@ class HomeScene extends Phaser.Scene {
         emitter.once(CONSTANTS.CREATE_HUD, this.createHUD, this);
 
         // Start a game when the room is full
-        emitter.on(CONSTANTS.START_GAME, (data) => {
+        emitter.on(CONSTANTS.START_GAME, () => {
             console.log('start game triggered');
-            this.startGame(data);
+            this.startGame();
         });
     }
 
@@ -128,15 +128,12 @@ class HomeScene extends Phaser.Scene {
         game.scene.stop(CONSTANTS.HOME_SCENE);
     }
 
-    startGame(data) {
+    startGame() {
         emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
         emitter.removeListener(CONSTANTS.START_GAME);
-
-        console.log('start game');
-        console.log(data);
 
         game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);

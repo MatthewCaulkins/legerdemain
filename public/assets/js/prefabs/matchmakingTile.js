@@ -85,7 +85,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     }
 
     onLeftSidePointerdown() {
-        console.log(game.player.playerId);
+        // console.log(game.player.playerId);
         if (this.player1 === null) {
             // TODO: Send socket event that player joined
             emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.LEFT, roomID: this.roomID});

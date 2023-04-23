@@ -21,7 +21,15 @@ class GameBoardTile extends Tile {
 
     pointerover() {
         if (this.scene.phase != CONSTANTS.GAME_PHASE) return; // Only do actions during game phase   
+
+        if (this.unit) {
+            this.scene.updateDetailsView(this.unit);
+            
+            if (this.unit.playerId != game.player.playerId) return;
+        }
+
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
+        if (this.scene.playerTurn != this.scene.playerSide) return;
 
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
@@ -66,9 +74,6 @@ class GameBoardTile extends Tile {
         }
         
         if (this.unit) {
-            console.log(this.unit);
-            this.scene.updateDetailsView(this.unit);
-
             if (this.scene.turnUnit === this.unit) {
                 if (this.scene.turnUnitLocked) {
                     this.setTint(CONSTANTS.BLUE_TINT);
@@ -81,8 +86,16 @@ class GameBoardTile extends Tile {
 
     pointerout() {
         if (this.scene.phase != CONSTANTS.GAME_PHASE) return; // Only do actions during game phase   
-        if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
+        if (this.unit) {
+            this.scene.hideStats(this.unit);
+
+            if (this.unit.playerId != game.player.playerId) return;
+        }
+
+        if (this.scene.playerTurn != this.scene.playerSide) return;        
+        if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
+        
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
                 if (this.scene.turnUnit && this.scene.turnUnit.tile === this) {
@@ -128,8 +141,6 @@ class GameBoardTile extends Tile {
         }
         
         if (this.unit) {
-            this.scene.hideStats(this.unit);
-
             if (this.scene.turnUnit === this.unit) {
                 if (this.scene.turnUnitLocked) {
                     this.setTint(CONSTANTS.BLUE_TINT);
@@ -142,7 +153,11 @@ class GameBoardTile extends Tile {
 
     pointerdown() {
         if (this.scene.phase != CONSTANTS.GAME_PHASE) return; // Only do actions during game phase   
+
+        if (this.unit && this.unit.playerId != game.player.playerId) return;
+        
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
+        if (this.scene.playerTurn != this.scene.playerSide) return;
 
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {
             console.log('selection pointer down');

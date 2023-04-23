@@ -5,13 +5,16 @@ class ArmyDeployment {
         this.armyUnits = config.armyUnits;
         this.generatedBoard = config.generatedBoard;
         this.unitsBoard = config.unitsBoard;
+        this.playerSide = config.playerSide;
+
+        this.opponentArmyUnits;
 
         // Specific to setup scene
         this.selectGrid = config.selectGrid;
 
-        console.log(this.armyUnits);
+        // console.log(this.armyUnits);
         if (this.armyUnits && this.armyUnits.units.length > 0) {
-            console.log('got here');
+            // console.log('got here');
             this.populateBoard();
         }
     }
@@ -28,7 +31,7 @@ class ArmyDeployment {
         });
 
         if (this.selectGrid) {
-            console.log(this.selectGrid);
+            // console.log(this.selectGrid);
             this.selectGrid.tiles.forEach(tile => {
                 tile.clearTint();
                 tile.unit.alpha = 1;
@@ -38,7 +41,7 @@ class ArmyDeployment {
     }
 
     populateBoard() {
-        console.log(this.armyUnits.units);
+        // console.log(this.armyUnits.units);
         this.armyUnits.units.forEach(unit => {
             if (this.selectGrid) { // Setup scene
                 let n = 0;
@@ -56,15 +59,40 @@ class ArmyDeployment {
                 this.addUnitToGameBoard(unit);
             }
         });
+
+        this.unitsBoard.sort('z');
     }
 
-    addUnitToGameBoard(unit) {
+    populateOpponentBoard(playerId) {
+        this.opponentArmyUnits.units.forEach(unit => {
+            this.addUnitToGameBoard(unit, true, playerId);
+        });
+
+        
+        this.unitsBoard.sort('z');
+    }
+
+    addUnitToGameBoard(unit, opponentsArmy = false, playerId = game.player.playerId) {
         // TODO: Test for player 2
         // console.log(unit);
-        const boardTile = this.generatedBoard.tiles[unit.tileNum];
+        let tileNum = unit.tileNum;
+        let direction = CONSTANTS.RIGHT;
+
+        if (!opponentsArmy) {
+            if (this.playerSide === CONSTANTS.RIGHT) {
+                tileNum = 120 - tileNum;
+                direction = CONSTANTS.LEFT
+            }
+        } else {
+            if (this.playerSide === CONSTANTS.LEFT) {
+                tileNum = 120 - tileNum;
+                direction = CONSTANTS.LEFT
+            }
+        }
+        const boardTile = this.generatedBoard.tiles[tileNum];
 
         // console.log(boardTile);
-        this.createUnit(unit.unit, boardTile);
+        this.createUnit(unit.unit, boardTile, direction, playerId);
     }
 
     addUnitToSetupBoard(boardTile, selectGridTile, incrementCounter = true) {
@@ -77,7 +105,7 @@ class ArmyDeployment {
             // Clear the select grid tile but leave it knowing it is active
             selectGridTile.unit.alpha = .5;
             selectGridTile.setTint(CONSTANTS.ORANGE_TINT);
-            this.createUnit(selectGridTile.unit.type, boardTile)
+            this.createUnit(selectGridTile.unit.type, boardTile, CONSTANTS.RIGHT, game.player.playerId)
 
             this.scene.selectGridTile = null;
             this.scene.boardTile = null;
@@ -91,89 +119,89 @@ class ArmyDeployment {
     }
 
 
-    createUnit(type, boardTile) {
+    createUnit(type, boardTile, direction, playerId) {
         // console.log(type);
         // console.log(boardTile);
         switch(type) {
             case CONSTANTS.AXE:
                 boardTile.unit = new Axe({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.BOW:
                 boardTile.unit = new Bow({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.CONTROL:
                 boardTile.unit = new Control({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.DAGGER:
                 boardTile.unit = new Dagger({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.HEALING:
                 boardTile.unit = new Healing({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.LANCE:
                 boardTile.unit = new Lance({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.SHIELD:
                 boardTile.unit = new Shield({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.SORCERY:
                 boardTile.unit = new Sorcery({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
             case CONSTANTS.SWORD:
                 boardTile.unit = new Sword({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardTile,
                     container: this.unitsBoard,
-                    direction: CONSTANTS.RIGHT
+                    direction: direction
                 });
             break;
         }

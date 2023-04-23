@@ -81,7 +81,7 @@ class SelectUnitsGrid {
 
         const unitConfig = {
             scene: this.scene,
-            player: this.config.player,
+            playerId: game.player.playerId,
             container: this.container,
         }
 

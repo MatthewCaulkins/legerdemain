@@ -1,7 +1,7 @@
 class ActionButton extends Phaser.GameObjects.Container {
     constructor(config) {
         super(config.scene, config.x, config.y);
-        this.playerNum = config.playerNum;
+        // this.playerSide = config.playerSide;
 
         this.activated = false;
         this.used = false;
@@ -61,6 +61,7 @@ class ActionButton extends Phaser.GameObjects.Container {
     }
 
     pointerOver() {
+        if (this.scene.playerTurn != this.scene.playerSide) return;
         if (this.used) return;
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
@@ -76,6 +77,7 @@ class ActionButton extends Phaser.GameObjects.Container {
     }
 
     pointerOut() {
+        if (this.scene.playerTurn != this.scene.playerSide) return;
         if (this.used) return;
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
@@ -91,6 +93,7 @@ class ActionButton extends Phaser.GameObjects.Container {
     }
 
     pointerDown() {
+        if (this.scene.playerTurn != this.scene.playerSide) return;
         if (this.used) return;
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
 
@@ -147,6 +150,8 @@ class ActionButton extends Phaser.GameObjects.Container {
                 } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
                     this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.highlightTilesInMovementRange(tile);
+                } else if (this.phase === CONSTANTS.WAIT_ACTION) {
+                    emitter.emit(CONSTANTS.END_TURN, {roomID: controller.gameRoom.roomID});
                 }
             }
 
@@ -177,9 +182,15 @@ class ActionButton extends Phaser.GameObjects.Container {
     }
 
     reset() {
-        if (this.scene.playerTurn = this.playerNum) {
+        console.log(this.scene.playerTurn);
+        console.log(this.scene.playerSide);
+        if (this.scene.playerTurn === this.scene.playerSide) {
+            this.activated = false;
+            this.used = false;
             this.sprite.play(this.onKey);
         } else {
+            this.activated = true;
+            this.used = true;
             this.sprite.play(this.offKey);
         }
     }

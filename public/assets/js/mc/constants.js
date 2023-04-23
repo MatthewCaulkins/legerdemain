@@ -42,6 +42,7 @@ class Constants {
         this.ACCEPT_BOARD_PLACEMENT = 'acceptBoardPlacement';
         this.ARMY_DELETED = 'armyDeleted';
         this.ARMY_SAVED = 'armySaved';
+        this.ARMIES_SELECTED = 'armiesSelected';
         this.BACK_TO_HOME = 'backToHome';
         this.CLEAR_ARMY = 'clearArmy';
         this.CLEAR_PLAYER_FROM_ROOMS = 'clearPlayerFromRooms';
@@ -63,9 +64,14 @@ class Constants {
         this.PLAYER_ARMIES = 'playerArmies';
         this.QUIT_GAME = 'quitGame';
         this.SAVE_ARMY = 'saveArmy';
+        this.SELECTED_ARMY = 'selectedArmy';
         this.START_GAME = 'startGame';
 
         // Battle events
+        this.CHANGE_DIRECTION = 'changeDirection';
+        this.CHANGE_DIRECTION_CONFIRMED = 'changeDirectionConfirmed';
+        this.END_TURN = 'endTurn';
+        this.END_TURN_CONFIRMED = 'endTurnConfirmed';
         this.MOVE_UNIT = 'moveUnit';
         this.MOVE_UNIT_CONFIRMED = 'moveUnitConfirmed';
 
