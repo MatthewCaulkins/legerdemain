@@ -92,40 +92,62 @@ class PlayScene extends Phaser.Scene {
         this.armyDeployment = new ArmyDeployment(armyDeploymentConfig);
 
         
-        // Add arrows to pick army
+        // Add UI for selecting army phase
         this.armyName = this.add.text(0, 0, this.playerArmies[this.currentArmy].name, CONSTANTS.HUD_STYLE);
         this.armyName.setOrigin(.5, .5);
-        this.alignmentGrid.positionItemAtIndex(19, this.armyName);
+        let acceptIndex = 41;
+        
+        this.selectArmyText = this.add.text(0, 0, 'Select your army', CONSTANTS.HUD_STYLE);
+        this.selectArmyText.setOrigin(.5, .5);
+
+        this.opponentSelectArmyText = this.add.text(0, 0, 'Opponent is selecting their army', CONSTANTS.HUD_STYLE);
+        this.opponentSelectArmyText.setOrigin(.5, .5);
+
+        if (this.playerSide === CONSTANTS.LEFT) {
+            this.alignmentGrid.positionItemAtIndex(19, this.selectArmyText);
+            this.alignmentGrid.positionItemAtIndex(96, this.opponentSelectArmyText);
+            this.alignmentGrid.positionItemAtIndex(30, this.armyName);
+        } else { 
+            this.alignmentGrid.positionItemAtIndex(85, this.selectArmyText);
+            this.alignmentGrid.positionItemAtIndex(30, this.opponentSelectArmyText);
+            this.alignmentGrid.positionItemAtIndex(96, this.armyName);
+            acceptIndex = 107;
+        }
 
         if (this.playerArmies.length > 1) {
             this.leftArrow = new ScrollArrow(this, 'left', .5);
             this.rightArrow = new ScrollArrow(this, 'right', .5);
 
-            this.alignmentGrid.positionItemAtIndex(17, this.leftArrow);
-            this.alignmentGrid.positionItemAtIndex(21, this.rightArrow);
+            if (this.playerSide === CONSTANTS.LEFT) {
+                this.alignmentGrid.positionItemAtIndex(28, this.leftArrow);
+                this.alignmentGrid.positionItemAtIndex(32, this.rightArrow);
+            } else {
+                this.alignmentGrid.positionItemAtIndex(94, this.leftArrow);
+                this.alignmentGrid.positionItemAtIndex(98, this.rightArrow);
+            }
         }
 
         // The button to get back to the home page
         this.quitButton = new Button({
             scene: this, 
             key: 'tile',
-            text: 'QUIT',
-            textConfig: CONSTANTS.TEXT_STYLE,
-            event: CONSTANTS.QUIT_GAME,
+            text: 'Quit Game',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.QUIT_GAME_SELECTED,
             alignmentGrid: this.alignmentGrid,
             index: 12
         });
-        emitter.once(CONSTANTS.QUIT_GAME, this.quitGame);
+        emitter.once(CONSTANTS.QUIT_GAME_SELECTED, this.quitGame);
 
         // The button to accept this setup
         this.acceptButton = new Button({
             scene: this, 
             key: CONSTANTS.TILE,
-            text: 'Accept',
-            textConfig: CONSTANTS.TEXT_STYLE,
+            text: 'Select Army',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.ACCEPT_ARMY,
             alignmentGrid: this.alignmentGrid,
-            index: 30
+            index: acceptIndex
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
 
@@ -193,6 +215,10 @@ class PlayScene extends Phaser.Scene {
             this.startGame();
         });
 
+        emitter.on(CONSTANTS.QUIT_GAME_CONFIRMED, () => {
+            console.log('quit confirmed emitter on');
+            this.quitGameConfirmed();
+        });
         
 
         this.player1Name = this.add.text(0, 0, controller.gameRoom.player1.name, CONSTANTS.HUD_STYLE);
@@ -210,12 +236,24 @@ class PlayScene extends Phaser.Scene {
 
 
     quitGame() {
+        console.log('quit game');
         // Remove event listeners
+
+        emitter.emit(CONSTANTS.QUIT_GAME, {roomID: controller.gameRoom.roomID});
+    }
+
+    quitGameConfirmed() {
+        console.log('quit confirmed');
+
         emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
-        emitter.removeListener(CONSTANTS.QUIT_GAME);
+        emitter.removeListener(CONSTANTS.QUIT_GAME_SELECTED);
         emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);
         emitter.removeListener(CONSTANTS.CHANGE_DIRECTION_CONFIRMED);
+        emitter.removeListener(CONSTANTS.END_TURN_CONFIRMED);
         emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
+        emitter.removeListener(CONSTANTS.QUIT_GAME_CONFIRMED);
+
+        controller.gameRoom = null;
 
         // Save the board placements to the database
         game.scene.start(CONSTANTS.HOME_SCENE);
@@ -240,7 +278,13 @@ class PlayScene extends Phaser.Scene {
             this.leftArrow.destroy();
             this.rightArrow.destroy(); 
         }
-        
+
+        this.selectArmyText.text = 'Waiting for opponent to finish selecting their army';
+        if (this.playerSide === CONSTANTS.LEFT) {
+            this.alignmentGrid.positionItemAtIndex(30, this.selectArmyText);
+        } else { 
+            this.alignmentGrid.positionItemAtIndex(96, this.selectArmyText);
+        }
         // TODO: remove the else stuff for testing
         // if (controller.gameRoom) {
         emitter.emit(CONSTANTS.SELECTED_ARMY, {roomID: controller.gameRoom.roomID, player: this.playerSide, army: this.armyDeployment.armyUnits});
@@ -250,6 +294,9 @@ class PlayScene extends Phaser.Scene {
     }
 
     startGame() {
+        this.selectArmyText.destroy();
+        this.opponentSelectArmyText.destroy();
+
         this.phase = CONSTANTS.GAME_PHASE;
 
         // TODO: set active player
@@ -353,7 +400,10 @@ class PlayScene extends Phaser.Scene {
 
     hideStats(unit) {
         this.unitStats.hideStats();
-        unit.hideHealthbar();
+
+        if (unit != this.turnUnit) {
+            unit.hideHealthbar();
+        }
     }
 
 
@@ -721,6 +771,7 @@ class PlayScene extends Phaser.Scene {
 
         this.playerTurn = this.playerTurn === CONSTANTS.LEFT ? CONSTANTS.RIGHT : CONSTANTS.LEFT;
         this.currentPlayerText.text = this.playerTurn === CONSTANTS.LEFT ? controller.gameRoom.player1.name + "'s Turn" : controller.gameRoom.player2.name + "'s Turn";
+        this.turnUnit.hideHealthbar();
         this.turnUnit = null;
         this.turnUnitLocked = false;
 

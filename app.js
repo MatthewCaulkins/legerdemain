@@ -244,8 +244,9 @@ io.on('connection', async function (socket) {
             }
         });
     
-        socket.broadcast.emit('listRooms', rooms);
-        socket.emit('listRooms', rooms);
+        // socket.broadcast.emit('listRooms', rooms);
+        // socket.emit('listRooms', rooms);
+        io.emit('listRooms', rooms);
     });
 
     // Leave a room
@@ -262,8 +263,9 @@ io.on('connection', async function (socket) {
         }
 
         // TODO: Make this so it only updates that one room instead of relisting all of them
-        socket.broadcast.emit('listRooms', rooms);
-        socket.emit('listRooms', rooms);
+        // socket.broadcast.emit('listRooms', rooms);
+        // socket.emit('listRooms', rooms);
+        io.emit('listRooms', rooms);
     });
 
     // Move a unit 
@@ -299,12 +301,28 @@ io.on('connection', async function (socket) {
         console.log(data);
         // TODO: save to the database
 
-
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
-        io.in(data.roomID).emit('endTurnConfirmed', data);
+        io.in(data.roomID).emit('endTurnConfirmed');
         // socket.emit('moveUnitConfirmed', data);
-    })
+    });
+
+    socket.on('quitGame', (data) => {
+        console.log('quit game');
+        console.log(data);
+
+        
+        rooms[data.roomID].player1 = null;
+        rooms[data.roomID].player1Army = null;
+        rooms[data.roomID].player2 = null;
+        rooms[data.roomID].player2Army = null;
+
+        // TODO: save the lose to the database
+
+
+        io.in(data.roomID).emit('quitGameConfirmed');
+        io.emit('listRooms', rooms);
+    });
 
     // Save armies
     socket.on('saveArmy', async (data) => {
@@ -343,22 +361,33 @@ io.on('connection', async function (socket) {
             // console.log('has id');
             // console.log(players[socket.id].playerId);
 
+            // This should end a game if the player disconnects
+            console.log('rooms');
+            console.log(rooms);
+            let roomID;
             const playerId = players[socket.id].playerId;
             Object.keys(rooms).forEach(room => {
                 if (rooms[room].player1 && rooms[room].player1.playerId === playerId) {
+                    console.log('player was player 1 in a room');
                     rooms[room].player1 = null;
                     rooms[room].player1Army = null;
+                    roomID = room;
                 }
                 if (rooms[room].player2 && rooms[room].player2.playerId === playerId) {
+                    console.log('player was player 2 in a room');
                     rooms[room].player2 = null;
                     rooms[room].player2Army = null;
+                    roomID = room;
                 }
             });
+            console.log(roomID);
+            socket.emit('quitGame', {roomID: roomID});
+            // io.in(roomID).emit('quitGameConfirmed');
         }
 
-        socket.broadcast.emit('listRooms', rooms);
-        socket.emit('listRooms', rooms);
-
+        // socket.broadcast.emit('listRooms', rooms);
+        // socket.emit('listRooms', rooms);
+        io.emit('listRooms', rooms);
         // Since the connection was getting destroyed on page loads, I just store the page name before running the disconnect code
         // if (screen !== 'introScreen') {
             // remove this player from our players object

@@ -13,6 +13,8 @@ class Button extends Phaser.GameObjects.Container {
         this.image = this.scene.add.image(0, 0, this.config.key);
         this.add(this.image);
 
+        this.textConfig.wordWrap = {width: this.image.displayWidth - 10};
+
         this.text = this.scene.add.text(0, 0, this.text, this.textConfig);
         this.text.setOrigin(.5, .5);
         this.add(this.text);

@@ -63,6 +63,8 @@ class Constants {
         this.NEW_PLAYER = 'newPlayer';
         this.PLAYER_ARMIES = 'playerArmies';
         this.QUIT_GAME = 'quitGame';
+        this.QUIT_GAME_CONFIRMED = 'quitGameConfirmed';
+        this.QUIT_GAME_SELECTED = 'quitGameSelected';
         this.SAVE_ARMY = 'saveArmy';
         this.SELECTED_ARMY = 'selectedArmy';
         this.START_GAME = 'startGame';

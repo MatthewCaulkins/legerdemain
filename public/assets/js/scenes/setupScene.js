@@ -279,7 +279,7 @@ class SetupScene extends Phaser.Scene {
         this.saveButton = new Button({
             scene: this, 
             key: 'tile',
-            text: 'Save',
+            text: 'Save Army',
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
             alignmentGrid: this.alignmentGrid,
@@ -291,7 +291,7 @@ class SetupScene extends Phaser.Scene {
         this.clearButton = new Button({
             scene: this, 
             key: 'tile',
-            text: 'Clear',
+            text: 'Clear Army',
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.CLEAR_ARMY,
             alignmentGrid: this.alignmentGrid,

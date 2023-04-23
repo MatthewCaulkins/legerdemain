@@ -155,7 +155,7 @@ class GameBoardTile extends Tile {
         if (this.scene.phase != CONSTANTS.GAME_PHASE) return; // Only do actions during game phase   
 
         if (this.unit && this.unit.playerId != game.player.playerId) return;
-        
+
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         if (this.scene.playerTurn != this.scene.playerSide) return;
 
@@ -163,23 +163,28 @@ class GameBoardTile extends Tile {
             console.log('selection pointer down');
             if (this.unit) {
                 if (!this.scene.turnUnitLocked) {
-                    if (this.scene.turnUnit) {
+                    this.scene.clearPaths(false);
+                    
+                    if (this.scene.turnUnit) { // clear old turn unit
                         this.scene.turnUnit.tile.clearTint();
                     }
 
-                    this.scene.clearPaths(false);
-
                     if (this.scene.selectedFromTile === this) {
                         console.log('A');
+                        // this.scene.turnUnit.hideHealthbar();
                         this.scene.turnUnit = null;
                         this.scene.selectedFromTile = null;
                         this.setTint(CONSTANTS.GREEN_TINT);
                     } else {
                         console.log('B');
-                    
+                        if (this.scene.turnUnit) { // clear old turn unit
+                            this.scene.turnUnit.hideHealthbar();
+                        } else {
+                            this.setTint(CONSTANTS.RED_TINT);
+                        }
+
                         this.scene.turnUnit = this.unit;
                         this.scene.selectedFromTile = this;
-                        this.setTint(CONSTANTS.RED_TINT);
                     }
                     
                     this.scene.positionDirections(this.scene.turnUnit);
@@ -202,6 +207,7 @@ class GameBoardTile extends Tile {
                             console.log('switch to this tile');
 
                             this.scene.clearPaths();
+                            this.scene.turnUnit.hideHealthbar();
                             this.scene.turnUnit.tile.clearTint();
                             // Highlight all tiles within unit's range
 
@@ -256,6 +262,7 @@ class GameBoardTile extends Tile {
                             this.scene.turnUnit.tile.clearTint();
                             // Highlight all tiles within unit's range
 
+                            this.scene.turnUnit.hideHealthbar();
                             this.scene.turnUnit = this.unit;
                             this.scene.positionDirections(this.scene.turnUnit);
                             this.scene.selectedFromTile = this;

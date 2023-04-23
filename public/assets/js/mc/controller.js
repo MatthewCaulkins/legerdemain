@@ -258,7 +258,7 @@ class Controller {
         this.socket.on(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, (data) => {
             console.log('confirmed change direction');
             emitter.emit(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, data);
-        })
+        });
 
         // Wait and end turn
         if (!controller.events.includes(CONSTANTS.END_TURN)) {
@@ -270,12 +270,25 @@ class Controller {
             controller.events.push(CONSTANTS.END_TURN);
         }
 
-        this.socket.on(CONSTANTS.END_TURN_CONFIRMED, (data) => {
+        this.socket.on(CONSTANTS.END_TURN_CONFIRMED, () => {
             console.log('confirm end turn');
-            emitter.emit(CONSTANTS.END_TURN_CONFIRMED, data);
-        })
+            emitter.emit(CONSTANTS.END_TURN_CONFIRMED);
+        });
 
+        // Quit the game
+        if (!controller.events.includes(CONSTANTS.QUIT_GAME)) {
+            console.log('controller quit game');
+            emitter.on(CONSTANTS.QUIT_GAME, (data) => {
+                this.socket.emit(CONSTANTS.QUIT_GAME, data);
+            });
 
+            controller.events.push(CONSTANTS.QUIT_GAME);
+        }
+
+        this.socket.on(CONSTANTS.QUIT_GAME_CONFIRMED, () => {
+            console.log('confirm quit game');
+            emitter.emit(CONSTANTS.QUIT_GAME_CONFIRMED);
+        });
 
         // Return when army is saved
         this.socket.on(CONSTANTS.ARMY_SAVED, () => {

@@ -62,25 +62,25 @@ class HomeScene extends Phaser.Scene {
         console.log(this);
 
         // Add navigation buttons
-        this.playSceneButton = new Button({
-            scene: this, 
-            key: 'tile',
-            text: 'Play',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
-            event: CONSTANTS.LOAD_PLAY_SCENE,
-            alignmentGrid: this.alignmentGrid,
-            index: 12
-        });
-        emitter.once(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
+        // this.playSceneButton = new Button({
+        //     scene: this, 
+        //     key: 'tile',
+        //     text: 'Play',
+        //     textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+        //     event: CONSTANTS.LOAD_PLAY_SCENE,
+        //     alignmentGrid: this.alignmentGrid,
+        //     index: 12
+        // });
+        // emitter.once(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
 
         this.setupSceneButton = new Button({
             scene: this, 
             key: 'tile',
-            text: 'Setup',
+            text: 'Army Setup',
             textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             event: CONSTANTS.LOAD_SETUP_SCENE,
             alignmentGrid: this.alignmentGrid,
-            index: 14
+            index: 12
         });
         emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
 
@@ -104,20 +104,20 @@ class HomeScene extends Phaser.Scene {
     }
 
     // Change scenes
-    loadPlayScene() {
-        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
-        emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
-        emitter.removeListener(CONSTANTS.CREATE_HUD);
-        emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
-        emitter.removeListener(CONSTANTS.START_GAME);
-        emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
+    // loadPlayScene() {
+    //     // emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+    //     emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
+    //     emitter.removeListener(CONSTANTS.CREATE_HUD);
+    //     emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+    //     emitter.removeListener(CONSTANTS.START_GAME);
+    //     emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
 
-        game.scene.start(CONSTANTS.PLAY_SCENE);
-        game.scene.stop(CONSTANTS.HOME_SCENE);
-    }
+    //     game.scene.start(CONSTANTS.PLAY_SCENE);
+    //     game.scene.stop(CONSTANTS.HOME_SCENE);
+    // }
 
     loadSetupScene() {
-        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+        // emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
@@ -129,7 +129,7 @@ class HomeScene extends Phaser.Scene {
     }
 
     startGame() {
-        emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
+        // emitter.removeListener(CONSTANTS.LOAD_PLAY_SCENE);
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
