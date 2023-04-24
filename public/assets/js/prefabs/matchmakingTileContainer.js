@@ -39,19 +39,19 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
             // let roomID = 1;
 
             // if (!controller.events.includes(CONSTANTS.CREATE_NEW_ROOM)) {
-            emitter.on(CONSTANTS.CREATE_NEW_ROOM, room => {
+            emitter.on(CONSTANTS.CREATE_NEW_ROOM, data => {
                 // console.log('create a new room');
                 // console.log(room);
-                this.createNewRoom(room.roomID, room.player1, room.player2);
+                this.createNewRoom(data);
             });
 
             //     controller.events.push(CONSTANTS.CREATE_NEW_ROOM);
             // }
     }
 
-    createNewRoom(roomID, player1, player2) {
+    createNewRoom(data) {
         const rooms = Object.keys(controller.rooms).length;
-        // console.log(rooms);
+        console.log(rooms);
         this.column = rooms === 0 ? 0 : Math.floor(rooms / 2);
         // console.log(this.column);
         this.row = rooms % 2;
@@ -64,15 +64,17 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         let matchmakingConfig = {
             scene: this.scene,
             container: this,
-            roomID: roomID,
+            roomID: data.roomID,
             x: this.offset + (this.multiplier * this.column),
             y: this.offset + (this.multiplier * this.row),
-            player1: player1,
-            player2: player2
+            player1: data.player1,
+            player1Army: data.player1Army,
+            player2: data.player2,
+            player2Army: data.player2Army,
         };
         const matchmakingTile = new MatchmakingTile(matchmakingConfig);
         // console.log(matchmakingTile);
-        controller.rooms[roomID] = matchmakingTile;
+        controller.rooms[data.roomID] = matchmakingTile;
         // console.log(controller.rooms[roomID]);
 
         // if (player1) {

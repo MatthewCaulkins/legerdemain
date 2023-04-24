@@ -12,8 +12,10 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
 
         this.rightSide.scaleX = -1;
 
-        this.player1 = null;
-        this.player2 = null;
+        this.player1 = config.player1;
+        this.player1Army = config.player1Army;
+        this.player2 = config.player2;
+        this.player2Army = config.playerSArmy;
 
         // Add Interactions to the sides
         this.leftSide.setInteractive();
@@ -35,7 +37,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
         config.container.add(this);
 
-        this.player1Name = this.scene.add.text(0, 0, '______________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player1Name = this.scene.add.text(0, 0, '_________________', CONSTANTS.DARK_TEXT_STYLE);
         this.player1Name.x = -65;
         this.player1Name.y = 65;
         this.player1Name.setOrigin(0, 0);
@@ -48,10 +50,10 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.vsText.setOrigin(.5, .5);
         this.add(this.vsText);
         
-        this.player2Name = this.scene.add.text(0, 0, '______________', CONSTANTS.DARK_TEXT_STYLE);
-        this.player2Name.x = 120;
-        this.player2Name.y = 65;
-        this.player2Name.setOrigin(0, 0);
+        this.player2Name = this.scene.add.text(0, 0, '_________________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player2Name.x = 140;
+        this.player2Name.y = -65;
+        this.player2Name.setOrigin(1, 1);
         this.player2Name.setRotation(CONSTANTS.MATCHMAKING_NAME_ORIENTATION);
         this.add(this.player2Name);
 

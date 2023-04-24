@@ -97,7 +97,7 @@ class Controller {
         this.socket.on(CONSTANTS.CREATE_NEW_ROOM, data => {
             // console.log('New Room Created');
 
-            controller.rooms[data.roomID] = data;
+            // controller.rooms[data.roomID] = data;
             // console.log(controller.rooms);
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data);
         });
@@ -126,7 +126,7 @@ class Controller {
             // console.log(data);
 
             Object.keys(data).forEach(room => {
-                console.log(data[room]);
+                // console.log(data[room]);
                 emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
             });
 
@@ -319,6 +319,20 @@ class Controller {
             // console.log('Player disconnected');
             // console.log(socketId);
             // console.log(controller.otherPlayers);
+
+            if (controller.gameRoom) {
+                if (controller.gameRoom.player1.playerId === game.player.playerId) {
+                    if (controller.gameRoom.player2.socketId === socketId) {
+                        emitter.emit(CONSTANTS.QUIT_GAME, {roomID: controller.gameRoom.roomID});
+                    }
+                } else if (controller.gameRoom.player2.playerId === game.player.playerId) {
+                    if (controller.gameRoom.player1.socketId === socketId) {
+                        emitter.emit(CONSTANTS.QUIT_GAME, {roomID: controller.gameRoom.roomID});
+                    }
+                }
+            }
+
+            
 
             delete controller.otherPlayers[socketId];
         });

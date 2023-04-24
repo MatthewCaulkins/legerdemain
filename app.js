@@ -262,6 +262,8 @@ io.on('connection', async function (socket) {
             rooms[data.roomID].player2Army = null;
         }
 
+        socket.leave(data.roomID);
+
         // TODO: Make this so it only updates that one room instead of relisting all of them
         // socket.broadcast.emit('listRooms', rooms);
         // socket.emit('listRooms', rooms);
@@ -321,6 +323,7 @@ io.on('connection', async function (socket) {
 
 
         io.in(data.roomID).emit('quitGameConfirmed');
+        socket.leave(data.roomID);
         io.emit('listRooms', rooms);
     });
 
@@ -364,25 +367,29 @@ io.on('connection', async function (socket) {
             // This should end a game if the player disconnects
             console.log('rooms');
             console.log(rooms);
-            let roomID;
+            //let roomID;
             const playerId = players[socket.id].playerId;
             Object.keys(rooms).forEach(room => {
                 if (rooms[room].player1 && rooms[room].player1.playerId === playerId) {
                     console.log('player was player 1 in a room');
                     rooms[room].player1 = null;
                     rooms[room].player1Army = null;
-                    roomID = room;
+                    //roomID = room;
+                    
+                    // io.to(rooms[room].player2.socketId).emit('quitGame', {roomID: room});
                 }
                 if (rooms[room].player2 && rooms[room].player2.playerId === playerId) {
                     console.log('player was player 2 in a room');
                     rooms[room].player2 = null;
                     rooms[room].player2Army = null;
-                    roomID = room;
+                    //roomID = room;
+
+                    // io.to(rooms[room].player1.socketId).emit('quitGame', {roomID: room});
                 }
             });
-            console.log(roomID);
-            socket.emit('quitGame', {roomID: roomID});
-            // io.in(roomID).emit('quitGameConfirmed');
+            // console.log(roomID);
+           // socket.emit('quitGame', {roomID: roomID});
+            // socket.to(roomID).emit('quitGame', {roomID: roomID});
         }
 
         // socket.broadcast.emit('listRooms', rooms);
