@@ -113,7 +113,7 @@ class ArmyDeployment {
             if (incrementCounter) {
                 this.scene.unitsPlaced[this.army] ++;
                 this.scene.updateCounter();
-                this.scene.hideStats();
+                this.scene.hideDetailsView();
             }
         }
     }

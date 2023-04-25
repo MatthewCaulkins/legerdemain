@@ -140,15 +140,13 @@ class ActionButton extends Phaser.GameObjects.Container {
 
                 this.scene.turnUnit = tile.unit;
                 this.scene.turnUnit.resetDirection();
+                this.scene.positionDirections(this.scene.turnUnit);
                 
                 if (this.phase === CONSTANTS.ACTION_ACTION) {
-                    this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.highlightTilesInActionRange(tile)
                 } else if (this.phase === CONSTANTS.DIRECTION_ACTION) {
-                    this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.directions.setVisible(true);
                 } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
-                    this.scene.positionDirections(this.scene.turnUnit);
                     this.scene.highlightTilesInMovementRange(tile);
                 } else if (this.phase === CONSTANTS.WAIT_ACTION) {
                     emitter.emit(CONSTANTS.END_TURN, {roomID: controller.gameRoom.roomID});

@@ -336,5 +336,13 @@ class Controller {
 
             delete controller.otherPlayers[socketId];
         });
+
+        this.socket.on('disconnect', () => {
+            console.log('disconnect');
+
+            console.log(window);
+
+            window.location.replace('/'); //index.html
+        });
     }
 }

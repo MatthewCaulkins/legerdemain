@@ -222,17 +222,21 @@ class PlayScene extends Phaser.Scene {
         
 
         this.player1Name = this.add.text(0, 0, controller.gameRoom.player1.name, CONSTANTS.HUD_STYLE);
+        this.player1Name.setOrigin(0, 1);
         this.player1Name.setRotation(-CONSTANTS.BOARD_ORIENTATION);
         this.alignmentGrid.positionItemAtIndex(44, this.player1Name);
-        // this.player1Name.x += 10;
-        this.player1Name.y -= 30;
+        this.player1Name.x += 10;
+        this.player1Name.y -= 20;
         
         this.player2Name = this.add.text(0, 0, controller.gameRoom.player2.name, CONSTANTS.HUD_STYLE);
+        this.player2Name.setOrigin(1, 0);
         this.player2Name.setRotation(-CONSTANTS.BOARD_ORIENTATION);
-        this.alignmentGrid.positionItemAtIndex(103, this.player2Name);
+        this.alignmentGrid.positionItemAtIndex(73, this.player2Name);
+        this.player2Name.x -= 65;
+        this.player2Name.y += 15;
     }
 
-    update() {}
+    // update() {}
 
 
     quitGame() {
@@ -319,7 +323,7 @@ class PlayScene extends Phaser.Scene {
     addActionButtons() {
         const config = {
             scene: this, 
-            // playerSide: this.playerSide,
+            playerSide: this.playerSide,
         }
 
         this.currentPlayerText = this.add.text(0, 0, controller.gameRoom.player1.name + "'s Turn", CONSTANTS.HUD_STYLE);
@@ -395,14 +399,14 @@ class PlayScene extends Phaser.Scene {
     
     updateDetailsView(unit) {
         this.unitStats.updateStats(unit);
-        unit.showHealthbar();
+        unit.showHealthbar(true);
     }
 
-    hideStats(unit) {
+    hideDetailsView(unit) {
         this.unitStats.hideStats();
 
         if (unit != this.turnUnit) {
-            unit.hideHealthbar();
+            unit.showHealthbar(false);
         }
     }
 
@@ -508,6 +512,112 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
+    startMoveUnit(currentTile, selectedToTile) {
+        this.playerAction = CONSTANTS.MID_ACTION;
+        this.removeAllHighlights(selectedToTile.path);
+
+        emitter.emit(CONSTANTS.MOVE_UNIT, {
+            roomID: controller.gameRoom.roomID,
+            currentTileNum: currentTile.number, 
+            selectedToTileNum: selectedToTile.number,
+            path: selectedToTile.path
+        });
+        // this.moveUnit(currentTile);
+    }
+
+    moveUnit(currentTile, selectedToTile) {
+        this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
+        // TODO: Clear everything but the path
+
+        this.currentTile = currentTile;
+        const unit = currentTile.unit;
+        console.log(unit);
+        console.log(unit.character);
+
+        // let currentTile = this.selectedFromTile;
+        this.selectedToTile = selectedToTile;
+        const path = this.selectedToTile.path.shift();
+        const direction = path.direction;
+
+        unit.setDirection(direction);
+
+        // TODO: set direction frames
+        // switch (direction) {
+        //     case CONSTANTS.TOP:
+        //         unit.character.play(unit.topIdle);
+        //         unit.tint.play(unit.topTintIdle);
+        //         break;
+        //     case CONSTANTS.RIGHT:
+        //         unit.character.play(unit.rightIdle);
+        //         unit.tint.play(unit.rightTintIdle);
+        //         break;
+        //     case CONSTANTS.BOTTOM:
+        //         unit.character.play(unit.bottomIdle);
+        //         unit.tint.play(unit.bottomTintIdle);
+        //         break;
+        //     case CONSTANTS.LEFT:
+        //         unit.character.play(unit.leftIdle);
+        //         unit.tint.play(unit.leftTintIdle);
+        //         break;
+        // }
+
+        this.targetTile = path.tile;
+
+        // Remove tints as the character moves
+        this.currentTile.clearTint();
+
+        
+        this.tweens.add({
+            targets: unit, 
+            x: this.targetTile.x, 
+            y: this.targetTile.y, 
+            duration: 500, 
+            yoyo: false, 
+            repeat: 0,
+            onStart: function () {},// console.log('onStart'); console.log(arguments); },
+            onComplete: function () { 
+                // console.log('onComplete'); 
+                // console.log(arguments); 
+                const unit = arguments[1][0];
+                const scene = unit.scene;
+                scene.currentTile.unit = null;
+                scene.targetTile.unit = unit;
+                // console.log(scene.targetTile.unit.tint.z);
+                // console.log(scene.targetTile.unit.character.z);
+                // console.log(scene.targetTile.z);
+                scene.selectedFromTile = scene.targetTile;
+                scene.targetTile.unit.z = scene.targetTile.z;
+                // scene.targetTile.unit.tint.setDepth(scene.targetTile.depth);
+                // scene.targetTile.unit.character.setDepth(scene.targetTile.depth);
+                unit.tile = scene.targetTile;
+
+                // This works, need to use .sort to sort them by depth
+                // scene.unitsBoard.sendToBack(unit);
+                scene.unitsBoard.sort('z');//, (a, b) => {
+                //     a.z > b.z ? 1 : -1;
+                // });
+                console.log(scene.unitsBoard.list);
+
+                if (scene.selectedToTile.path.length > 0) {
+                    scene.moveUnit(scene.targetTile, scene.selectedToTile);
+                } else {
+                    // TODO: unlock scene
+                    scene.clearPaths();
+                    
+                    scene.playerAction = CONSTANTS.SELECTION_ACTION;
+
+                    unit.tile.setTint(CONSTANTS.BLUE_TINT);
+
+                    scene.positionDirections(unit);
+                    // scene.removeAllHighlights();
+                }
+            },
+        }); 
+            //onStart: function()
+            //onComplete: function()
+    }
+
+    
     // Set the highlight to all tiles in range
     highlightTilesInActionRange(tile) {
         // Get the range
@@ -609,109 +719,22 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
-    startMoveUnit(currentTile) {
+    startUnitAction(unit, selectedToTile) {
+        //start action
+        // TODO: determine which action to take based on unit
         this.playerAction = CONSTANTS.MID_ACTION;
-        this.removeAllHighlights(this.selectedToTile.path);
 
-        emitter.emit(CONSTANTS.MOVE_UNIT, {
-            roomID: controller.gameRoom.roomID,
-            currentTileNum: currentTile.number, 
-            path: this.selectedToTile.path, 
-            selectedToTileNum: this.selectedToTile.number
-        });
-        // this.moveUnit(currentTile);
-    }
-
-    moveUnit(currentTile, selectedToTile) {
-        this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
-        // TODO: Clear everything but the path
-
-        this.currentTile = currentTile;
-        const unit = currentTile.unit;
-        console.log(unit);
-        console.log(unit.character);
-
-        // let currentTile = this.selectedFromTile;
-        this.selectedToTile = selectedToTile;
-        const path = this.selectedToTile.path.shift();
+        const path = selectedToTile.path.shift();
         const direction = path.direction;
-
+        
         unit.setDirection(direction);
 
-        // TODO: set direction frames
-        // switch (direction) {
-        //     case CONSTANTS.TOP:
-        //         unit.character.play(unit.topIdle);
-        //         unit.tint.play(unit.topTintIdle);
-        //         break;
-        //     case CONSTANTS.RIGHT:
-        //         unit.character.play(unit.rightIdle);
-        //         unit.tint.play(unit.rightTintIdle);
-        //         break;
-        //     case CONSTANTS.BOTTOM:
-        //         unit.character.play(unit.bottomIdle);
-        //         unit.tint.play(unit.bottomTintIdle);
-        //         break;
-        //     case CONSTANTS.LEFT:
-        //         unit.character.play(unit.leftIdle);
-        //         unit.tint.play(unit.leftTintIdle);
-        //         break;
-        // }
+        // make this a range based on the area of affect
+        this.removeAllHighlights([{tile: unit.tile}, {tile: selectedToTile}]);
+    }
 
-        this.targetTile = path.tile;
+    unitAction(unit, selectedToTile) {
 
-        // Remove tints as the character moves
-        this.currentTile.clearTint();
-
-        
-        this.tweens.add({
-            targets: unit, 
-            x: this.targetTile.x, 
-            y: this.targetTile.y, 
-            duration: 500, 
-            yoyo: false, 
-            repeat: 0,
-            onStart: function () {},// console.log('onStart'); console.log(arguments); },
-            onComplete: function () { 
-                // console.log('onComplete'); 
-                // console.log(arguments); 
-                const unit = arguments[1][0];
-                const scene = unit.scene;
-                scene.currentTile.unit = null;
-                scene.targetTile.unit = unit;
-                // console.log(scene.targetTile.unit.tint.z);
-                // console.log(scene.targetTile.unit.character.z);
-                // console.log(scene.targetTile.z);
-                scene.selectedFromTile = scene.targetTile;
-                scene.targetTile.unit.z = scene.targetTile.z;
-                // scene.targetTile.unit.tint.setDepth(scene.targetTile.depth);
-                // scene.targetTile.unit.character.setDepth(scene.targetTile.depth);
-                unit.tile = scene.targetTile;
-
-                // This works, need to use .sort to sort them by depth
-                // scene.unitsBoard.sendToBack(unit);
-                scene.unitsBoard.sort('z');//, (a, b) => {
-                //     a.z > b.z ? 1 : -1;
-                // });
-                console.log(scene.unitsBoard.list);
-
-                if (scene.selectedToTile.path.length > 0) {
-                    scene.moveUnit(scene.targetTile, scene.selectedToTile);
-                } else {
-                    // TODO: unlock scene
-                    scene.clearPaths();
-                    
-                    scene.playerAction = CONSTANTS.SELECTION_ACTION;
-
-                    unit.tile.setTint(CONSTANTS.BLUE_TINT);
-
-                    scene.positionDirections(unit);
-                    // scene.removeAllHighlights();
-                }
-            },
-        }); 
-            //onStart: function()
-            //onComplete: function()
     }
 
     positionDirections(unit) {
@@ -771,7 +794,10 @@ class PlayScene extends Phaser.Scene {
 
         this.playerTurn = this.playerTurn === CONSTANTS.LEFT ? CONSTANTS.RIGHT : CONSTANTS.LEFT;
         this.currentPlayerText.text = this.playerTurn === CONSTANTS.LEFT ? controller.gameRoom.player1.name + "'s Turn" : controller.gameRoom.player2.name + "'s Turn";
-        this.turnUnit.hideHealthbar();
+
+        if (this.turnUnit) {
+            this.turnUnit.showHealthbar(false);
+        }
         this.turnUnit = null;
         this.turnUnitLocked = false;
 

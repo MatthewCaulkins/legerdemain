@@ -50,7 +50,7 @@ class SetupBoardTile extends Tile {
         if (this.scene.selectGridTile) {
             this.scene.updateDetailsView(this.scene.selectGridTile.unit);
         } else {
-            this.scene.hideStats();
+            this.scene.hideDetailsView();
         }
 
         if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {

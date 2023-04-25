@@ -1,9 +1,5 @@
 class Constants {
     constructor() {
-        this.ATTACK_SOUND = 'attackSound';
-        this.DODGE = 'dodge';
-        this.MOVE_UNIT = 'moveUnit';
-
         // Text inputs
         this.ARMY_NAME = 'armyName';
 
@@ -15,6 +11,9 @@ class Constants {
         // Hex codes
         this.WHITE = '#ffffff';
         this.BLACK = '#000000';
+
+        this.GREEN_COLOR = {r: 3, g: 108, b: 3, a: 255};
+        this.RED_COLOR = {r: 138, g: 36, b: 0, a: 255};
 
         // Tints
         this.BLUE_TINT = 0x0044ff;
@@ -191,6 +190,10 @@ class Constants {
         this.DODGE = 'Dodge';
         this.BLOCK = 'Block';
         this.COOLDOWN = 'Cooldown';
+
+        // Action Results
+        this.BLOCK_RESULT = 'BLOCK';
+        this.DODGE_RESULT = 'DODGE';
 
         // Setup scene notices
         this.ARMY_SAVED_NOTICE = 'armySavedNotice';

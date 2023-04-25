@@ -947,7 +947,7 @@ class SetupScene extends Phaser.Scene {
         // }
     }
 
-    hideStats() {
+    hideDetailsView() {
         this.unitStats.hideStats();
         // if (this.stats) {
         //     this.stats.forEach(stat => {

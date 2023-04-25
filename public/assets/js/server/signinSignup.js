@@ -12,7 +12,7 @@ function signUp() {
         success: function (data) {
             // console.log(data);
             window.alert('user created successfully');
-            window.location.replace('/index.html');
+            window.location.replace('/'); //index.html
         },
         error: function (response) {
             // Switch this stuff around to use console and not reload
@@ -82,7 +82,7 @@ function forgotPassword() {
         data,
         success: function (data) {
             // window.alert(data.message);
-            window.location.replace('/index.html');
+            window.location.replace('/'); //index.html
         },
         error: function (response) {
             // Make this use validation field instead of alert
@@ -113,7 +113,7 @@ function resetPassword() {
             data,
             success: function (data) {
                 // window.alert(data.message);
-                window.location.replace('/index.html');
+                window.location.replace('/'); //index.html
             },
             error: function (response) {
                 window.alert(JSON.stringify(response));

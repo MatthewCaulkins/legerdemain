@@ -92,12 +92,15 @@ class Unit extends Phaser.GameObjects.Container {
             });
             this.add(this.healthBar);
 
-            this.healthBar.setPercent(1);
-            this.healthBar.setDepth(this.z);
 
-            this.healthBar.container.setVisible(false);
-            this.healthBar.bar.setVisible(false);
-
+            // Add the block/dodge/dmg text
+            this.actionResultsText = new ActionResultsText({
+                scene: this.scene,
+                textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+                x: 0,
+                y: 0 - (.5 * height),
+            });
+            this.add(this.actionResultsText);
 
             // Add directions
             
@@ -116,13 +119,13 @@ class Unit extends Phaser.GameObjects.Container {
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
     }
 
-    showHealthbar() {
-        this.healthBar.bar.setVisible(true);
+    showHealthbar(visible) {
+        this.healthBar.setVisible(visible);
     }
 
-    hideHealthbar() {
-        this.healthBar.bar.setVisible(false);
-    }
+    // hideHealthbar() {
+    //     this.healthBar.setVisible(false);
+    // }
 
     // Set the tint for the player's army
     setTint(tint) {
