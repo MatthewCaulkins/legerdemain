@@ -67,6 +67,9 @@ class Constants {
         this.SAVE_ARMY = 'saveArmy';
         this.SELECTED_ARMY = 'selectedArmy';
         this.START_GAME = 'startGame';
+        this.UPDATE_ROOMS = 'updateRooms';
+
+        this.BLANK_NAME = '_________________';
 
         // Battle events
         this.CHANGE_DIRECTION = 'changeDirection';
@@ -75,6 +78,8 @@ class Constants {
         this.END_TURN_CONFIRMED = 'endTurnConfirmed';
         this.MOVE_UNIT = 'moveUnit';
         this.MOVE_UNIT_CONFIRMED = 'moveUnitConfirmed';
+        this.UNIT_ACTION = 'unitAction';
+        this.UNIT_ACTION_CONFIRMED = 'unitActionConfirmed';
 
         // Mouse events
         this.POINTER_DOWN = 'pointerdown';

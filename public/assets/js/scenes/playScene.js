@@ -181,6 +181,26 @@ class PlayScene extends Phaser.Scene {
             this.moveUnit(startTile, endTile);
         });
 
+        emitter.on(CONSTANTS.UNIT_ACTION_CONFIRMED, (data) => {
+            console.log('Unit action');
+            console.log(data);
+
+            // let path = [];
+
+            // data.path.forEach(step => {
+            //     const stepTile = this.generatedBoard.getTile(step.tileNum);
+            //     path.push({direction: step.direction, tile: stepTile});
+            // });
+
+            // const startTile = this.generatedBoard.getTile(data.currentTileNum);
+            // const endTile = this.generatedBoard.getTile(data.selectedToTileNum);
+            // endTile.path = path;
+
+            // console.log(endTile);
+            // data.selectedToTile.path = data.path;
+            this.unitAction(data);
+        });
+
         emitter.on(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, (data) => {
             console.log('Change directions');
             console.log(data);
@@ -291,6 +311,9 @@ class PlayScene extends Phaser.Scene {
         }
         // TODO: remove the else stuff for testing
         // if (controller.gameRoom) {
+        console.log('Army Units');
+        console.log(this.armyDeployment.armyUnits);
+        console.log(controller.gameRoom);
         emitter.emit(CONSTANTS.SELECTED_ARMY, {roomID: controller.gameRoom.roomID, player: this.playerSide, army: this.armyDeployment.armyUnits});
         // } else {
         //     this.startGame();
@@ -444,7 +467,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile, tileNum: questionedTile.number}); //CONSTANTS.TOP);
+                            questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number}); //CONSTANTS.TOP); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
                         } else {
                             console.log('tile included already');
@@ -459,7 +482,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile, tileNum: questionedTile.number}); //CONSTANTS.RIGHT);
+                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number}); //CONSTANTS.RIGHT); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -472,7 +495,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile, tileNum: questionedTile.number}); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number}); // CONSTANTS.DOWN); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -485,7 +508,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile, tileNum: questionedTile.number}); // CONSTANTS.LEFT);
+                            questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number}); // CONSTANTS.LEFT); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
                         }
                     }
@@ -651,7 +674,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.TOP, tile: questionedTile}); //CONSTANTS.TOP);
+                            questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number}); //CONSTANTS.TOP); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
                         } else {
                             console.log('tile included already');
@@ -666,7 +689,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tile: questionedTile}); //CONSTANTS.RIGHT);
+                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number}); //CONSTANTS.RIGHT);
                             tilesOfInterest.push(questionedTile);
                         }
                     // }
@@ -679,7 +702,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tile: questionedTile}); // CONSTANTS.DOWN);
+                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number}); // CONSTANTS.DOWN);
                             tilesOfInterest.push(questionedTile);
                         }
                     // }
@@ -692,7 +715,7 @@ class PlayScene extends Phaser.Scene {
                             tileOfInterest.path.forEach(path => {
                                 questionedTile.path.push(path);
                             })
-                            questionedTile.path.push({direction: CONSTANTS.LEFT, tile: questionedTile}); // CONSTANTS.LEFT);
+                            questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number}); // CONSTANTS.LEFT);
                             tilesOfInterest.push(questionedTile);
                         }
                     // }
@@ -719,22 +742,54 @@ class PlayScene extends Phaser.Scene {
         // }
     }
 
-    startUnitAction(unit, selectedToTile) {
+    startUnitAction(selectedToTile) {
         //start action
         // TODO: determine which action to take based on unit
-        this.playerAction = CONSTANTS.MID_ACTION;
-
-        const path = selectedToTile.path.shift();
+        const path = selectedToTile.path;
         const direction = path.direction;
-        
-        unit.setDirection(direction);
 
-        // make this a range based on the area of affect
-        this.removeAllHighlights([{tile: unit.tile}, {tile: selectedToTile}]);
+        const actionUnit = {
+            tileNum: this.turnUnit.tile.number,
+            type: this.turnUnit.type,
+            offense: this.turnUnit.offense,
+            // cooldown: this.turnUnit.cooldown,
+            direction: direction,
+            path: path
+        };
+        this.playerAction = CONSTANTS.MID_ACTION;
+        this.removeAllHighlights([{tile: this.turnUnit.tile}, {tile: selectedToTile}]);
+
+        // TODO: make this an array for multiple units
+        const recievingUnit = selectedToTile.unit ? 
+            {
+                tileNum: selectedToTile.number,
+                type: selectedToTile.unit.type, 
+                defense: selectedToTile.unit.defense, 
+                dodge: selectedToTile.unit.dodge, 
+                block: selectedToTile.unit.block, 
+                direction: selectedToTile.unit.currentDirection
+            } : null;
+
+        emitter.emit(CONSTANTS.UNIT_ACTION, {
+            roomID: controller.gameRoom.roomID,
+            // currentTileNum: currentTile.number, 
+            actionUnit: actionUnit,
+            // selectedToTileNum: selectedToTile.number,
+            recievingUnit: recievingUnit,
+            // path: selectedToTile.path
+        });
     }
 
-    unitAction(unit, selectedToTile) {
+    unitAction(response) {
+        console.log('Unit Action Confirmed');
+        console.log(respone);
 
+        // const path = selectedToTile.path.shift();
+        // const direction = path.direction;
+        
+        // currentTile.unit.setDirection(direction);
+
+        // TODO: run action animation
     }
 
     positionDirections(unit) {

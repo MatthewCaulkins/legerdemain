@@ -269,7 +269,7 @@ class GameBoardTile extends Tile {
                                 this.scene.turnUnitLocked = true;
                         
                                 this.scene.activeActionButton = null;
-                                this.scene.startUnitAction(this.scene.turnUnit, this.scene.selectedToTile);
+                                this.scene.startUnitAction(this.scene.selectedToTile); //this.scene.turnUnit.tile, this.scene.selectedToTile
                             } else {
                                 if (this.unit && this.unit.playerId === game.player.playerId && !this.scene.turnUnitLocked) {
                                     console.log('switch to this tile');

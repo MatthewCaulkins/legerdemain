@@ -136,6 +136,10 @@ class Controller {
             // }
         });
 
+        this.socket.on(CONSTANTS.UPDATE_ROOMS, (data) => {
+            emitter.emit(CONSTANTS.UPDATE_ROOMS, data);
+        });
+
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
             emitter.on(CONSTANTS.JOIN_ROOM, (data) => {
@@ -211,6 +215,8 @@ class Controller {
             // console.log('startgame');
             // console.log(data);
             controller.gameRoom = data;
+            console.log('game room');
+            console.log(controller.gameRoom);
             emitter.emit(CONSTANTS.START_GAME);
         });
 
@@ -224,8 +230,8 @@ class Controller {
 
         // Both armies selected
         this.socket.on(CONSTANTS.ARMIES_SELECTED, data => {
-            // console.log('armies selected');
-            // console.log(data);
+            console.log('armies selected');
+            console.log(data);
             // controller.gameRoom = data;
             controller.gameRoom = data;
             // console.log(controller);
@@ -243,6 +249,19 @@ class Controller {
 
         this.socket.on(CONSTANTS.MOVE_UNIT_CONFIRMED, (data) => {
             emitter.emit(CONSTANTS.MOVE_UNIT_CONFIRMED, data);
+        });
+
+        // Unit action
+        if (!controller.events.includes(CONSTANTS.UNIT_ACTION)) {
+            emitter.on(CONSTANTS.UNIT_ACTION, (data) => {
+                this.socket.emit(CONSTANTS.UNIT_ACTION, data);
+            });
+
+            controller.events.push(CONSTANTS.UNIT_ACTION);
+        }
+
+        this.socket.on(CONSTANTS.UNIT_ACTION_CONFIRMED, (data) => {
+            emitter.emit(CONSTANTS.UNIT_ACTION_CONFIRMED, data);
         });
 
         // Change unit direction

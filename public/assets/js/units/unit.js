@@ -9,16 +9,15 @@ class Unit extends Phaser.GameObjects.Container {
         // const y = tile.y;
 
         super(config.scene, 0, 0, [tint, character]);
-
         
 
         //this.scene.boardContainer.add(this.tint);
         //this.scene.boardContainer.add(this.character);
+        this.playerId = config.playerId;
 
         if (this.scene.scene.key === CONSTANTS.HOME_SCENE) {
 
         } else {
-            this.playerId = config.playerId;
             this.tint = tint;
             this.character = character;
             this.tile = config.tile;
@@ -68,6 +67,8 @@ class Unit extends Phaser.GameObjects.Container {
 
             // Universal attributes used by sub-classes
             this.currentHealth;
+            this.currentCooldown;
+            this.currentDirection;
             
             this.description;
             this.health;
@@ -79,7 +80,6 @@ class Unit extends Phaser.GameObjects.Container {
             this.block;
             this.cooldown;
 
-            this.currentDirection;
 
 
             // Add the healthbar for this unit
