@@ -35,32 +35,32 @@ class HealthBar extends Phaser.GameObjects.Container {
         this.setPercent(1);
         this.setDepth(this.z);
 
-        // this.setVisible(false);
+        this.setVisible(false);
 
         // TINT FROM GREEN TO RED
 
-        this.scene.tweens.addCounter({
-            from: 0,
-            to: 100,
-            duration: 1000,
-            ease: Phaser.Math.Easing.Sine.InOut,
-            repeat: -1,
-            yoyo: true,
-            onUpdate: tween => {
-                const value = tween.getValue();
-                const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
-                    this.fullColor,
-                    this.emptyColor,
-                    100,
-                    value
-                );
+                // this.scene.tweens.addCounter({
+                //     from: 0,
+                //     to: 100,
+                //     duration: 1000,
+                //     ease: Phaser.Math.Easing.Sine.InOut,
+                //     repeat: -1,
+                //     yoyo: true,
+                //     onUpdate: tween => {
+                //         const value = tween.getValue();
+                //         const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+                //             this.fullColor,
+                //             this.emptyColor,
+                //             100,
+                //             value
+                //         );
 
-                const color = Phaser.Display.Color.GetColor(colorObject.r, colorObject.g, colorObject.b);
+                //         const color = Phaser.Display.Color.GetColor(colorObject.r, colorObject.g, colorObject.b);
 
-                // console.log(color);
-                this.bar.setFillStyle(color);
-            }
-        })
+                //         // console.log(color);
+                //         this.bar.setFillStyle(color);
+                //     }
+                // })
     }
 
     setPercent(percent) {
