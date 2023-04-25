@@ -15,6 +15,7 @@ class Dagger extends Unit {
         this.dodge = .35;
         this.block = .25;
         this.cooldown = 0;
+        this.action = CONSTANTS.DAMAGE;
 
         this.currentHealth = this.health;
         this.currentCooldown = 0;

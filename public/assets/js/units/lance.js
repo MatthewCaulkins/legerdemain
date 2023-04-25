@@ -15,6 +15,7 @@ class Lance extends Unit {
         this.dodge = .15;
         this.block = .35;
         this.cooldown = 1;
+        this.action = CONSTANTS.DAMAGE;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;

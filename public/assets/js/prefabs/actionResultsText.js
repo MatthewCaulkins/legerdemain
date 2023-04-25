@@ -16,6 +16,8 @@ class ActionResultsText extends Phaser.GameObjects.Container {
     // }
 
     setActive(text) {
+        this.setVisible(true);
+        this.text.text = text;
         // TODO: set a tween to 1 alpha -y, then to 0 alpha +y 
     }
 }

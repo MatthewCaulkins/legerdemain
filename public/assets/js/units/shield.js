@@ -15,6 +15,7 @@ class Shield extends Unit {
         this.dodge = .05;
         this.block = .4;
         this.cooldown = 2;
+        this.action = CONSTANTS.DAMAGE;
 
         this.currentHealth = this.health;
         this.currentCooldown = 0;

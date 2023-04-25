@@ -273,6 +273,7 @@ class PlayScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.QUIT_GAME_SELECTED);
         emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);
         emitter.removeListener(CONSTANTS.CHANGE_DIRECTION_CONFIRMED);
+        emitter.removeListener(CONSTANTS.UNIT_ACTION_CONFIRMED);
         emitter.removeListener(CONSTANTS.END_TURN_CONFIRMED);
         emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
         emitter.removeListener(CONSTANTS.QUIT_GAME_CONFIRMED);
@@ -428,7 +429,7 @@ class PlayScene extends Phaser.Scene {
     hideDetailsView(unit) {
         this.unitStats.hideStats();
 
-        if (unit != this.turnUnit) {
+        if (unit != this.turnUnit && !unit.active) {
             unit.showHealthbar(false);
         }
     }
@@ -750,8 +751,9 @@ class PlayScene extends Phaser.Scene {
 
         const actionUnit = {
             tileNum: this.turnUnit.tile.number,
-            type: this.turnUnit.type,
+            // type: this.turnUnit.type,
             offense: this.turnUnit.offense,
+            action: this.turnUnit.action,
             // cooldown: this.turnUnit.cooldown,
             direction: direction,
             path: path
@@ -760,10 +762,12 @@ class PlayScene extends Phaser.Scene {
         this.removeAllHighlights([{tile: this.turnUnit.tile}, {tile: selectedToTile}]);
 
         // TODO: make this an array for multiple units
+        selectedToTile.unit.setActive(true);
+
         const recievingUnit = selectedToTile.unit ? 
             {
                 tileNum: selectedToTile.number,
-                type: selectedToTile.unit.type, 
+                // type: selectedToTile.unit.type, 
                 defense: selectedToTile.unit.defense, 
                 dodge: selectedToTile.unit.dodge, 
                 block: selectedToTile.unit.block, 
@@ -780,16 +784,24 @@ class PlayScene extends Phaser.Scene {
         });
     }
 
-    unitAction(response) {
+    unitAction(data) {
+        this.actionButtonContainer.setUsed(CONSTANTS.ACTION_BUTTON);
+
         console.log('Unit Action Confirmed');
-        console.log(respone);
+        console.log(data);
 
-        // const path = selectedToTile.path.shift();
-        // const direction = path.direction;
+        const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
+        actionUnit.setDirection(data.actionUnit.path[0].direction);
+
+        const recievingUnit = this.generatedBoard.getTile(data.recievingUnit.tileNum).unit;
+
+        console.log(actionUnit);
+        console.log(recievingUnit);
+
+        recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, data.actionUnit.path[0].direction, data.result.text);
         
-        // currentTile.unit.setDirection(direction);
-
-        // TODO: run action animation
+        // TODO: Make all the animations and stuff happen
+        this.playerAction = CONSTANTS.SELECTION_ACTION;
     }
 
     positionDirections(unit) {
@@ -846,6 +858,15 @@ class PlayScene extends Phaser.Scene {
         console.log('got to end turn');
         this.playerAction = CONSTANTS.SELECTION_ACTION;
         this.activeActionButton = null;
+
+        // Set cooldown 
+        let fullCooldown = false;
+        if (this.actionButtonContainer.movementButton.used && this.actionButtonContainer.actionButton.used) {
+            fullCooldown = true;
+        }
+        if (this.turnUnit) {
+            this.turnUnit.setCooldown(fullCooldown);
+        }
 
         this.playerTurn = this.playerTurn === CONSTANTS.LEFT ? CONSTANTS.RIGHT : CONSTANTS.LEFT;
         this.currentPlayerText.text = this.playerTurn === CONSTANTS.LEFT ? controller.gameRoom.player1.name + "'s Turn" : controller.gameRoom.player2.name + "'s Turn";

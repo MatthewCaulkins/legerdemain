@@ -15,6 +15,7 @@ class Bow extends Unit {
         this.dodge = .2;
         this.block = .1;
         this.cooldown = 2;
+        this.action = CONSTANTS.DAMAGE;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;

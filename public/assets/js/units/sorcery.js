@@ -15,6 +15,7 @@ class Sorcery extends Unit {
         this.dodge = .1;
         this.block = .1;
         this.cooldown = 3;
+        this.action = CONSTANTS.DAMAGE;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;

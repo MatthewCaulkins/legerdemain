@@ -15,6 +15,7 @@ class Healing extends Unit {
         this.dodge = .15;
         this.block = 0;
         this.cooldown = 4;
+        this.action = CONSTANTS.HEAL;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;

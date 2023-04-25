@@ -19,6 +19,7 @@ class Constants {
         this.BLUE_TINT = 0x0044ff;
         this.BROWN_TINT = 0x9b530d;
         this.GREEN_TINT = 0x06cb06;
+        this.GREY_TINT = 0xffffff;
         this.ORANGE_TINT = 0xe9b11a;
         this.PINK_TINT = 0xfb14bc;
         this.PURPLE_TINT = 0x9a12cc;
@@ -105,9 +106,22 @@ class Constants {
 
         // Directions
         this.TOP = 'top';
+        this.RIGHT = 'right';
         this.BOTTOM = 'bottom';
         this.LEFT = 'left';
-        this.RIGHT = 'right';
+
+        // Direction Opposites
+        this.DIRECTION_OPPOSITES = {
+            'top': 'bottom',
+            'right': 'left',
+            'bottom': 'top',
+            'left': 'right'
+        };
+
+        // Action types
+        this.DAMAGE = 'damage';
+        this.HEAL = 'heal';
+        this.STOP = 'stop';
 
         // Direction buttons
         this.TOP_DIRECTION_BUTTON = 'topDirectionButton';

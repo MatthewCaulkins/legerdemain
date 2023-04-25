@@ -15,6 +15,7 @@ class Sword extends Unit {
         this.dodge = .25;
         this.block = .25;
         this.cooldown = 1;
+        this.action = CONSTANTS.DAMAGE;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;
