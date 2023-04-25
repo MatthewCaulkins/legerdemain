@@ -73,8 +73,8 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     }
 
     updateRoom(config) {
-        console.log('update room ' + config.roomID);
-        console.log(this);
+        // console.log('update room ' + config.roomID);
+        // console.log(this);
 
         if (this.leftSide.unit) {            
             this.leftSide.unit.destroy();

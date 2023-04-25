@@ -61,7 +61,7 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
 
     createNewRoom(room) {
         const rooms = Object.keys(controller.rooms).length;
-        console.log(rooms);
+        // console.log(rooms);
         this.column = rooms === 0 ? 0 : Math.floor(rooms / 2);
         // console.log(this.column);
         this.row = rooms % 2;

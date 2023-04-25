@@ -323,42 +323,44 @@ io.on('connection', async function (socket) {
         console.log(data.recievingUnit);
         console.log(directionsModifiers);
         
-        const modifier = directionsModifiers[data.actionUnit.path[0].direction][data.recievingUnit.direction];
-        const action = data.actionUnit.action;
+        if (data.recievingUnit) {
+            const modifier = directionsModifiers[data.actionUnit.path[0].direction][data.recievingUnit.direction];
+            const action = data.actionUnit.action;
 
-        switch (action) {
-            case 'damage':
-                if ((Math.random() * 100 * modifier) > ((1 - data.recievingUnit.dodge) * 100)) {
-                    data.result = {
-                        tileNum: data.recievingUnit.tileNum,
-                        text: 'Dodge',
-                        turn: true,
-                        action: 'damage',
-                        value: 0
-                    };
-                } else if ((Math.random() * 100 * modifier) > ((1 - data.recievingUnit.block) * 100)) {
-                    data.result = {
-                        tileNum: data.recievingUnit.tileNum,
-                        text: 'Block',
-                        turn: true,
-                        action: 'damage',
-                        value: 0
-                    };
-                } else {
-                    const value = Math.ceil(data.actionUnit.offense * (1 - data.recievingUnit.defense));
-                    data.result = {
-                        tileNum: data.recievingUnit.tileNum,
-                        text: '-' + value,
-                        turn: false,
-                        action: 'damage',
-                        value: value
-                    };
-                }
-                break;
-            case 'heal':
-                break;
-            case 'stop':
-                break;
+            switch (action) {
+                case 'damage':
+                    if ((Math.random() * 100) < ((data.recievingUnit.dodge * modifier) * 100)) {
+                        data.result = {
+                            tileNum: data.recievingUnit.tileNum,
+                            text: 'Dodge',
+                            turn: true,
+                            action: 'damage',
+                            value: 0
+                        };
+                    } else if ((Math.random() * 100) < ((data.recievingUnit.block * modifier) * 100)) {
+                        data.result = {
+                            tileNum: data.recievingUnit.tileNum,
+                            text: 'Block',
+                            turn: true,
+                            action: 'damage',
+                            value: 0
+                        };
+                    } else {
+                        const value = Math.ceil(data.actionUnit.offense * (1 - data.recievingUnit.defense));
+                        data.result = {
+                            tileNum: data.recievingUnit.tileNum,
+                            text: '-' + value,
+                            turn: false,
+                            action: 'damage',
+                            value: value
+                        };
+                    }
+                    break;
+                case 'heal':
+                    break;
+                case 'stop':
+                    break;
+            }
         }
         
         // data.actionUnit.offense

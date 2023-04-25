@@ -74,13 +74,13 @@ class PlayScene extends Phaser.Scene {
         // TODO: Wait for Socket.IO to return both selected armies
 
         // Only have armies that are created
-        console.log(game.player.armies);
+        // console.log(game.player.armies);
         this.playerArmies = [];
         game.player.armies.forEach(army => {
             this.playerArmies.push(army);
         })
 
-        console.log(this.playerArmies);
+        // console.log(this.playerArmies);
 
         const armyDeploymentConfig = {
             scene: this,
@@ -162,23 +162,7 @@ class PlayScene extends Phaser.Scene {
 
         // Add event listeners for battle actions
         emitter.on(CONSTANTS.MOVE_UNIT_CONFIRMED, (data) => {
-            console.log('Move Unit');
-            console.log(data);
-
-            let path = [];
-
-            data.path.forEach(step => {
-                const stepTile = this.generatedBoard.getTile(step.tileNum);
-                path.push({direction: step.direction, tile: stepTile});
-            });
-
-            const startTile = this.generatedBoard.getTile(data.currentTileNum);
-            const endTile = this.generatedBoard.getTile(data.selectedToTileNum);
-            endTile.path = path;
-
-            console.log(endTile);
-            // data.selectedToTile.path = data.path;
-            this.moveUnit(startTile, endTile);
+            this.moveUnitConfirmed(data);
         });
 
         emitter.on(CONSTANTS.UNIT_ACTION_CONFIRMED, (data) => {
@@ -202,14 +186,7 @@ class PlayScene extends Phaser.Scene {
         });
 
         emitter.on(CONSTANTS.CHANGE_DIRECTION_CONFIRMED, (data) => {
-            console.log('Change directions');
-            console.log(data);
-
-            const tile = this.generatedBoard.getTile(data.currentTileNum);
-
-            this.directions.setVisible(false);
-        // this.scene.turnUnit.directions.setVisible(false);
-            tile.unit.setDirection(data.direction);
+            this.changeDirectionConfirmed(data);
         });
 
         
@@ -220,19 +197,7 @@ class PlayScene extends Phaser.Scene {
 
         // Add the opponents army
         emitter.on(CONSTANTS.ARMIES_SELECTED, () => {
-            console.log('ARMIES SELECTED');
-            if (this.playerSide === CONSTANTS.LEFT) {
-                this.opponentArmy = controller.gameRoom.player2Army;
-                this.opponentId = controller.gameRoom.player2.playerId;
-            } else {
-                this.opponentArmy = controller.gameRoom.player1Army;
-                this.opponentId = controller.gameRoom.player1.playerId;
-            }
-
-            this.armyDeployment.opponentArmyUnits = this.opponentArmy;
-            this.armyDeployment.populateOpponentBoard(this.opponentId);
-            
-            this.startGame();
+            this.armiesSelected();
         });
 
         emitter.on(CONSTANTS.QUIT_GAME_CONFIRMED, () => {
@@ -319,6 +284,22 @@ class PlayScene extends Phaser.Scene {
         // } else {
         //     this.startGame();
         // }
+    }
+
+    armiesSelected() {
+        console.log('ARMIES SELECTED');
+        if (this.playerSide === CONSTANTS.LEFT) {
+            this.opponentArmy = controller.gameRoom.player2Army;
+            this.opponentId = controller.gameRoom.player2.playerId;
+        } else {
+            this.opponentArmy = controller.gameRoom.player1Army;
+            this.opponentId = controller.gameRoom.player1.playerId;
+        }
+
+        this.armyDeployment.opponentArmyUnits = this.opponentArmy;
+        this.armyDeployment.populateOpponentBoard(this.opponentId);
+        
+        this.startGame();
     }
 
     startGame() {
@@ -470,8 +451,8 @@ class PlayScene extends Phaser.Scene {
                             })
                             questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number}); //CONSTANTS.TOP); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
-                        } else {
-                            console.log('tile included already');
+                        // } else {
+                        //     console.log('tile included already');
                         }
                     }
                 }
@@ -549,14 +530,34 @@ class PlayScene extends Phaser.Scene {
         // this.moveUnit(currentTile);
     }
 
+    moveUnitConfirmed(data) {
+        console.log('Move Unit');
+        console.log(data);
+
+        let path = [];
+
+        data.path.forEach(step => {
+            const stepTile = this.generatedBoard.getTile(step.tileNum);
+            path.push({direction: step.direction, tile: stepTile});
+        });
+
+        const startTile = this.generatedBoard.getTile(data.currentTileNum);
+        const endTile = this.generatedBoard.getTile(data.selectedToTileNum);
+        endTile.path = path;
+
+        console.log(endTile);
+        // data.selectedToTile.path = data.path;
+        this.moveUnit(startTile, endTile);
+    }
+
     moveUnit(currentTile, selectedToTile) {
         this.actionButtonContainer.setUsed(CONSTANTS.MOVE_BUTTON);
         // TODO: Clear everything but the path
 
         this.currentTile = currentTile;
         const unit = currentTile.unit;
-        console.log(unit);
-        console.log(unit.character);
+        // console.log(unit);
+        // console.log(unit.character);
 
         // let currentTile = this.selectedFromTile;
         this.selectedToTile = selectedToTile;
@@ -656,7 +657,7 @@ class PlayScene extends Phaser.Scene {
 
         const tilesOfInterest = [tile];
 
-        console.log(generatedBoard);
+        // console.log(generatedBoard);
         for (let i = 0; i < range; i++) {
             tilesOfInterest.forEach(tileOfInterest => {
 
@@ -677,8 +678,8 @@ class PlayScene extends Phaser.Scene {
                             })
                             questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number}); //CONSTANTS.TOP); //tile: questionedTile, 
                             tilesOfInterest.push(questionedTile);
-                        } else {
-                            console.log('tile included already');
+                        // } else {
+                        //     console.log('tile included already');
                         }
                     // }
                 }
@@ -761,8 +762,7 @@ class PlayScene extends Phaser.Scene {
         this.playerAction = CONSTANTS.MID_ACTION;
         this.removeAllHighlights([{tile: this.turnUnit.tile}, {tile: selectedToTile}]);
 
-        // TODO: make this an array for multiple units
-        selectedToTile.unit.setActive(true);
+       
 
         const recievingUnit = selectedToTile.unit ? 
             {
@@ -787,30 +787,52 @@ class PlayScene extends Phaser.Scene {
     unitAction(data) {
         this.actionButtonContainer.setUsed(CONSTANTS.ACTION_BUTTON);
 
+        // TODO: make this an array for multiple units
+       
         console.log('Unit Action Confirmed');
         console.log(data);
 
         const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
+        actionUnit.setActive(true);
         actionUnit.setDirection(data.actionUnit.path[0].direction);
 
-        const recievingUnit = this.generatedBoard.getTile(data.recievingUnit.tileNum).unit;
+        let recievingUnit;
+        if (data.recievingUnit) {
+            recievingUnit = this.generatedBoard.getTile(data.recievingUnit.tileNum).unit;
+            recievingUnit.setActive(true);
 
-        console.log(actionUnit);
-        console.log(recievingUnit);
+            console.log(actionUnit);
+            console.log(recievingUnit);
 
-        recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, data.actionUnit.path[0].direction, data.result.text);
-        
+            recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, data.actionUnit.path[0].direction, data.result.text);
+        }
+
         // TODO: Make all the animations and stuff happen
         this.playerAction = CONSTANTS.SELECTION_ACTION;
+        if (recievingUnit) {
+            recievingUnit.setActive(false);
+        }
+        actionUnit.setActive(false);
     }
 
     positionDirections(unit) {
         this.directions.setUnit(unit);
     }
 
+    changeDirectionConfirmed(data) {
+        console.log('Change directions');
+        console.log(data);
+
+        const tile = this.generatedBoard.getTile(data.currentTileNum);
+
+        this.directions.setVisible(false);
+    // this.scene.turnUnit.directions.setVisible(false);
+        tile.unit.setDirection(data.direction);
+    }
+
     clearPaths(clearSelections = true) {
-        console.log('clearPaths');
-        console.log('clear selections: ' + clearSelections);
+        // console.log('clearPaths');
+        // console.log('clear selections: ' + clearSelections);
         this.generatedBoard.tiles.forEach((tile) => {
             tile.inRange = false;
             tile.path = [];
@@ -828,8 +850,8 @@ class PlayScene extends Phaser.Scene {
     // Iterate over all tiles and remove the tint
     removeAllHighlights(exclude = null) {
         // console.log(this.generatedBoard);
-        console.log('Path');
-        console.log(exclude);
+        // console.log('Path');
+        // console.log(exclude);
                 
 
         this.generatedBoard.tiles.forEach((tile) => {
