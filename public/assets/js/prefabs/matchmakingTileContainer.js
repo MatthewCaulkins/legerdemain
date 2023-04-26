@@ -39,19 +39,29 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
             // let roomID = 1;
 
             // if (!controller.events.includes(CONSTANTS.CREATE_NEW_ROOM)) {
-            emitter.on(CONSTANTS.CREATE_NEW_ROOM, data => {
+            emitter.on(CONSTANTS.CREATE_NEW_ROOM, room => {
                 // console.log('create a new room');
                 // console.log(room);
-                this.createNewRoom(data);
+                this.createNewRoom(room);
             });
 
+            // Update rooms with new players
+            emitter.on(CONSTANTS.UPDATE_ROOMS, data => {
+                Object.keys(data).forEach(roomID => {
+                    // console.log(data[room]);
+                    const room = data[roomID];
+
+                    controller.rooms[room.roomID].updateRoom(room);
+                });
+            });
+            
             //     controller.events.push(CONSTANTS.CREATE_NEW_ROOM);
             // }
     }
 
-    createNewRoom(data) {
+    createNewRoom(room) {
         const rooms = Object.keys(controller.rooms).length;
-        console.log(rooms);
+        // console.log(rooms);
         this.column = rooms === 0 ? 0 : Math.floor(rooms / 2);
         // console.log(this.column);
         this.row = rooms % 2;
@@ -64,17 +74,17 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         let matchmakingConfig = {
             scene: this.scene,
             container: this,
-            roomID: data.roomID,
+            roomID: room.roomID,
             x: this.offset + (this.multiplier * this.column),
             y: this.offset + (this.multiplier * this.row),
-            player1: data.player1,
-            player1Army: data.player1Army,
-            player2: data.player2,
-            player2Army: data.player2Army,
+            player1: room.player1,
+            player1Army: room.player1Army,
+            player2: room.player2,
+            player2Army: room.player2Army,
         };
         const matchmakingTile = new MatchmakingTile(matchmakingConfig);
         // console.log(matchmakingTile);
-        controller.rooms[data.roomID] = matchmakingTile;
+        controller.rooms[room.roomID] = matchmakingTile;
         // console.log(controller.rooms[roomID]);
 
         // if (player1) {

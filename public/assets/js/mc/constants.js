@@ -19,6 +19,7 @@ class Constants {
         this.BLUE_TINT = 0x0044ff;
         this.BROWN_TINT = 0x9b530d;
         this.GREEN_TINT = 0x06cb06;
+        this.GREY_TINT = 0xffffff;
         this.ORANGE_TINT = 0xe9b11a;
         this.PINK_TINT = 0xfb14bc;
         this.PURPLE_TINT = 0x9a12cc;
@@ -67,6 +68,9 @@ class Constants {
         this.SAVE_ARMY = 'saveArmy';
         this.SELECTED_ARMY = 'selectedArmy';
         this.START_GAME = 'startGame';
+        this.UPDATE_ROOMS = 'updateRooms';
+
+        this.BLANK_NAME = '_________________';
 
         // Battle events
         this.CHANGE_DIRECTION = 'changeDirection';
@@ -75,6 +79,8 @@ class Constants {
         this.END_TURN_CONFIRMED = 'endTurnConfirmed';
         this.MOVE_UNIT = 'moveUnit';
         this.MOVE_UNIT_CONFIRMED = 'moveUnitConfirmed';
+        this.UNIT_ACTION = 'unitAction';
+        this.UNIT_ACTION_CONFIRMED = 'unitActionConfirmed';
 
         // Mouse events
         this.POINTER_DOWN = 'pointerdown';
@@ -100,9 +106,22 @@ class Constants {
 
         // Directions
         this.TOP = 'top';
+        this.RIGHT = 'right';
         this.BOTTOM = 'bottom';
         this.LEFT = 'left';
-        this.RIGHT = 'right';
+
+        // Direction Opposites
+        this.DIRECTION_OPPOSITES = {
+            'top': 'bottom',
+            'right': 'left',
+            'bottom': 'top',
+            'left': 'right'
+        };
+
+        // Action types
+        this.DAMAGE = 'damage';
+        this.HEAL = 'heal';
+        this.STOP = 'stop';
 
         // Direction buttons
         this.TOP_DIRECTION_BUTTON = 'topDirectionButton';

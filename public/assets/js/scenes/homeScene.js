@@ -121,6 +121,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+        emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
         emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
 
@@ -133,6 +134,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+        emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
 
         game.scene.start(CONSTANTS.PLAY_SCENE);

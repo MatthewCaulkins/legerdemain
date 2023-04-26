@@ -20,7 +20,8 @@ class HealthBar extends Phaser.GameObjects.Container {
         // Make the full color
         this.fullColor = new Phaser.Display.Color(CONSTANTS.GREEN_COLOR.r, CONSTANTS.GREEN_COLOR.g, CONSTANTS.GREEN_COLOR.b, CONSTANTS.GREEN_COLOR.a);
         this.emptyColor = new Phaser.Display.Color(CONSTANTS.RED_COLOR.r, CONSTANTS.RED_COLOR.g, CONSTANTS.RED_COLOR.b, CONSTANTS.RED_COLOR.a);
-        this.bar = new Phaser.GameObjects.Rectangle(this.scene, 0, 0, config.width - 4, config.height - 4, CONSTANTS.GREEN_TINT, 1);
+        this.bar = new Phaser.GameObjects.Rectangle(this.scene, -(config.width / 2) + 2, -(config.height / 2) + 2, config.width - 4, config.height - 4, CONSTANTS.GREEN_TINT, 1);
+        this.bar.setOrigin(0, 0);
         // this.bar = this.scene.add.graphics();
         // this.bar.fillStyle(CONSTANTS.GREEN_TINT, 1);
         // this.bar.fillRect(1, 1, config.width - 3, config.height -3);

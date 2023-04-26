@@ -9,16 +9,15 @@ class Unit extends Phaser.GameObjects.Container {
         // const y = tile.y;
 
         super(config.scene, 0, 0, [tint, character]);
-
         
 
         //this.scene.boardContainer.add(this.tint);
         //this.scene.boardContainer.add(this.character);
+        this.playerId = config.playerId;
 
         if (this.scene.scene.key === CONSTANTS.HOME_SCENE) {
 
         } else {
-            this.playerId = config.playerId;
             this.tint = tint;
             this.character = character;
             this.tile = config.tile;
@@ -68,6 +67,8 @@ class Unit extends Phaser.GameObjects.Container {
 
             // Universal attributes used by sub-classes
             this.currentHealth;
+            this.currentCooldown;
+            this.currentDirection;
             
             this.description;
             this.health;
@@ -79,8 +80,8 @@ class Unit extends Phaser.GameObjects.Container {
             this.block;
             this.cooldown;
 
-            this.currentDirection;
 
+            this.active = false;
 
             // Add the healthbar for this unit
             this.healthBar = new HealthBar({
@@ -91,7 +92,6 @@ class Unit extends Phaser.GameObjects.Container {
                 y: 0 - (.6 * height),
             });
             this.add(this.healthBar);
-
 
             // Add the block/dodge/dmg text
             this.actionResultsText = new ActionResultsText({
@@ -119,6 +119,11 @@ class Unit extends Phaser.GameObjects.Container {
         // scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
     }
 
+    setActive(active) {
+        this.active = active;
+        this.showHealthbar(active);
+    }
+
     showHealthbar(visible) {
         this.healthBar.setVisible(visible);
     }
@@ -127,9 +132,46 @@ class Unit extends Phaser.GameObjects.Container {
     //     this.healthBar.setVisible(false);
     // }
 
-    // Set the tint for the player's army
+    // TODO: Set the tint for the player's army
     setTint(tint) {
         this.tint.setTint(tint);
+    }
+
+    resolveAction(value, action, turn, direction, text) {
+        console.log('Resolve Action');
+        console.log(value);
+        console.log(action);
+        console.log(turn);
+        console.log(direction);
+        console.log(text);
+
+        switch (action) {
+            case CONSTANTS.DAMAGE:
+                if (turn) {
+                    this.setDirection(CONSTANTS.DIRECTION_OPPOSITES[direction]);
+                }
+                console.log('Current HP: ' + this.currentHealth);
+                console.log('Damage: ' + value);
+                this.currentHealth = (this.currentHealth - value) < 0 ? 0 : (this.currentHealth - value);
+
+                console.log('Current HP: ' + this.currentHealth);
+
+                this.healthBar.setPercent(this.currentHealth / this.health);
+                this.actionResultsText.setActive(text);
+
+                break;
+            case CONSTANTS.HEAL:
+                break;
+            case CONSTANTS.STOP:
+                break;
+        }
+
+    }
+
+    setCooldown(both = false) {
+        this.currentCooldown = both ? this.cooldown + 1 : this.cooldown;
+
+        this.character.setTint(CONSTANTS.GREY_TINT);
     }
 
     changeFrame ()

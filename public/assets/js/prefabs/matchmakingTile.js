@@ -37,7 +37,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.setRotation(CONSTANTS.BOARD_ORIENTATION);
         config.container.add(this);
 
-        this.player1Name = this.scene.add.text(0, 0, '_________________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player1Name = this.scene.add.text(0, 0, CONSTANTS.BLANK_NAME, CONSTANTS.DARK_TEXT_STYLE);
         this.player1Name.x = -65;
         this.player1Name.y = 65;
         this.player1Name.setOrigin(0, 0);
@@ -50,26 +50,58 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         this.vsText.setOrigin(.5, .5);
         this.add(this.vsText);
         
-        this.player2Name = this.scene.add.text(0, 0, '_________________', CONSTANTS.DARK_TEXT_STYLE);
+        this.player2Name = this.scene.add.text(0, 0, CONSTANTS.BLANK_NAME, CONSTANTS.DARK_TEXT_STYLE);
         this.player2Name.x = 140;
         this.player2Name.y = -65;
         this.player2Name.setOrigin(1, 1);
         this.player2Name.setRotation(CONSTANTS.MATCHMAKING_NAME_ORIENTATION);
         this.add(this.player2Name);
 
-        if (config.player1) {
+        if (this.player1) {
             // this.player1 = config.player1;
-            this.player1Name.text = config.player1.name;
-            this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT, config.player1);
+            this.player1Name.text = this.player1.name;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
         }
-        if (config.player2) {
+        if (this.player2) {
             // this.player2 = config.player2;
-            this.player2Name.text = config.player2.name;
-            this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT, config.player2);
+            this.player2Name.text = this.player2.name;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
         }
 
         // this.leftUnit = null;
         // this.rightUnit = null;
+    }
+
+    updateRoom(config) {
+        // console.log('update room ' + config.roomID);
+        // console.log(this);
+
+        if (this.leftSide.unit) {            
+            this.leftSide.unit.destroy();
+        }
+        if (this.rightSide.unit) {            
+            this.rightSide.unit.destroy();
+        }
+        
+        this.player1 = config.player1;
+        this.player1Army = config.player1Army;
+        this.player2 = config.player2;
+        this.player2Army = config.playerSArmy;
+        
+
+        if (this.player1) {
+            this.player1Name.text = this.player1.name;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.LEFT);
+        } else {
+            this.player1Name.text = CONSTANTS.BLANK_NAME;
+        }
+        if (this.player2) {
+            this.player2Name.text = this.player2.name;
+            this.createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT);
+        } else {
+            this.player2Name.text = CONSTANTS.BLANK_NAME;
+            
+        }
     }
     
     onLeftSidePointerover() {
@@ -132,19 +164,20 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
         }
     }
 
-    createUnit(type, side, player) {
+    createUnit(type, side) {
         let direction;
         let boardSide;
+        let playerId;
 
         if (side === CONSTANTS.LEFT) {
             boardSide = this.leftSide;
             direction = CONSTANTS.RIGHT;
-            this.player1 = player;
+            playerId = this.player1.playerId;
         }
         if (side === CONSTANTS.RIGHT) {
             boardSide = this.rightSide;
             direction = CONSTANTS.LEFT;
-            this.player2 = player;
+            playerId = this.player2.playerId;
         }
         // console.log(type);
         // console.log(boardTile);
@@ -152,7 +185,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.AXE:
                 boardSide.unit = new Axe({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -161,7 +194,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.BOW:
                 boardSide.unit = new Bow({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -170,7 +203,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.CONTROL:
                 boardSide.unit = new Control({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -179,7 +212,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.DAGGER:
                 boardSide.unit = new Dagger({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -188,7 +221,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.HEALING:
                 boardSide.unit = new Healing({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -197,7 +230,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.LANCE:
                 boardSide.unit = new Lance({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -206,7 +239,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.SHIELD:
                 boardSide.unit = new Shield({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -215,7 +248,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.SORCERY:
                 boardSide.unit = new Sorcery({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction
@@ -224,7 +257,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
             case CONSTANTS.SWORD:
                 boardSide.unit = new Sword({
                     scene: this.scene, 
-                    player: game.player,
+                    playerId: playerId,
                     tile: boardSide,
                     container: this,
                     direction: direction

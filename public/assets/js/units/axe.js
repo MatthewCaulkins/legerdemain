@@ -15,6 +15,7 @@ class Axe extends Unit {
         this.dodge = .2;
         this.block = .2;
         this.cooldown = 1;
+        this.action = CONSTANTS.DAMAGE;
 
         this.currentHealth = this.health;
         this.currentCooldown = 0;
