@@ -190,9 +190,9 @@ class PlayScene extends Phaser.Scene {
         });
 
         
-        emitter.on(CONSTANTS.END_TURN_CONFIRMED, () => {
+        emitter.on(CONSTANTS.END_TURN_CONFIRMED, (data) => {
             console.log('end turn');
-            this.endTurn();
+            this.endTurn(data);
         });
 
         // Add the opponents army
@@ -290,12 +290,19 @@ class PlayScene extends Phaser.Scene {
         console.log('ARMIES SELECTED');
         if (this.playerSide === CONSTANTS.LEFT) {
             this.opponentArmy = controller.gameRoom.player2Army;
+            this.opponentArmyCount = this.opponentArmy.units.length;
             this.opponentId = controller.gameRoom.player2.playerId;
+
+            this.playerArmyCount = controller.gameRoom.player1Army.units.length;
         } else {
             this.opponentArmy = controller.gameRoom.player1Army;
+            this.opponentArmyCount = this.opponentArmy.units.length;
             this.opponentId = controller.gameRoom.player1.playerId;
+
+            this.playerArmyCount = controller.gameRoom.player2Army.units.length;
         }
 
+        console.log(controller);
         this.armyDeployment.opponentArmyUnits = this.opponentArmy;
         this.armyDeployment.populateOpponentBoard(this.opponentId);
         
@@ -318,6 +325,9 @@ class PlayScene extends Phaser.Scene {
         this.unitStats = new UnitStats(this);
         this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
 
+        if (this.playerSide === CONSTANTS.LEFT) {
+            this.actionButtonContainer.setActive(CONSTANTS.MOVE_BUTTON);
+        }
         // this.player2Name = this.add.text(0, 0, game.player.name, CONSTANTS.HUD_STYLE);
         // this.add(this.player2Name);
         // this.alignmentGrid.positionItemAtIndex(100, this.player2Name);
@@ -547,6 +557,10 @@ class PlayScene extends Phaser.Scene {
 
         console.log(endTile);
         // data.selectedToTile.path = data.path;
+
+        if (!this.turnUnit) {
+            this.turnUnit = startTile.unit;
+        }
         this.moveUnit(startTile, endTile);
     }
 
@@ -768,6 +782,7 @@ class PlayScene extends Phaser.Scene {
             {
                 tileNum: selectedToTile.number,
                 // type: selectedToTile.unit.type, 
+                currentHealth: selectedToTile.unit.currentHealth,
                 defense: selectedToTile.unit.defense, 
                 dodge: selectedToTile.unit.dodge, 
                 block: selectedToTile.unit.block, 
@@ -793,8 +808,11 @@ class PlayScene extends Phaser.Scene {
         console.log(data);
 
         const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
-        actionUnit.setActive(true);
+        // actionUnit.setActive(true);
         actionUnit.setDirection(data.actionUnit.path[0].direction);
+        if (!this.turnUnit) {
+            this.turnUnit = actionUnit;
+        }
 
         let recievingUnit;
         if (data.recievingUnit) {
@@ -805,14 +823,59 @@ class PlayScene extends Phaser.Scene {
             console.log(recievingUnit);
 
             recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, data.actionUnit.path[0].direction, data.result.text);
+            this.updateDetailsView(recievingUnit);
+            
         }
 
+        let destroyed = data.result ? data.result.destroyed : null;
+        this.time.addEvent({ delay: 1400, repeat: 0, callback: this.finishAction, callbackScope: this, args: [recievingUnit, destroyed]});
         // TODO: Make all the animations and stuff happen
+        // this.playerAction = CONSTANTS.SELECTION_ACTION;
+        // if (recievingUnit) {
+        //     recievingUnit.setActive(false);
+        // }
+        // actionUnit.setActive(false);
+    }
+
+    finishAction(recievingUnit, destroyed) {
+        console.log(this.playerAction);
+        console.log('UNLOCK SCENE');
+        console.log(recievingUnit);
+        console.log(destroyed);
         this.playerAction = CONSTANTS.SELECTION_ACTION;
+        console.log(this.playerAction);
+
         if (recievingUnit) {
             recievingUnit.setActive(false);
+            recievingUnit.tile.clearTint();
+
+            if (destroyed) {
+                recievingUnit.tile.unit = null;
+                recievingUnit.destroy();
+
+                if (this.playerTurn === this.playerSide) {
+                    this.opponentArmyCount -= 1;
+
+                    if (this.opponentArmyCount === 0) {
+                        console.log('VICTORY');
+
+                        // TODO: victory popup
+                    }
+                } else {
+                    this.playerArmyCount -= 1;
+
+                    if (this.playerArmyCount === 0) {
+                        console.log('DEFEAT');
+
+                        // TODO: defeat popup
+                    }
+                }
+            }
+        } else {
+            if (this.selectedToTile) {
+                this.selectedToTile.clearTint();
+            }
         }
-        actionUnit.setActive(false);
     }
 
     positionDirections(unit) {
@@ -876,18 +939,31 @@ class PlayScene extends Phaser.Scene {
         });
     }
 
-    endTurn() {
+    endTurn(data) {
         console.log('got to end turn');
         this.playerAction = CONSTANTS.SELECTION_ACTION;
         this.activeActionButton = null;
 
+        // Lower all cooldowns by 1
+        this.unitsBoard.iterate((unit) => {
+            if (this.playerTurn === CONSTANTS.LEFT && controller.gameRoom.player1.playerId === unit.playerId) {
+                unit.lowerCooldown();
+            }
+
+            if (this.playerTurn === CONSTANTS.RIGHT && controller.gameRoom.player2.playerId === unit.playerId) {
+                unit.lowerCooldown();
+            }
+        });
+
         // Set cooldown 
-        let fullCooldown = false;
-        if (this.actionButtonContainer.movementButton.used && this.actionButtonContainer.actionButton.used) {
-            fullCooldown = true;
-        }
+        // let fullCooldown = false;
+        // if (this.actionButtonContainer.movementButton.used && this.actionButtonContainer.actionButton.used) {
+        //     fullCooldown = true;
+        // }
+        console.log('turn unit');
+        console.log(this.turnUnit);
         if (this.turnUnit) {
-            this.turnUnit.setCooldown(fullCooldown);
+            this.turnUnit.setCooldown(data.fullCooldown);
         }
 
         this.playerTurn = this.playerTurn === CONSTANTS.LEFT ? CONSTANTS.RIGHT : CONSTANTS.LEFT;
@@ -907,6 +983,10 @@ class PlayScene extends Phaser.Scene {
 
         this.actionButtonContainer.reset();
         this.clearPaths();
+
+        if (this.playerSide === this.playerTurn) {
+            this.actionButtonContainer.setActive(CONSTANTS.MOVE_BUTTON);
+        }
     }
 
 

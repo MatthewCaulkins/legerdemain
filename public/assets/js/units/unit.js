@@ -122,6 +122,7 @@ class Unit extends Phaser.GameObjects.Container {
     setActive(active) {
         this.active = active;
         this.showHealthbar(active);
+        this.actionResultsText.setVisible(active);
     }
 
     showHealthbar(visible) {
@@ -137,17 +138,17 @@ class Unit extends Phaser.GameObjects.Container {
         this.tint.setTint(tint);
     }
 
-    resolveAction(value, action, turn, direction, text) {
+    resolveAction(value, action, turnUnit, direction, text) {
         console.log('Resolve Action');
         console.log(value);
         console.log(action);
-        console.log(turn);
+        console.log(turnUnit);
         console.log(direction);
         console.log(text);
 
         switch (action) {
             case CONSTANTS.DAMAGE:
-                if (turn) {
+                if (turnUnit) {
                     this.setDirection(CONSTANTS.DIRECTION_OPPOSITES[direction]);
                 }
                 console.log('Current HP: ' + this.currentHealth);
@@ -158,7 +159,6 @@ class Unit extends Phaser.GameObjects.Container {
 
                 this.healthBar.setPercent(this.currentHealth / this.health);
                 this.actionResultsText.setActive(text);
-
                 break;
             case CONSTANTS.HEAL:
                 break;
@@ -171,7 +171,20 @@ class Unit extends Phaser.GameObjects.Container {
     setCooldown(both = false) {
         this.currentCooldown = both ? this.cooldown + 1 : this.cooldown;
 
-        this.character.setTint(CONSTANTS.GREY_TINT);
+        // TODO: make this the used sprite
+        this.character.setTint(CONSTANTS.BLACK_TINT);
+    }
+
+    lowerCooldown() {
+        if (this.currentCooldown > 0) {
+            this.currentCooldown -= 1;
+        }
+
+        if (this.currentCooldown === 0) {
+            
+            // TODO: make this the used sprite
+            this.character.clearTint();
+        }
     }
 
     changeFrame ()

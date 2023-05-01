@@ -135,22 +135,36 @@ class ActionButton extends Phaser.GameObjects.Container {
                 // }
             }
 
-            if (this.scene.turnUnit) { // this.scene.selectedFromTile || 
-                const tile = this.scene.turnUnit.tile;// ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
+            // if (this.scene.turnUnit) { // this.scene.selectedFromTile || 
+            //     const tile = this.scene.turnUnit.tile;// ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
 
-                this.scene.turnUnit = tile.unit;
-                this.scene.turnUnit.resetDirection();
-                this.scene.positionDirections(this.scene.turnUnit);
-                
-                if (this.phase === CONSTANTS.ACTION_ACTION) {
-                    this.scene.highlightTilesInActionRange(tile)
-                } else if (this.phase === CONSTANTS.DIRECTION_ACTION) {
-                    this.scene.directions.setVisible(true);
-                } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
-                    this.scene.highlightTilesInMovementRange(tile);
-                } else if (this.phase === CONSTANTS.WAIT_ACTION) {
-                    emitter.emit(CONSTANTS.END_TURN, {roomID: controller.gameRoom.roomID});
+            //     this.scene.turnUnit = tile.unit;
+            //     this.scene.turnUnit.resetDirection();
+            //     this.scene.positionDirections(this.scene.turnUnit);
+            if (this.phase === CONSTANTS.WAIT_ACTION) {
+                let fullCooldown = false;
+                if (this.scene.actionButtonContainer.movementButton.used && this.scene.actionButtonContainer.actionButton.used) {
+                    fullCooldown = true;
                 }
+                emitter.emit(CONSTANTS.END_TURN, {roomID: controller.gameRoom.roomID, fullCooldown: fullCooldown});
+            } else {
+                if (this.scene.turnUnit) { // this.scene.selectedFromTile || 
+                    const tile = this.scene.turnUnit.tile;// ? this.scene.turnUnit.tile : this.scene.selectedFromTile;
+    
+                    this.scene.turnUnit = tile.unit;
+                    this.scene.turnUnit.resetDirection();
+                    this.scene.positionDirections(this.scene.turnUnit);
+
+                    if (this.phase === CONSTANTS.ACTION_ACTION) {
+                        this.scene.highlightTilesInActionRange(tile)
+                    } else if (this.phase === CONSTANTS.DIRECTION_ACTION) {
+                        this.scene.directions.setVisible(true);
+                    } else if (this.phase === CONSTANTS.MOVEMENT_ACTION) {
+                        this.scene.highlightTilesInMovementRange(tile);
+                    } 
+                }
+
+            // }
             }
 
             this.scene.activeActionButton = this;
@@ -170,6 +184,13 @@ class ActionButton extends Phaser.GameObjects.Container {
         }
         
         console.log(this.scene.playerAction);
+    }
+
+    setActive() {
+        this.scene.activeActionButton = this;
+        this.sprite.play(this.activeKey);
+        this.activated = true;
+        this.scene.playerAction = this.phase;
     }
 
     setUsed() {

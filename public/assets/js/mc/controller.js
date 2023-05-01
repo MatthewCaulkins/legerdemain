@@ -289,9 +289,9 @@ class Controller {
             controller.events.push(CONSTANTS.END_TURN);
         }
 
-        this.socket.on(CONSTANTS.END_TURN_CONFIRMED, () => {
+        this.socket.on(CONSTANTS.END_TURN_CONFIRMED, (data) => {
             console.log('confirm end turn');
-            emitter.emit(CONSTANTS.END_TURN_CONFIRMED);
+            emitter.emit(CONSTANTS.END_TURN_CONFIRMED, data);
         });
 
         // Quit the game

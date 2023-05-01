@@ -26,6 +26,7 @@ class Constants {
         this.RED_TINT = 0xff4400;
         this.TEAL_TINT = 0x12eedc;
         this.YELLOW_TINT = 0xe8ef36;
+        this.BLACK_TINT = 0x000000;
 
         // Text styles
         this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };

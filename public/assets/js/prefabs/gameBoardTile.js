@@ -29,6 +29,8 @@ class GameBoardTile extends Tile {
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         if (this.scene.playerTurn != this.scene.playerSide) return;
 
+        if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
                 if (this.unit.playerId != game.player.playerId) return;
@@ -96,6 +98,8 @@ class GameBoardTile extends Tile {
         if (this.scene.playerTurn != this.scene.playerSide) return;        
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         
+        if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
                 if (this.unit.playerId != game.player.playerId) return;
@@ -161,7 +165,9 @@ class GameBoardTile extends Tile {
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         if (this.scene.playerTurn != this.scene.playerSide) return;
 
-        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION) {
+        if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+
+        if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit && this.unit.playerId != game.player.playerId) return;
 
             console.log('selection pointer down');
@@ -183,15 +189,25 @@ class GameBoardTile extends Tile {
                         console.log('B');
                         if (this.scene.turnUnit) { // clear old turn unit
                             this.scene.turnUnit.showHealthbar(false);
-                        } else {
+                        } 
+                        // else {
                             this.setTint(CONSTANTS.RED_TINT);
-                        }
+                        //}
 
                         this.scene.turnUnit = this.unit;
                         this.scene.selectedFromTile = this;
                     }
                     
                     this.scene.positionDirections(this.scene.turnUnit);
+                    if (this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
+                        if (this.scene.turnUnit) {
+                            this.scene.directions.setVisible(true);
+                        } else {
+                            this.scene.directions.setVisible(false);
+
+                        }
+                    }
+        
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Movement phase  

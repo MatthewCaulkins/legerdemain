@@ -18,6 +18,16 @@ class ActionResultsText extends Phaser.GameObjects.Container {
     setActive(text) {
         this.setVisible(true);
         this.text.text = text;
+
+        this.scene.tweens.add({
+            targets: this.text, 
+            easing: 'quadratic.in',
+            y: this.text.y - 5, 
+            duration: 300, 
+            yoyo: true, 
+            repeat: 0,
+            hold: 400,
+        });
         // TODO: set a tween to 1 alpha -y, then to 0 alpha +y 
     }
 }

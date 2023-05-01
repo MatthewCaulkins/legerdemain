@@ -35,6 +35,9 @@ class DirectionButton extends Phaser.GameObjects.Image {
     pointerDown() {
         console.log('direction pointer down');
         this.scene.actionButtonContainer.directionButton.setUsed();
+
+        this.scene.turnUnit = this._unit;
+        this.scene.turnUnitLocked = true;
         
         emitter.emit(CONSTANTS.CHANGE_DIRECTION, {roomID: controller.gameRoom.roomID, currentTileNum: this._unit.tile.number, direction: this.direction});
     }

@@ -335,7 +335,8 @@ io.on('connection', async function (socket) {
                             text: 'Dodge',
                             turn: true,
                             action: 'damage',
-                            value: 0
+                            value: 0,
+                            destroyed: false
                         };
                     } else if ((Math.random() * 100) < ((data.recievingUnit.block * modifier) * 100)) {
                         data.result = {
@@ -343,16 +344,23 @@ io.on('connection', async function (socket) {
                             text: 'Block',
                             turn: true,
                             action: 'damage',
-                            value: 0
+                            value: 0,
+                            destroyed: false,
                         };
                     } else {
-                        const value = Math.ceil(data.actionUnit.offense * (1 - data.recievingUnit.defense));
+                        let value = Math.ceil(data.actionUnit.offense * (1 - data.recievingUnit.defense));
+                        destroyed = false;
+                        if (data.recievingUnit.currentHealth - value <= 0) {
+                            value = data.recievingUnit.currentHealth;
+                            destroyed = true;
+                        };
                         data.result = {
                             tileNum: data.recievingUnit.tileNum,
                             text: '-' + value,
                             turn: false,
                             action: 'damage',
-                            value: value
+                            value: value,
+                            destroyed: destroyed,
                         };
                     }
                     break;
@@ -404,7 +412,7 @@ io.on('connection', async function (socket) {
 
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
-        io.in(data.roomID).emit('endTurnConfirmed');
+        io.in(data.roomID).emit('endTurnConfirmed', data);
         // socket.emit('moveUnitConfirmed', data);
     });
 
