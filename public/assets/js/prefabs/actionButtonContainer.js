@@ -124,6 +124,13 @@ class ActionButtonContainer extends Phaser.GameObjects.Container {
         button.setUsed();
     }
 
+    removeInteractive() {
+        this.movementButton.sprite.disableInteractive();
+        this.actionButton.sprite.disableInteractive();
+        this.directionButton.sprite.disableInteractive();
+        this.waitButton.sprite.disableInteractive();
+    }
+
     reset() {
         this.directionButton.reset();
         this.actionButton.reset();

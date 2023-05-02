@@ -32,7 +32,7 @@ class Button extends Phaser.GameObjects.Container {
             this.y = config.y;
         }
         if (config.index) {
-            this.config.alignmentGrid.positionItemAtIndex(config.index, this);
+            config.alignmentGrid.positionItemAtIndex(config.index, this);
         }
 
         if(this.event) {

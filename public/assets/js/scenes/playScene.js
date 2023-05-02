@@ -776,8 +776,6 @@ class PlayScene extends Phaser.Scene {
         this.playerAction = CONSTANTS.MID_ACTION;
         this.removeAllHighlights([{tile: this.turnUnit.tile}, {tile: selectedToTile}]);
 
-       
-
         const recievingUnit = selectedToTile.unit ? 
             {
                 tileNum: selectedToTile.number,
@@ -882,14 +880,24 @@ class PlayScene extends Phaser.Scene {
     }
 
     endGame(victory) {
+        // Remove Interactivity
+        this.generatedBoard.tiles.forEach((tile) => {
+            tile.disableInteractive();
+        });
+        this.quitButton.image.disableInteractive();
+        this.actionButtonContainer.removeInteractive();
+
         let config;
         config = {
+            scene: this,
             imageKey: 'lance',
             buttonKey: 'tile',
             buttonText: 'Accept',
             buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             buttonEvent: CONSTANTS.ACCEPT_GAME_OVER,
         }
+
+        emitter.on(CONSTANTS.ACCEPT_GAME_OVER, this.leaveGame);
 
         if (victory) {
             config.imageKey = 'lance';
