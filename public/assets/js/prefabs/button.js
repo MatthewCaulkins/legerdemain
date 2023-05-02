@@ -3,21 +3,24 @@ class Button extends Phaser.GameObjects.Container {
         super(config.scene);
         this.fired = false;
 
-        this.config = config;
+        // this.config = config;
         //this.scene = config.scene;
-        this.text = config.text;
-        this.textConfig = config.textConfig;
         this.event = config.event;
         this.params = config.params
 
-        this.image = this.scene.add.image(0, 0, this.config.key);
+        this.image = this.scene.add.image(0, 0, config.key);
         this.add(this.image);
 
-        this.textConfig.wordWrap = {width: this.image.displayWidth - 10};
 
-        this.text = this.scene.add.text(0, 0, this.text, this.textConfig);
-        this.text.setOrigin(.5, .5);
-        this.add(this.text);
+        if (config.text) {
+            this.text = config.text;
+            this.textConfig = config.textConfig;
+            this.textConfig.wordWrap = {width: this.image.displayWidth - 10};
+
+            this.text = this.scene.add.text(0, 0, this.text, this.textConfig);
+            this.text.setOrigin(.5, .5);
+            this.add(this.text);
+        }
 
         this.setSize(this.image.displayWidth, this.image.displayHeight);
         this.scene.add.existing(this);

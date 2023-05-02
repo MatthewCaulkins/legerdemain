@@ -857,15 +857,18 @@ class PlayScene extends Phaser.Scene {
                     this.opponentArmyCount -= 1;
 
                     if (this.opponentArmyCount === 0) {
-                        console.log('VICTORY');
+                        this.endGame(true);
+                        // console.log('VICTORY');
 
+                        
                         // TODO: victory popup
                     }
                 } else {
                     this.playerArmyCount -= 1;
 
                     if (this.playerArmyCount === 0) {
-                        console.log('DEFEAT');
+                        this.endGame(false);
+                        // console.log('DEFEAT');
 
                         // TODO: defeat popup
                     }
@@ -876,6 +879,43 @@ class PlayScene extends Phaser.Scene {
                 this.selectedToTile.clearTint();
             }
         }
+    }
+
+    endGame(victory) {
+        let config;
+        config = {
+            imageKey: 'lance',
+            buttonKey: 'tile',
+            buttonText: 'Accept',
+            buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            buttonEvent: CONSTANTS.ACCEPT_GAME_OVER,
+        }
+
+        if (victory) {
+            config.imageKey = 'lance';
+        } else {
+            config.imageKey = 'lance';
+        }
+
+        const overlay = new Overlay(config);
+    }
+
+    leaveGame() {
+        emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
+        emitter.removeListener(CONSTANTS.QUIT_GAME_SELECTED);
+        emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);
+        emitter.removeListener(CONSTANTS.CHANGE_DIRECTION_CONFIRMED);
+        emitter.removeListener(CONSTANTS.UNIT_ACTION_CONFIRMED);
+        emitter.removeListener(CONSTANTS.END_TURN_CONFIRMED);
+        emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
+        emitter.removeListener(CONSTANTS.QUIT_GAME_CONFIRMED);
+        emitter.removeListener(CONSTANTS.ACCEPT_GAME_OVER);
+
+        controller.gameRoom = null;
+
+        // Save the board placements to the database
+        game.scene.start(CONSTANTS.HOME_SCENE);
+        game.scene.stop(CONSTANTS.PLAY_SCENE);
     }
 
     positionDirections(unit) {

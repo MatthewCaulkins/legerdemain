@@ -41,6 +41,7 @@ class Constants {
         // Events
         this.ACCEPT_ARMY = 'acceptArmy';
         this.ACCEPT_BOARD_PLACEMENT = 'acceptBoardPlacement';
+        this.ACCEPT_GAME_OVER = 'acceptGameOver';
         this.ARMY_DELETED = 'armyDeleted';
         this.ARMY_SAVED = 'armySaved';
         this.ARMIES_SELECTED = 'armiesSelected';
