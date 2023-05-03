@@ -613,7 +613,7 @@ class PlayScene extends Phaser.Scene {
             duration: 500, 
             yoyo: false, 
             repeat: 0,
-            onStart: function () {},// console.log('onStart'); console.log(arguments); },
+            // onStart: function () {},// console.log('onStart'); console.log(arguments); },
             onComplete: function () { 
                 // console.log('onComplete'); 
                 // console.log(arguments); 
@@ -663,81 +663,111 @@ class PlayScene extends Phaser.Scene {
         const unit = tile.unit;
         const range = unit.range;
         const generatedBoard = tile.scene.generatedBoard;
+        const unitsBoard = tile.scene.unitsBoard;
         // const scene = tile.scene;
         // const number = tile.number;
-        let questionedTile;
+        // let questionedTile;
 
-        tile.path = [];
+        // tile.path = [];
 
-        const tilesOfInterest = [tile];
+        // //let tilesOfInterest = [tile];
 
-        // console.log(generatedBoard);
-        for (let i = 0; i < range; i++) {
-            tilesOfInterest.forEach(tileOfInterest => {
+        const tilesOfInterest = unit.highlightTilesInActionRange(range, generatedBoard, unitsBoard);
 
-                // console.log(tileOfInterest);
+        // if (unit.type === CONSTANTS.CONTROL) {
+        //     this.unitsBoard.iterate((unit) => {
+        //         if (unit.playerId === this.opponentId) {
+        //             tilesOfInterest.push(unit.tile);
+        //         }
+        //     });
+        // } // else if (unit.type === CONSTANTS.HEAL) {
 
-                // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
-                if (tileOfInterest.column - 1 >= 0) {
-                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+        // } else if (unit.type === CONSTANTS.LANCE) {
 
-                    // console.log(questionedTile);
+        // } else if (unit.type === CONSTANTS.SWORD) {
 
-                    // Will have to take into account friendly units in the Play Scene
-                    // if (questionedTile.unit === null) {
-                        if (!tilesOfInterest.includes(questionedTile)) {
-                            console.log(tileOfInterest.path);
-                            tileOfInterest.path.forEach(path => {
-                                questionedTile.path.push(path);
-                            })
-                            questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number}); //CONSTANTS.TOP); //tile: questionedTile, 
-                            tilesOfInterest.push(questionedTile);
-                        // } else {
-                        //     console.log('tile included already');
-                        }
-                    // }
-                }
-                
-                if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
-                    questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
-                    // if (questionedTile.unit === null) {
-                        if (!tilesOfInterest.includes(questionedTile)) {
-                            tileOfInterest.path.forEach(path => {
-                                questionedTile.path.push(path);
-                            })
-                            questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number}); //CONSTANTS.RIGHT);
-                            tilesOfInterest.push(questionedTile);
-                        }
-                    // }
-                }
+        // } else if (unit.type === CONSTANTS.AXE) {
 
-                if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
-                    questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
-                    // if (questionedTile.unit === null) {
-                        if (!tilesOfInterest.includes(questionedTile)) {
-                            tileOfInterest.path.forEach(path => {
-                                questionedTile.path.push(path);
-                            })
-                            questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number}); // CONSTANTS.DOWN);
-                            tilesOfInterest.push(questionedTile);
-                        }
-                    // }
-                }
-                
-                if (tileOfInterest.row - 1 >= 0) {
-                    questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
-                    // if (questionedTile.unit === null) {
-                        if (!tilesOfInterest.includes(questionedTile)) {
-                            tileOfInterest.path.forEach(path => {
-                                questionedTile.path.push(path);
-                            })
-                            questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number}); // CONSTANTS.LEFT);
-                            tilesOfInterest.push(questionedTile);
-                        }
-                    // }
-                }
-            });
-        }
+        // } else if (unit.type === SORCERY) {
+
+        // } else {
+
+        //     // console.log(generatedBoard);
+        //     for (let i = 0; i < range; i++) {
+        //         tilesOfInterest.forEach(tileOfInterest => {
+
+        //             // console.log(tileOfInterest);
+
+        //             // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+        //             if (unit.type != CONSTANTS.SWORD || (tileOfInterest.path.length == 0 || (tileOfInterest.path[0].direction === CONSTANTS.TOP && tileOfInterest.path[0].unit === false))) {
+        //                 if (tileOfInterest.column - 1 >= 0) {
+        //                     questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+
+        //                     // console.log(questionedTile);
+
+        //                     // Will have to take into account friendly units in the Play Scene
+        //                     // if (questionedTile.unit === null) {
+        //                         if (!tilesOfInterest.includes(questionedTile)) {
+        //                             // console.log(tileOfInterest.path);
+        //                             tileOfInterest.path.forEach(path => {
+        //                                 questionedTile.path.push(path);
+        //                             });
+        //                             questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: true}); //CONSTANTS.TOP); //tile: questionedTile, 
+        //                             tilesOfInterest.push(questionedTile);
+        //                         // } else {
+        //                         //     console.log('tile included already');
+        //                         }
+        //                     // }
+        //                 }
+        //             }
+                    
+        //             if (unit.type != CONSTANTS.SWORD || (tileOfInterest.path.length == 0 || (tileOfInterest.path[0].direction === CONSTANTS.RIGHT && tileOfInterest.path[0].unit === false))) {
+        //                 if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
+        //                     questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
+        //                     // if (questionedTile.unit === null) {
+        //                         if (!tilesOfInterest.includes(questionedTile)) {
+        //                             tileOfInterest.path.forEach(path => {
+        //                                 questionedTile.path.push(path);
+        //                             })
+        //                             questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number, unit: true}); //CONSTANTS.RIGHT);
+        //                             tilesOfInterest.push(questionedTile);
+        //                         }
+        //                     // }
+        //                 }
+        //             }
+
+        //             if (unit.type != CONSTANTS.SWORD || (tileOfInterest.path.length == 0 || (tileOfInterest.path[0].direction === CONSTANTS.BOTTOM && tileOfInterest.path[0].unit === false))) {
+        //                 if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
+        //                     questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
+        //                     // if (questionedTile.unit === null) {
+        //                         if (!tilesOfInterest.includes(questionedTile)) {
+        //                             tileOfInterest.path.forEach(path => {
+        //                                 questionedTile.path.push(path);
+        //                             })
+        //                             questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number, unit: true}); // CONSTANTS.DOWN);
+        //                             tilesOfInterest.push(questionedTile);
+        //                         }
+        //                     // }
+        //                 }
+        //             }
+                    
+        //             if (unit.type != CONSTANTS.SWORD || (tileOfInterest.path.length == 0 || (tileOfInterest.path[0].direction === CONSTANTS.LEFT && tileOfInterest.path[0].unit === false))) {
+        //                 if (tileOfInterest.row - 1 >= 0) {
+        //                     questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
+        //                     // if (questionedTile.unit === null) {
+        //                         if (!tilesOfInterest.includes(questionedTile)) {
+        //                             tileOfInterest.path.forEach(path => {
+        //                                 questionedTile.path.push(path);
+        //                             })
+        //                             questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number, unit: true}); // CONSTANTS.LEFT);
+        //                             tilesOfInterest.push(questionedTile);
+        //                         }
+        //                     // }
+        //                 }
+        //             }
+        //         });
+        //     }
+        // }
 
         tilesOfInterest.forEach(tileOfInterest => {
             if (tileOfInterest != tile) {
@@ -806,23 +836,27 @@ class PlayScene extends Phaser.Scene {
         console.log(data);
 
         const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
-        // actionUnit.setActive(true);
-        actionUnit.setDirection(data.actionUnit.path[0].direction);
         if (!this.turnUnit) {
             this.turnUnit = actionUnit;
         }
 
+        // actionUnit.setActive(true);
+        let direction = null;
+        if (data.actionUnit.path[0]) {
+            direction = data.actionUnit.path[0].direction;
+            actionUnit.setDirection(direction);
+        }
+        
         let recievingUnit;
         if (data.recievingUnit) {
             recievingUnit = this.generatedBoard.getTile(data.recievingUnit.tileNum).unit;
-            recievingUnit.setActive(true);
+            // recievingUnit.setActive(true);
 
             console.log(actionUnit);
             console.log(recievingUnit);
 
-            recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, data.actionUnit.path[0].direction, data.result.text);
+            recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, direction, data.result.text);
             this.updateDetailsView(recievingUnit);
-            
         }
 
         let destroyed = data.result ? data.result.destroyed : null;
@@ -890,7 +924,6 @@ class PlayScene extends Phaser.Scene {
         let config;
         config = {
             scene: this,
-            imageKey: 'lance',
             buttonKey: 'tile',
             buttonText: 'Accept',
             buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
@@ -900,12 +933,12 @@ class PlayScene extends Phaser.Scene {
         emitter.on(CONSTANTS.ACCEPT_GAME_OVER, this.leaveGame);
 
         if (victory) {
-            config.imageKey = 'lance';
+            config.imageKey = CONSTANTS.VICTORY;
         } else {
-            config.imageKey = 'lance';
+            config.imageKey = CONSTANTS.DEFEAT;
         }
 
-        const overlay = new Overlay(config);
+        const overlay = new EndGameOverlay(config);
     }
 
     leaveGame() {

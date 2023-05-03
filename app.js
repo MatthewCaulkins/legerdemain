@@ -324,11 +324,12 @@ io.on('connection', async function (socket) {
         console.log(directionsModifiers);
         
         if (data.recievingUnit) {
-            const modifier = directionsModifiers[data.actionUnit.path[0].direction][data.recievingUnit.direction];
             const action = data.actionUnit.action;
 
             switch (action) {
                 case 'damage':
+                    const modifier = directionsModifiers[data.actionUnit.path[0].direction][data.recievingUnit.direction];
+            
                     if ((Math.random() * 100) < ((data.recievingUnit.dodge * modifier) * 100)) {
                         data.result = {
                             tileNum: data.recievingUnit.tileNum,
@@ -353,6 +354,14 @@ io.on('connection', async function (socket) {
                         if (data.recievingUnit.currentHealth - value <= 0) {
                             value = data.recievingUnit.currentHealth;
                             destroyed = true;
+                            
+                            // TODO: save game victory or lose
+                            rooms[data.roomID].player1 = null;
+                            rooms[data.roomID].player1Army = null;
+                            rooms[data.roomID].player2 = null;
+                            rooms[data.roomID].player2Army = null;
+                            
+                            io.emit('updateRooms', rooms);
                         };
                         data.result = {
                             tileNum: data.recievingUnit.tileNum,
@@ -366,7 +375,17 @@ io.on('connection', async function (socket) {
                     break;
                 case 'heal':
                     break;
+                case 'sorcery':
+                    break;
                 case 'stop':
+                    data.result = {
+                        tileNum: data.recievingUnit.tileNum,
+                        text: '+2 cooldown',
+                        turn: false,
+                        action: 'stop',
+                        value: 2,
+                        destroyed: false,
+                    };
                     break;
             }
         }

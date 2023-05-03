@@ -2,6 +2,7 @@ class ActionResultsText extends Phaser.GameObjects.Container {
     constructor(config) {
         super(config.scene, config.x, config.y);
 
+        config.textConfig.wordWrap = { width: 300 };
         this.text = this.scene.add.text(0, 0, CONSTANTS.BLOCK_RESULT, config.textConfig);
         this.text.setOrigin(.5, .5);
         this.add(this.text);
@@ -15,8 +16,8 @@ class ActionResultsText extends Phaser.GameObjects.Container {
     //     this.text.setVisible(visible);
     // }
 
-    setActive(text) {
-        this.setVisible(true);
+    setActive(active, text) {
+        this.setVisible(active);
         this.text.text = text;
 
         this.scene.tweens.add({

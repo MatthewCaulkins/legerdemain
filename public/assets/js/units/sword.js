@@ -93,4 +93,89 @@ class Sword extends Unit {
         super.setTint(CONSTANTS.GREEN_TINT);
         super.setDirection(config.direction);
     }
+
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) {
+        const tile = this.tile;
+        let questionedTile;
+        tile.path = [];
+
+        const tilesOfInterest = [tile];
+
+        for (let i = 0; i < 2; i++) {
+            tilesOfInterest.forEach(tileOfInterest => {
+
+                // console.log(tileOfInterest);
+
+                // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+                if (tileOfInterest.path.length === 0 || (tileOfInterest.path[0].direction === CONSTANTS.TOP && tileOfInterest.path[0].unit === null)) {
+                    if (tileOfInterest.column - 1 >= 0) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+
+                        // console.log(questionedTile);
+
+                        // Will have to take into account friendly units in the Play Scene
+                        // if (questionedTile.unit === null) {
+                            if (!tilesOfInterest.includes(questionedTile)) {
+                                // console.log(tileOfInterest.path);
+                                tileOfInterest.path.forEach(path => {
+                                    questionedTile.path.push(path);
+                                });
+                                questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: questionedTile.unit}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                tilesOfInterest.push(questionedTile);
+                            // } else {
+                            //     console.log('tile included already');
+                            }
+                        // }
+                    }
+                }
+                
+                if (tileOfInterest.path.length === 0 || (tileOfInterest.path[0].direction === CONSTANTS.RIGHT && tileOfInterest.path[0].unit === null)) {
+                    if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
+                        // if (questionedTile.unit === null) {
+                            if (!tilesOfInterest.includes(questionedTile)) {
+                                tileOfInterest.path.forEach(path => {
+                                    questionedTile.path.push(path);
+                                })
+                                questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number, unit: questionedTile.unit}); //CONSTANTS.RIGHT);
+                                tilesOfInterest.push(questionedTile);
+                            }
+                        // }
+                    }
+                }
+
+                if (tileOfInterest.path.length === 0 || (tileOfInterest.path[0].direction === CONSTANTS.BOTTOM && tileOfInterest.path[0].unit === null)) {
+                    if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
+                        // if (questionedTile.unit === null) {
+                            if (!tilesOfInterest.includes(questionedTile)) {
+                                tileOfInterest.path.forEach(path => {
+                                    questionedTile.path.push(path);
+                                })
+                                questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number, unit: questionedTile.unit}); // CONSTANTS.DOWN);
+                                tilesOfInterest.push(questionedTile);
+                            }
+                        // }
+                    }
+                }
+                
+                if (tileOfInterest.path.length === 0 || (tileOfInterest.path[0].direction === CONSTANTS.LEFT && tileOfInterest.path[0].unit === null)) {
+                    if (tileOfInterest.row - 1 >= 0) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
+                        // if (questionedTile.unit === null) {
+                            if (!tilesOfInterest.includes(questionedTile)) {
+                                tileOfInterest.path.forEach(path => {
+                                    questionedTile.path.push(path);
+                                })
+                                questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number, unit: questionedTile.unit}); // CONSTANTS.LEFT);
+                                tilesOfInterest.push(questionedTile);
+                            }
+                        // }
+                    }
+                }
+            });
+        }
+
+        return tilesOfInterest;
+    }
 }

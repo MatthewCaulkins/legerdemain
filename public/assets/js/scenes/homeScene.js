@@ -4,11 +4,15 @@ class HomeScene extends Phaser.Scene {
     }
 
     preload() {
+        // Overlay images
+        this.load.spritesheet(CONSTANTS.END_GAME_ICON, 'assets/img/endGameIcon.png', {frameWidth: 500, frameHeight: 500, endFrame: 1});
+
+        // Tiles
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
         this.load.image(CONSTANTS.MATCHMAKING_TILE, 'assets/img/board.png');
-        this.load.image(CONSTANTS.ACTION_BUTTON_CONTAINER, 'assets/img/actionButtonContainer.png');
 
-        // Direction buttons
+        // Action buttons
+        this.load.image(CONSTANTS.ACTION_BUTTON_CONTAINER, 'assets/img/actionButtonContainer.png');
         this.load.image(CONSTANTS.TOP_DIRECTION_BUTTON, 'assets/img/topDirectionButton.png');
         this.load.image(CONSTANTS.RIGHT_DIRECTION_BUTTON, 'assets/img/rightDirectionButton.png');
         this.load.image(CONSTANTS.BOTTOM_DIRECTION_BUTTON, 'assets/img/bottomDirectionButton.png');

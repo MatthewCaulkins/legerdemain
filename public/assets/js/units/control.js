@@ -92,4 +92,16 @@ class Control extends Unit {
         super.setTint(CONSTANTS.PINK_TINT);
         super.setDirection(config.direction);
     }
+
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) {
+        const tilesOfInterest = [];
+
+        unitsBoard.iterate((unit) => {
+            if (unit.playerId != game.player.playerId) {
+                tilesOfInterest.push(unit.tile);
+            }
+        });
+
+        return tilesOfInterest;
+    }
 }

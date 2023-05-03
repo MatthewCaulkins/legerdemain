@@ -8,6 +8,11 @@ class Constants {
         this.GRID_ORIENTATION = 0;
         this.MATCHMAKING_NAME_ORIENTATION = -1.5708;
 
+        // End game icons
+        this.END_GAME_ICON = 'endGameIcon';
+        this.VICTORY = 'victory';
+        this.DEFEAT = 'defeat';
+
         // Hex codes
         this.WHITE = '#ffffff';
         this.BLACK = '#000000';
