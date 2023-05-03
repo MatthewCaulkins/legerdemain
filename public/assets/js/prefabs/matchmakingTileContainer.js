@@ -45,6 +45,14 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
                 this.createNewRoom(room);
             });
 
+            emitter.on(CONSTANTS.CREATE_ROOMS, async data => {
+                await Object.keys(data).forEach(async (room) => {
+                    await this.createNewRoom(data[room]);
+                });
+
+                emitter.emit(CONSTANTS.MATCHMAKING_TILES_CREATED);
+            })
+
             // Update rooms with new players
             emitter.on(CONSTANTS.UPDATE_ROOMS, data => {
                 Object.keys(data).forEach(roomID => {
@@ -60,11 +68,11 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
     }
 
     createNewRoom(room) {
-        const rooms = Object.keys(controller.rooms).length;
+        const roomObj = Object.keys(controller.rooms).length;
         // console.log(rooms);
-        this.column = rooms === 0 ? 0 : Math.floor(rooms / 2);
+        this.column = roomObj === 0 ? 0 : Math.floor(roomObj / 2);
         // console.log(this.column);
-        this.row = rooms % 2;
+        this.row = roomObj % 2;
         // console.log(this.row);
         // console.log('PLAYER 1 MATCHMAKING TILE CONTAINER');
         // console.log(player1);
@@ -93,6 +101,8 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
         // if (player2) {
         //     controller.rooms[roomID].createUnit(CONSTANTS.LANCE, CONSTANTS.RIGHT, player2);
         // }
+
+        return;
     }
 
     

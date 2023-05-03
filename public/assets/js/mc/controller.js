@@ -125,10 +125,14 @@ class Controller {
             // console.log('list rooms data:');
             // console.log(data);
 
-            Object.keys(data).forEach(room => {
-                // console.log(data[room]);
-                emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
-            });
+                    // await Object.keys(data).forEach(room => {
+                    //     // console.log(data[room]);
+                    //     emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
+                    // });
+
+            emitter.emit(CONSTANTS.CREATE_ROOMS, data);
+
+            // emitter.emit(CONSTANTS.MATCHMAKING_TILES_CREATED);
 
             // Get the new room reference after units have been added
             // if (controller.currentRoom) {

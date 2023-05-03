@@ -3,6 +3,8 @@ class Button extends Phaser.GameObjects.Container {
         super(config.scene);
         this.fired = false;
 
+        this.invalidateFired = config.invalidateFired != null ? config.invalidateFired : true;
+
         // this.config = config;
         //this.scene = config.scene;
         this.event = config.event;
@@ -50,7 +52,10 @@ class Button extends Phaser.GameObjects.Container {
             } else {
                 emitter.emit(this.event);
             }
-            this.fired = true;
+
+            if (this.invalidateFired) {
+                this.fired = true;
+            }
         }
     }
 

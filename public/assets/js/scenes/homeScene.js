@@ -125,6 +125,8 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+        emitter.removeListener(CONSTANTS.CREATE_ROOMS);
+        emitter.removeListener(CONSTANTS.MATCHMAKING_TILES_CREATED);
         emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
         emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
@@ -138,6 +140,8 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.LOAD_SETUP_SCENE);
         emitter.removeListener(CONSTANTS.CREATE_HUD);
         emitter.removeListener(CONSTANTS.CREATE_NEW_ROOM);
+        emitter.removeListener(CONSTANTS.CREATE_ROOMS);
+        emitter.removeListener(CONSTANTS.MATCHMAKING_TILES_CREATED);
         emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
 
@@ -157,8 +161,6 @@ class HomeScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(100, text);
 
-        
-        // TODO: add matchmaking tile container
         const matcmakingContainerConfig = {
             scene: this,
             x: 110,
@@ -167,6 +169,48 @@ class HomeScene extends Phaser.Scene {
             height: gameHeight - 400
         };
         this.matchmakingTileContainer = new MatchmakingTileContainer(matcmakingContainerConfig);
+
+        // TODO: only do this automatically if not saved that it is done
+        emitter.on(CONSTANTS.MATCHMAKING_TILES_CREATED, this.showTutorial, this);
+    }
+
+    showTutorial() {    
+        console.log('show tutorial');
+        console.log(controller);
+        const underlyingInteractives = [];
+
+        Object.keys(controller.rooms).forEach(roomID => {
+            underlyingInteractives.push(controller.rooms[roomID].leftSide);
+            underlyingInteractives.push(controller.rooms[roomID].rightSide);
+        })
+
+        underlyingInteractives.push(this.setupSceneButton.image);
+        //armySetupTut
+        // matchmakingTileTut
+        this.tutorialOverlay = new TutorialOverlay({
+            scene: this,
+            underlyingInteractives: underlyingInteractives,
+            screens: [
+                {
+                    text: 'This is the home screen, where can manager your armies or join a match.',
+                    imageKey: '',
+                    imageIndex: 0,
+                }, 
+                {
+                    text: 'To manager you army layouts click on the Army Setup button in the upper right.',
+                    imageKey: '',
+                    imageIndex: 12,
+                },
+                {
+                    text: 'You can join or leave a match by selecting a side on a matchmaking tile.  The match will start when both sides are occupied.',
+                    imageKey: '',
+                    imageIndex: 34,
+                }    
+            ],
+            textConfig: CONSTANTS.TUTORIAL_TEXT_STYLE,
+            buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            alignmentGrid: this.alignmentGrid,
+        });
     }
 
     // loadPlayScene(scene) {

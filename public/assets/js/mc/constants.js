@@ -34,6 +34,7 @@ class Constants {
         this.BLACK_TINT = 0x000000;
 
         // Text styles
+        this.TUTORIAL_TEXT_STYLE = { fontFamily: 'Georgia', color: this.WHITE, fontSize: 16, fontStyle: 'bold', wordWrap: { width: gameWidth / 2 }};
         this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };
         this.LIGHT_TEXT_STYLE = { fontFamily: 'Raleway', color: this.WHITE, fontSize: 12 };
         this.HUD_STYLE = { fontFamily: 'Oswald', color: this.WHITE, fontSize: 20, fontStyle: 'bold' };
@@ -54,6 +55,7 @@ class Constants {
         this.CLEAR_ARMY = 'clearArmy';
         this.CLEAR_PLAYER_FROM_ROOMS = 'clearPlayerFromRooms';
         this.CREATE_HUD = 'createHUD';
+        this.CREATE_ROOMS = 'createRooms';
         this.CREATE_NEW_ROOM = 'createNewRoom';
         this.CURRENT_PLAYERS = 'currentPlayers';
         this.DELETE_ARMY = 'deleteArmy';
@@ -63,11 +65,14 @@ class Constants {
         this.GET_PLAYER_DATA = 'getPlayerData';
         this.GET_ROOMS = 'getRooms';
         this.JOIN_ROOM = 'joinRoom';
+        this.LAST_TUTORIAL_SCREEN = 'lastTutorialScreen';
         this.LEAVE_ROOM = 'leaveRoom';
         this.LIST_ROOMS = 'listRooms';
         this.LOAD_PLAY_SCENE = 'loadPlayScene';
         this.LOAD_SETUP_SCENE = 'loadSetupScene';
+        this.MATCHMAKING_TILES_CREATED = 'matchmakingTilesCreated';
         this.NEW_PLAYER = 'newPlayer';
+        this.NEXT_TUTORIAL_SCREEN = 'nextTutorialScreen';
         this.PLAYER_ARMIES = 'playerArmies';
         this.QUIT_GAME = 'quitGame';
         this.QUIT_GAME_CONFIRMED = 'quitGameConfirmed';
@@ -75,6 +80,7 @@ class Constants {
         this.SAVE_ARMY = 'saveArmy';
         this.SELECTED_ARMY = 'selectedArmy';
         this.START_GAME = 'startGame';
+        this.TOGGLE_INPUT = 'toggleInput';
         this.UPDATE_ROOMS = 'updateRooms';
 
         this.BLANK_NAME = '_________________';

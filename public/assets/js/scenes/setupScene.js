@@ -86,18 +86,19 @@ class SetupScene extends Phaser.Scene {
 
         this.armyNameInputBox = document.getElementById('input-box');
         //if (element && element.style.display === 'none') {
-        this.armyNameInputBox.style.display = 'block'
+        this.armyNameInputBox.style.display = 'block';
+        this.armyNameInput = document.getElementById('armyName');
 
-        for (let i = 0; i < this.armyNameInputBox.children.length; i++) {
-            // it is an input element
-            if (this.armyNameInputBox.children[i].tagName === 'INPUT') {
-                //let text = createText(element.children[i].name, i)
-                this.armyNameInput = this.armyNameInputBox.children[i];
-                // this.armyNameInput.addEventListener('input', () => {
-                // //    text.setText(element.children[i].value)
-                // })
-            }
-        }
+        // for (let i = 0; i < this.armyNameInputBox.children.length; i++) {
+        //     // it is an input element
+        //     if (this.armyNameInputBox.children[i].tagName === 'INPUT') {
+        //         //let text = createText(element.children[i].name, i)
+        //         this.armyNameInput = this.armyNameInputBox.children[i];
+        //         // this.armyNameInput.addEventListener('input', () => {
+        //         // //    text.setText(element.children[i].value)
+        //         // })
+        //     }
+        // }
         
         // this.alignmentGrid.positionItemAtIndex(96, this.armyNameInputBox);
 
@@ -330,9 +331,71 @@ class SetupScene extends Phaser.Scene {
 
         this.alignmentGrid.positionItemAtIndex(38, this.leftArrow);
         this.alignmentGrid.positionItemAtIndex(43, this.rightArrow);
+
+        this.runTutorial() 
     }
 
         
+    runTutorial() {
+        this.darkenInput(this);
+        this.lockInput(true);
+
+        this.tutorialOverlay = new TutorialOverlay({
+            scene: this,
+            screens: [
+                {
+                    text: 'This is the army management screen, here you can predefine unit layouts to use in matches.',
+                    imageKey: '',
+                    imageIndex: 0,
+                }, {
+                    text: 'Select a unit from the unit selection grid',
+                    imageKey: '',
+                    imageIndex: 17,
+                }, {
+                    text: 'And place it on the deployment board.  You can swap, move, and remove units by interacting with the board and grid.',
+                    imageKey: '',
+                    imageIndex: 0,
+                }, {
+                    text: 'You can customize your 4 armies as much and as often as you like.  You will be given a starting army that will reset if you delete all of your others.',
+                    imageKey: '',
+                    imageIndex: 0,
+                    callback: this.darkenInput
+                }, {
+                    text: 'An army needs at least one unit.  When you are satisfied, name and save your army for later battles.',
+                    imageKey: '',
+                    imageIndex: 0,
+                    callback: this.lightenInput
+                } 
+            ],
+            textConfig: CONSTANTS.TUTORIAL_TEXT_STYLE,
+            buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            alignmentGrid: this.alignmentGrid,
+            endEvent: CONSTANTS.TOGGLE_INPUT
+        });
+
+        emitter.on(CONSTANTS.TOGGLE_INPUT, (scene) => {
+            scene.lockInput(false);
+        });
+    }
+
+    darkenInput(scene) {
+        scene.armyNameInputBox.style.backgroundColor = 'rgba(90, 90, 90, 0.75)';
+        scene.armyNameInput.style.backgroundColor = 'rgba(90, 90, 90, .75)';
+    }
+
+    lightenInput(scene) {
+        scene.armyNameInputBox.style.backgroundColor = 'rgba(236, 238, 238, 1)';
+        scene.armyNameInput.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+    }
+
+    lockInput(lock) {
+        if (lock === false) {
+            emitter.removeListener(CONSTANTS.TOGGLE_INPUT);
+        }
+        this.armyNameInput.readOnly = lock;
+        this.armyNameInput.disabled = lock;
+    }
+
     update() {
         // This will let me iterate over all items inside this container
         // this.boardContainer.iterate(this.rollTile);
