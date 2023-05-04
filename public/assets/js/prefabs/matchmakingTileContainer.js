@@ -50,7 +50,9 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
                     await this.createNewRoom(data[room]);
                 });
 
-                emitter.emit(CONSTANTS.MATCHMAKING_TILES_CREATED);
+                if (Object.values(game.player.tutorials).indexOf('home') === -1) {
+                    emitter.emit(CONSTANTS.MATCHMAKING_TILES_CREATED);
+                }
             })
 
             // Update rooms with new players

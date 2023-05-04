@@ -610,7 +610,7 @@ class PlayScene extends Phaser.Scene {
             targets: unit, 
             x: this.targetTile.x, 
             y: this.targetTile.y, 
-            duration: 500, 
+            duration: CONSTANTS.MOVE_SPEED, 
             yoyo: false, 
             repeat: 0,
             // onStart: function () {},// console.log('onStart'); console.log(arguments); },
@@ -804,25 +804,59 @@ class PlayScene extends Phaser.Scene {
             path: path
         };
         this.playerAction = CONSTANTS.MID_ACTION;
-        this.removeAllHighlights([{tile: this.turnUnit.tile}, {tile: selectedToTile}]);
 
-        const recievingUnit = selectedToTile.unit ? 
-            {
+        // Get all tiles that should stay active
+        let attachedTiles = [{tile: this.turnUnit.tile}, {tile: selectedToTile}];
+        if (selectedToTile.attachedTiles) {
+            selectedToTile.attachedTiles.forEach(attachedTile => {
+                attachedTiles.push({tile: attachedTile});
+            });
+        }
+        this.removeAllHighlights(attachedTiles);
+
+        const recievingTiles = selectedToTile.unit ? 
+            [{
                 tileNum: selectedToTile.number,
+                unit: true,
                 // type: selectedToTile.unit.type, 
                 currentHealth: selectedToTile.unit.currentHealth,
                 defense: selectedToTile.unit.defense, 
                 dodge: selectedToTile.unit.dodge, 
                 block: selectedToTile.unit.block, 
                 direction: selectedToTile.unit.currentDirection
-            } : null;
+            }] : [{
+                tileNum: selectedToTile.number,
+                unit: false
+            }];
+
+        if (selectedToTile.attachedTiles) {
+            selectedToTile.attachedTiles.forEach(tile => {
+                if (tile.unit) {
+                    recievingTiles.push({
+                        tileNum: tile.number,
+                        unit: true,
+                        // type: selectedToTile.unit.type, 
+                        currentHealth: tile.unit.currentHealth,
+                        defense: tile.unit.defense, 
+                        dodge: tile.unit.dodge, 
+                        block: tile.unit.block, 
+                        direction: tile.unit.currentDirection
+                    });
+                } else {
+                    recievingTiles.push({
+                        tileNum: tile.number,
+                        unit: false
+                    });
+                }
+            })
+        }
 
         emitter.emit(CONSTANTS.UNIT_ACTION, {
             roomID: controller.gameRoom.roomID,
             // currentTileNum: currentTile.number, 
             actionUnit: actionUnit,
             // selectedToTileNum: selectedToTile.number,
-            recievingUnit: recievingUnit,
+            recievingTiles: recievingTiles,
             // path: selectedToTile.path
         });
     }
@@ -840,6 +874,59 @@ class PlayScene extends Phaser.Scene {
             this.turnUnit = actionUnit;
         }
 
+        if (actionUnit.type === CONSTANTS.SWORD && data.actionUnit.path.length === 2) {
+            let direction = null;
+            if (data.actionUnit.path[0]) {
+                direction = data.actionUnit.path[0].direction;
+                actionUnit.setDirection(direction);
+            }
+
+            const moveToTile = this.generatedBoard.getTile(data.actionUnit.path[0].tileNum);
+            this.tempData = data;
+
+            console.log('FOUND IT - ADD MOVE CODE HERE');
+
+            this.tweens.add({
+                targets: actionUnit, 
+                x: moveToTile.x, 
+                y: moveToTile.y, 
+                duration: CONSTANTS.DASH_SPEED, 
+                yoyo: false, 
+                repeat: 0,
+                // onStart: function () {},// console.log('onStart'); console.log(arguments); },
+                onComplete: function () { 
+                    // console.log('onComplete'); 
+                    // console.log(arguments); 
+                    const unit = arguments[1][0];
+                    const scene = unit.scene;
+
+                    // Reset the board data
+                    unit.tile.clearTint();
+                    unit.tile.unit = null;
+
+                    scene.selectedFromTile = scene.generatedBoard.getTile(scene.tempData.actionUnit.path[0].tileNum);
+                    scene.selectedFromTile.unit =  unit;
+                    unit.tile = scene.selectedFromTile;
+                    unit.tile.setTint(CONSTANTS.BLUE_TINT);
+                    scene.tempData.actionUnit.tileNum = unit.tile.number;
+
+                    // switch 
+                    scene.resolveAction(scene.tempData);
+                }
+            });
+        } else {
+            this.resolveAction(data);
+        }
+    }
+
+    resolveAction(data) {
+        this.tempData = null;
+
+        const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
+        if (!this.turnUnit) {
+            this.turnUnit = actionUnit;
+        }
+        
         // actionUnit.setActive(true);
         let direction = null;
         if (data.actionUnit.path[0]) {
@@ -847,20 +934,30 @@ class PlayScene extends Phaser.Scene {
             actionUnit.setDirection(direction);
         }
         
-        let recievingUnit;
-        if (data.recievingUnit) {
-            recievingUnit = this.generatedBoard.getTile(data.recievingUnit.tileNum).unit;
-            // recievingUnit.setActive(true);
+        if (data.result && data.result.tiles) {
+            // let recievingTile;
 
-            console.log(actionUnit);
-            console.log(recievingUnit);
+            data.result.tiles.forEach(tile => {
+                const recievingTile = this.generatedBoard.getTile(tile.tileNum);
+                
+                if (recievingTile.unit) {
+                    const recievingUnit = recievingTile.unit;
+                    // recievingUnit.setActive(true);
 
-            recievingUnit.resolveAction(data.result.value, data.result.action, data.result.turn, direction, data.result.text);
-            this.updateDetailsView(recievingUnit);
+                    console.log(actionUnit);
+                    console.log(recievingUnit);
+
+                    recievingUnit.resolveAction(tile.value, tile.action, tile.turn, direction, tile.text);
+                    this.updateDetailsView(recievingUnit);
+                }
+                // let destroyed = unit.destroyed;
+            });
+
+            // this.time.addEvent({ delay: 1400, repeat: 0, callback: this.finishAction, callbackScope: this, args: [data.result.units]});
+        // } else {
+            this.time.addEvent({ delay: 1400, repeat: 0, callback: this.finishAction, callbackScope: this, args: [data.result.tiles]}); // null]});
         }
 
-        let destroyed = data.result ? data.result.destroyed : null;
-        this.time.addEvent({ delay: 1400, repeat: 0, callback: this.finishAction, callbackScope: this, args: [recievingUnit, destroyed]});
         // TODO: Make all the animations and stuff happen
         // this.playerAction = CONSTANTS.SELECTION_ACTION;
         // if (recievingUnit) {
@@ -869,48 +966,63 @@ class PlayScene extends Phaser.Scene {
         // actionUnit.setActive(false);
     }
 
-    finishAction(recievingUnit, destroyed) {
+    finishAction(resultTiles) {
         console.log(this.playerAction);
         console.log('UNLOCK SCENE');
-        console.log(recievingUnit);
-        console.log(destroyed);
+        console.log(resultTiles);
         this.playerAction = CONSTANTS.SELECTION_ACTION;
+        this.selectedToTile = null;
         console.log(this.playerAction);
 
-        if (recievingUnit) {
-            recievingUnit.setActive(false);
-            recievingUnit.tile.clearTint();
+        // if (resultUnits) {
+            let unit;
+            let tile;
 
-            if (destroyed) {
-                recievingUnit.tile.unit = null;
-                recievingUnit.destroy();
+            resultTiles.forEach(resultTile => {
 
-                if (this.playerTurn === this.playerSide) {
-                    this.opponentArmyCount -= 1;
+                tile = this.generatedBoard.getTile(resultTile.tileNum);
+                tile.clearTint();
 
-                    if (this.opponentArmyCount === 0) {
-                        this.endGame(true);
-                        // console.log('VICTORY');
+                unit = tile.unit;
+                if (unit) {
+                    unit.setActive(false);
 
-                        
-                        // TODO: victory popup
-                    }
-                } else {
-                    this.playerArmyCount -= 1;
+                    if (resultTile.destroyed) {
+                        tile.unit = null;
+                        unit.destroy();
 
-                    if (this.playerArmyCount === 0) {
-                        this.endGame(false);
-                        // console.log('DEFEAT');
+                        if (this.playerTurn === this.playerSide) {
+                            this.opponentArmyCount -= 1;
 
-                        // TODO: defeat popup
+                            if (this.opponentArmyCount === 0) {
+                                this.endGame(true);
+                                // console.log('VICTORY');
+
+                                
+                                // TODO: victory popup
+                            }
+                        } else {
+                            this.playerArmyCount -= 1;
+
+                            if (this.playerArmyCount === 0) {
+                                this.endGame(false);
+                                // console.log('DEFEAT');
+
+                                // TODO: defeat popup
+                            }
+                        }
                     }
                 }
-            }
-        } else {
-            if (this.selectedToTile) {
-                this.selectedToTile.clearTint();
-            }
-        }
+            });
+        // } else {
+        //     if (this.selectedToTile) {
+        //         this.selectedToTile.clearTint();
+        //     }
+        // }
+        
+        this.generatedBoard.tiles.forEach((tile) => {
+            tile.attachedTiles = [];
+        });
     }
 
     endGame(victory) {

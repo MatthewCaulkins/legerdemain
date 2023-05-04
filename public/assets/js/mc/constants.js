@@ -20,6 +20,10 @@ class Constants {
         this.GREEN_COLOR = {r: 3, g: 108, b: 3, a: 255};
         this.RED_COLOR = {r: 138, g: 36, b: 0, a: 255};
 
+        // Movement speeds
+        this.MOVE_SPEED = 500;
+        this.DASH_SPEED = 250;
+        
         // Tints
         this.BLUE_TINT = 0x0044ff;
         this.BROWN_TINT = 0x9b530d;
@@ -64,6 +68,7 @@ class Constants {
         this.GAME_SCREEN_REACHED = 'gameScreenReached';
         this.GET_PLAYER_DATA = 'getPlayerData';
         this.GET_ROOMS = 'getRooms';
+        this.HOME_TUTORIAL_RUN = 'homeTutorialRun';
         this.JOIN_ROOM = 'joinRoom';
         this.LAST_TUTORIAL_SCREEN = 'lastTutorialScreen';
         this.LEAVE_ROOM = 'leaveRoom';
@@ -77,8 +82,11 @@ class Constants {
         this.QUIT_GAME = 'quitGame';
         this.QUIT_GAME_CONFIRMED = 'quitGameConfirmed';
         this.QUIT_GAME_SELECTED = 'quitGameSelected';
+        this.RUN_TUTORIAL = 'runTutorial';
+        this.RUN_HOME_TUTORIAL = 'runHomeTutorial';
         this.SAVE_ARMY = 'saveArmy';
         this.SELECTED_ARMY = 'selectedArmy';
+        this.SETUP_TUTORIAL_RUN = 'setupTutorialRun';
         this.START_GAME = 'startGame';
         this.TOGGLE_INPUT = 'toggleInput';
         this.UPDATE_ROOMS = 'updateRooms';

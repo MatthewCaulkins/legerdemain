@@ -20,6 +20,9 @@ const UserSchema = new Schema({
         unit: String,
         num: Number
     }],
+    tutorials: [{
+        type: String
+    }],
     resetToken: {
         type: String
     },

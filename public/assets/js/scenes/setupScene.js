@@ -33,6 +33,54 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
         this.alignmentGrid.showCellIndex();
 
+        
+        // The button to get back to the home page
+        this.homeButton = new Button({
+            scene: this, 
+            key: CONSTANTS.TILE,
+            text: 'Back',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.BACK_TO_HOME,
+            alignmentGrid: this.alignmentGrid,
+            index: 12
+        });
+        emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene, this);
+
+        // The button to get Save out the army
+        this.saveButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Save Army',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
+            alignmentGrid: this.alignmentGrid,
+            index: 100
+        });
+        emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement, this);
+        
+        // The button to delete army
+        this.clearButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Clear Army',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.CLEAR_ARMY,
+            alignmentGrid: this.alignmentGrid,
+            index: 101
+        });
+        emitter.on(CONSTANTS.CLEAR_ARMY, this.clearArmy, this);
+        
+        this.tutorialButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Tutorial',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.RUN_TUTORIAL,
+            alignmentGrid: this.alignmentGrid,
+            index: 13
+        });
+        emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
+
         // Add placement counter
         this.counter = this.add.text(0, 0, 'Army Size: 0 / 10', CONSTANTS.HUD_STYLE);
         // this.counter.setOrigin(.5, .5);
@@ -264,41 +312,6 @@ class SetupScene extends Phaser.Scene {
             // this.selectGrid[i].setVisible(false);
         }
 
-        // The button to get back to the home page
-        this.homeButton = new Button({
-            scene: this, 
-            key: CONSTANTS.TILE,
-            text: 'Back',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
-            event: CONSTANTS.BACK_TO_HOME,
-            alignmentGrid: this.alignmentGrid,
-            index: 12
-        });
-        emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene, this);
-
-        // The button to get Save out the army
-        this.saveButton = new Button({
-            scene: this, 
-            key: 'tile',
-            text: 'Save Army',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
-            event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
-            alignmentGrid: this.alignmentGrid,
-            index: 100
-        });
-        emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement, this);
-        
-        // The button to delete army
-        this.clearButton = new Button({
-            scene: this, 
-            key: 'tile',
-            text: 'Clear Army',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
-            event: CONSTANTS.CLEAR_ARMY,
-            alignmentGrid: this.alignmentGrid,
-            index: 101
-        });
-        emitter.on(CONSTANTS.CLEAR_ARMY, this.clearArmy.bind(this));
 
         // Add Notice
         this.addNoticeElement();
@@ -332,27 +345,49 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid.positionItemAtIndex(38, this.leftArrow);
         this.alignmentGrid.positionItemAtIndex(43, this.rightArrow);
 
-        this.runTutorial() 
+        if (Object.values(game.player.tutorials).indexOf('setup') === -1) {
+            this.runTutorial();
+        }
     }
 
         
     runTutorial() {
         this.darkenInput(this);
         this.lockInput(true);
+        const underlyingInteractives = [
+            this.leftArrow,
+            this.rightArrow,
+            this.homeButton.image,
+            this.saveButton.image,
+            this.clearButton.image,
+            this.tutorialButton.image
+        ];
+
+        console.log(this);
+        console.log(this.selectGrid);
+
+        this.selectGrid[0].tiles.forEach(tile => {
+            underlyingInteractives.push(tile);
+        });
+
+        this.generatedBoard[0].tiles.forEach(tile => {
+            underlyingInteractives.push(tile);
+        });
 
         this.tutorialOverlay = new TutorialOverlay({
             scene: this,
+            underlyingInteractives: underlyingInteractives,
             screens: [
                 {
                     text: 'This is the army management screen, here you can predefine unit layouts to use in matches.',
                     imageKey: '',
                     imageIndex: 0,
                 }, {
-                    text: 'Select a unit from the unit selection grid',
+                    text: 'Select a unit from the unit selection grid and its stats will appear in the lower right.',
                     imageKey: '',
                     imageIndex: 17,
                 }, {
-                    text: 'And place it on the deployment board.  You can swap, move, and remove units by interacting with the board and grid.',
+                    text: 'With a unit selected you can place it on the deployment board.  You can swap, move, and remove units by interacting with the board and grid.',
                     imageKey: '',
                     imageIndex: 0,
                 }, {
@@ -374,6 +409,7 @@ class SetupScene extends Phaser.Scene {
         });
 
         emitter.on(CONSTANTS.TOGGLE_INPUT, (scene) => {
+            emitter.emit(CONSTANTS.SETUP_TUTORIAL_RUN);
             scene.lockInput(false);
         });
     }
@@ -561,6 +597,7 @@ class SetupScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.CLEAR_ARMY);
         emitter.removeListener(CONSTANTS.ACCEPT_BOARD_PLACEMENT);
         emitter.removeListener(CONSTANTS.BACK_TO_HOME);
+        emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
 
         // console.log(this.clearButton);
         // if (this.clearButton) {

@@ -14,6 +14,7 @@ class GameBoardTile extends Tile {
         // Whether or not we are about to do special stuff to the tile
         this.active = false;
         this.inRange = false;
+        this.attachedTiles = [];
         
         // The path to get to this tile
         this.path = [];
@@ -72,6 +73,15 @@ class GameBoardTile extends Tile {
                 // } else {
                     if (this.inRange) {
                         this.setTint(CONSTANTS.ORANGE_TINT);
+                        
+                        console.log(this);
+                        console.log(this.attachedTiles);
+
+                        if (this.attachedTiles) { // For special multi-tile actions
+                            this.attachedTiles.forEach(tile => {
+                                tile.setTint(CONSTANTS.ORANGE_TINT);
+                            });
+                        }
                     }
                 // }
             } 
@@ -141,6 +151,11 @@ class GameBoardTile extends Tile {
                         this.setTint(CONSTANTS.ORANGE_TINT);
                     } else {
                         this.setTint(CONSTANTS.YELLOW_TINT);
+                        if (this.attachedTiles) { // For special multi-tile actions
+                            this.attachedTiles.forEach(tile => {
+                                tile.setTint(CONSTANTS.YELLOW_TINT);
+                            });
+                        }
                     }
                 } else {
                     this.clearTint();

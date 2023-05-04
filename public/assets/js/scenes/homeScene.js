@@ -77,17 +77,6 @@ class HomeScene extends Phaser.Scene {
         // });
         // emitter.once(CONSTANTS.LOAD_PLAY_SCENE, this.loadPlayScene);
 
-        this.setupSceneButton = new Button({
-            scene: this, 
-            key: 'tile',
-            text: 'Army Setup',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
-            event: CONSTANTS.LOAD_SETUP_SCENE,
-            alignmentGrid: this.alignmentGrid,
-            index: 12
-        });
-        emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
-
         // Setup the controller and load the HUD
         if (game.player) {
             this.createHUD();
@@ -129,6 +118,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.MATCHMAKING_TILES_CREATED);
         emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
+        emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
         emitter.emit(CONSTANTS.CLEAR_PLAYER_FROM_ROOMS);
 
         game.scene.start(CONSTANTS.SETUP_SCENE);
@@ -144,6 +134,7 @@ class HomeScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.MATCHMAKING_TILES_CREATED);
         emitter.removeListener(CONSTANTS.UPDATE_ROOMS);
         emitter.removeListener(CONSTANTS.START_GAME);
+        emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
 
         game.scene.start(CONSTANTS.PLAY_SCENE);
         game.scene.stop(CONSTANTS.HOME_SCENE);
@@ -170,34 +161,58 @@ class HomeScene extends Phaser.Scene {
         };
         this.matchmakingTileContainer = new MatchmakingTileContainer(matcmakingContainerConfig);
 
+        this.setupSceneButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Army Setup',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.LOAD_SETUP_SCENE,
+            alignmentGrid: this.alignmentGrid,
+            index: 12
+        });
+        emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
+
+        this.tutorialButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Tutorial',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.RUN_TUTORIAL,
+            alignmentGrid: this.alignmentGrid,
+            index: 13
+        });
+        emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
+
         // TODO: only do this automatically if not saved that it is done
-        emitter.on(CONSTANTS.MATCHMAKING_TILES_CREATED, this.showTutorial, this);
+        emitter.on(CONSTANTS.MATCHMAKING_TILES_CREATED, this.runTutorial, this);
+        emitter.on(CONSTANTS.RUN_HOME_TUTORIAL, this.runTutorial, this);
     }
 
-    showTutorial() {    
+    runTutorial() {    
         console.log('show tutorial');
         console.log(controller);
-        const underlyingInteractives = [];
+        console.log(this);
+        const underlyingInteractives = [
+            this.setupSceneButton.image, 
+            this.tutorialButton.image
+        ];
 
         Object.keys(controller.rooms).forEach(roomID => {
             underlyingInteractives.push(controller.rooms[roomID].leftSide);
             underlyingInteractives.push(controller.rooms[roomID].rightSide);
         })
 
-        underlyingInteractives.push(this.setupSceneButton.image);
-        //armySetupTut
-        // matchmakingTileTut
         this.tutorialOverlay = new TutorialOverlay({
             scene: this,
             underlyingInteractives: underlyingInteractives,
             screens: [
                 {
-                    text: 'This is the home screen, where can manager your armies or join a match.',
+                    text: 'This is the home screen, where you can manager your armies or join a match.',
                     imageKey: '',
                     imageIndex: 0,
                 }, 
                 {
-                    text: 'To manager you army layouts click on the Army Setup button in the upper right.',
+                    text: 'To manage your army layouts click on the Army Setup button in the upper left.',
                     imageKey: '',
                     imageIndex: 12,
                 },
@@ -210,6 +225,7 @@ class HomeScene extends Phaser.Scene {
             textConfig: CONSTANTS.TUTORIAL_TEXT_STYLE,
             buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
             alignmentGrid: this.alignmentGrid,
+            endEvent: CONSTANTS.HOME_TUTORIAL_RUN
         });
     }
 

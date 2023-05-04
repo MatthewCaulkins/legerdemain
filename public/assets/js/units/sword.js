@@ -97,6 +97,7 @@ class Sword extends Unit {
     highlightTilesInActionRange(range, generatedBoard, unitsBoard) {
         const tile = this.tile;
         let questionedTile;
+        let dashTileNum;
         tile.path = [];
 
         const tilesOfInterest = [tile];
@@ -120,7 +121,9 @@ class Sword extends Unit {
                                 tileOfInterest.path.forEach(path => {
                                     questionedTile.path.push(path);
                                 });
-                                questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: questionedTile.unit}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                
+                                // dashTileNum = questionedTile.path[questionedTile.path.length - 1] && questionedTile.path[questionedTile.path.length - 1].tileNum != this.number ? questionedTile.path[questionedTile.path.length - 1].tileNum : null;
+                                questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: questionedTile.unit}); //, dashTileNum: dashTileNum   CONSTANTS.TOP); //tile: questionedTile, 
                                 tilesOfInterest.push(questionedTile);
                             // } else {
                             //     console.log('tile included already');
@@ -137,6 +140,7 @@ class Sword extends Unit {
                                 tileOfInterest.path.forEach(path => {
                                     questionedTile.path.push(path);
                                 })
+
                                 questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number, unit: questionedTile.unit}); //CONSTANTS.RIGHT);
                                 tilesOfInterest.push(questionedTile);
                             }
@@ -152,6 +156,7 @@ class Sword extends Unit {
                                 tileOfInterest.path.forEach(path => {
                                     questionedTile.path.push(path);
                                 })
+
                                 questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number, unit: questionedTile.unit}); // CONSTANTS.DOWN);
                                 tilesOfInterest.push(questionedTile);
                             }
@@ -167,6 +172,7 @@ class Sword extends Unit {
                                 tileOfInterest.path.forEach(path => {
                                     questionedTile.path.push(path);
                                 })
+
                                 questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number, unit: questionedTile.unit}); // CONSTANTS.LEFT);
                                 tilesOfInterest.push(questionedTile);
                             }

@@ -102,6 +102,10 @@ class Controller {
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data);
         });
 
+        this.socket.on(CONSTANTS.RUN_HOME_TUTORIAL, () => {
+            emitter.emit(CONSTANTS.RUN_HOME_TUTORIAL);
+        })
+
         // Returning to the home page, get all rooms
         if (!controller.events.includes(CONSTANTS.GET_ROOMS)) {
             emitter.on(CONSTANTS.GET_ROOMS, () => {
@@ -143,6 +147,31 @@ class Controller {
         this.socket.on(CONSTANTS.UPDATE_ROOMS, (data) => {
             emitter.emit(CONSTANTS.UPDATE_ROOMS, data);
         });
+
+        // Tutorials
+        if (!controller.events.includes(CONSTANTS.SETUP_TUTORIAL_RUN)) {
+            emitter.on(CONSTANTS.SETUP_TUTORIAL_RUN, () => {
+                this.socket.emit(CONSTANTS.SETUP_TUTORIAL_RUN, {playerId: game.player.playerId});
+                
+                if (!game.player.tutorials.includes('setup')) {
+                    game.player.tutorials.push('setup');
+                }
+            });
+            controller.events.push(CONSTANTS.SETUP_TUTORIAL_RUN);
+        }
+
+        if (!controller.events.includes(CONSTANTS.HOME_TUTORIAL_RUN)) {
+            emitter.on(CONSTANTS.HOME_TUTORIAL_RUN, () => {
+                this.socket.emit(CONSTANTS.HOME_TUTORIAL_RUN, {playerId: game.player.playerId});
+
+                if (!game.player.tutorials.includes('home')) {
+                    game.player.tutorials.push('home');
+                }
+
+                console.log(game.player);
+            });
+            controller.events.push(CONSTANTS.HOME_TUTORIAL_RUN);
+        }
 
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
