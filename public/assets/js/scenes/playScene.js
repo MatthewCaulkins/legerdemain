@@ -323,7 +323,7 @@ class PlayScene extends Phaser.Scene {
 
         // Add unit stats component
         this.unitStats = new UnitStats(this);
-        this.alignmentGrid.positionItemAtIndex(84, this.unitStats);
+        this.alignmentGrid.positionItemAtIndex(73, this.unitStats);
 
         if (this.playerSide === CONSTANTS.LEFT) {
             this.actionButtonContainer.setActive(CONSTANTS.MOVE_BUTTON);
@@ -799,6 +799,7 @@ class PlayScene extends Phaser.Scene {
             // type: this.turnUnit.type,
             offense: this.turnUnit.offense,
             action: this.turnUnit.action,
+            unblockable: this.turnUnit.unblockable,
             // cooldown: this.turnUnit.cooldown,
             direction: direction,
             path: path
@@ -1092,6 +1093,7 @@ class PlayScene extends Phaser.Scene {
         this.generatedBoard.tiles.forEach((tile) => {
             tile.inRange = false;
             tile.path = [];
+            tile.attachedTiles = [];
         });
 
         if (clearSelections) {

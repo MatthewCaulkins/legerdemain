@@ -153,7 +153,11 @@ class GameBoardTile extends Tile {
                         this.setTint(CONSTANTS.YELLOW_TINT);
                         if (this.attachedTiles) { // For special multi-tile actions
                             this.attachedTiles.forEach(tile => {
-                                tile.setTint(CONSTANTS.YELLOW_TINT);
+                                if (tile.inRange) {
+                                    tile.setTint(CONSTANTS.YELLOW_TINT);
+                                } else {
+                                    tile.clearTint();
+                                }
                             });
                         }
                     }

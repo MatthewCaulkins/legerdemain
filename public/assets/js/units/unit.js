@@ -69,6 +69,7 @@ class Unit extends Phaser.GameObjects.Container {
             this.currentHealth;
             this.currentCooldown;
             this.currentDirection;
+            this.unblockable = false;
             
             this.description;
             this.health;
@@ -161,6 +162,9 @@ class Unit extends Phaser.GameObjects.Container {
                 this.setActive(true, text);
                 break;
             case CONSTANTS.HEAL:
+                this.currentHealth = (this.currentHealth + value) > this.health ? this.health : (this.currentHealth + value);
+                this.healthBar.setPercent(this.currentHealth / this.health);
+                this.setActive(true, text);
                 break;
             case CONSTANTS.STOP:
                 this.currentCooldown += 2;

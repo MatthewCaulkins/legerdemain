@@ -19,6 +19,7 @@ class Sorcery extends Unit {
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;
+        this.unblockable = true;
         
         // Frame keys
         
@@ -92,5 +93,52 @@ class Sorcery extends Unit {
         // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
         super.setTint(CONSTANTS.PURPLE_TINT);
         super.setDirection(config.direction);
+    }
+
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) { 
+        let tilesOfInterest = super.highlightTilesInActionRange(range, generatedBoard, unitsBoard);
+
+        tilesOfInterest = this.getAttachedTiles(tilesOfInterest, generatedBoard);
+
+        console.log(tilesOfInterest);
+        return tilesOfInterest;
+    }
+
+    getAttachedTiles(tilesOfInterest, generatedBoard) {
+        let questionedTile;
+        console.log(tilesOfInterest);
+
+        tilesOfInterest.forEach(tileOfInterest => {
+                    if (tileOfInterest.column - 1 >= 0) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column - 1];
+                        
+                        if (!tileOfInterest.attachedTiles.includes(questionedTile)) {
+                            tileOfInterest.attachedTiles.push(questionedTile);
+                        }
+                    }
+                    if (tileOfInterest.row + 1 < generatedBoard.mapRows) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row + 1][tileOfInterest.column]
+                        
+                        if (!tileOfInterest.attachedTiles.includes(questionedTile)) {
+                            
+                            tileOfInterest.attachedTiles.push(questionedTile);
+                        }
+                    }
+                    if (tileOfInterest.column + 1 < generatedBoard.mapColumns) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row][tileOfInterest.column + 1]
+                        
+                        if (!tileOfInterest.attachedTiles.includes(questionedTile)) {
+                            tileOfInterest.attachedTiles.push(questionedTile);
+                        }
+                    }
+                    if (tileOfInterest.row - 1 >= 0) {
+                        questionedTile = generatedBoard.board[tileOfInterest.row - 1][tileOfInterest.column]
+                       
+                        if (!tileOfInterest.attachedTiles.includes(questionedTile)) {
+                            tileOfInterest.attachedTiles.push(questionedTile);
+                        }
+                    }
+                });
+        return tilesOfInterest;
     }
 }

@@ -8,24 +8,25 @@ class UnitStats extends Phaser.GameObjects.Container {
         this.hoverUnit = null;
         this.activeUnit = null;
 
-        if (this.sceneKey === CONSTANTS.PLAY_SCENE) {
-            this.type = scene.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-            this.health = scene.add.text(0, 40, '', CONSTANTS.HUD_STYLE);
-            this.defense = scene.add.text(150, 40, '', CONSTANTS.HUD_STYLE);
-            this.offense = scene.add.text(0, 80, '', CONSTANTS.HUD_STYLE);
-            this.range = scene.add.text(150, 80, '', CONSTANTS.HUD_STYLE);
-            this.dodge = scene.add.text(0, 120, '', CONSTANTS.HUD_STYLE);
-            this.block = scene.add.text(150, 120, '', CONSTANTS.HUD_STYLE);
-            this.movement = scene.add.text(0, 160, '', CONSTANTS.HUD_STYLE);
-            this.cooldown = scene.add.text(150, 160, '', CONSTANTS.HUD_STYLE);
+        // if (this.sceneKey === CONSTANTS.PLAY_SCENE) {
+        //     this.type = scene.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
+        //     this.description = scene.add.text(0, 40, '', CONSTANTS.HUD_STYLE);
+        //     this.health = scene.add.text(0, 40, '', CONSTANTS.HUD_STYLE);
+        //     this.defense = scene.add.text(150, 40, '', CONSTANTS.HUD_STYLE);
+        //     this.offense = scene.add.text(0, 80, '', CONSTANTS.HUD_STYLE);
+        //     this.range = scene.add.text(150, 80, '', CONSTANTS.HUD_STYLE);
+        //     this.dodge = scene.add.text(0, 120, '', CONSTANTS.HUD_STYLE);
+        //     this.block = scene.add.text(150, 120, '', CONSTANTS.HUD_STYLE);
+        //     this.movement = scene.add.text(0, 160, '', CONSTANTS.HUD_STYLE);
+        //     this.cooldown = scene.add.text(150, 160, '', CONSTANTS.HUD_STYLE);
             
-            this.stats = [
-                this.type, this.health, this.defense, this.offense,
-                this.range, this.movement, this.dodge, this.block, this.cooldown
-            ];
+        //     this.stats = [
+        //         this.type, this.health, this.defense, this.offense,
+        //         this.range, this.movement, this.dodge, this.block, this.cooldown
+        //     ];
             
-            this.setSize(300, 180);
-        } else {
+        //     this.setSize(300, 180);
+        // } else {
             this.type = scene.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
             this.description = scene.add.text(0, 40, '', CONSTANTS.HUD_STYLE);
             this.health = scene.add.text(0, 100, '', CONSTANTS.HUD_STYLE);
@@ -44,7 +45,7 @@ class UnitStats extends Phaser.GameObjects.Container {
             ];
             
             this.setSize(300, 320);
-        }
+        // }
 
         this.stats.forEach(stat => {
             this.add(stat);
@@ -82,13 +83,13 @@ class UnitStats extends Phaser.GameObjects.Container {
             this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
             this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.currentCooldown}`;
 
+            this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1]*`;
+
+            this.description.text = `${unit.description}`;
+            this.disclaimer.text = '*When using attack and move'
             
             if (this.sceneKey === CONSTANTS.SETUP_SCENE) {
                 this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
-                this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1]*`;
-
-                this.description.text = `${unit.description}`;
-                this.disclaimer.text = '*When using attack and move'
             }
         }
 

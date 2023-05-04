@@ -352,7 +352,7 @@ io.on('connection', async function (socket) {
                         case 'damage':
                             const modifier = directionsModifiers[data.actionUnit.path[0].direction][tile.direction];
                 
-                            if ((Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
+                            if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
                                 data.result.tiles.push({
                                     tileNum: tile.tileNum,
                                     text: 'Dodge',
@@ -361,7 +361,7 @@ io.on('connection', async function (socket) {
                                     value: 0,
                                     destroyed: false
                                 });
-                            } else if ((Math.random() * 100) < ((tile.block * modifier) * 100)) {
+                            } else if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.block * modifier) * 100)) {
                                 data.result.tiles.push({
                                     tileNum: tile.tileNum,
                                     text: 'Block',
@@ -399,6 +399,14 @@ io.on('connection', async function (socket) {
                             }
                             break;
                         case 'heal':
+                            data.result.tiles.push({
+                                tileNum: tile.tileNum,
+                                text: '+' + data.actionUnit.offense,
+                                turn: false,
+                                action: 'heal',
+                                value: data.actionUnit.offense,
+                                destroyed: false,
+                            });
                             break;
                         case 'stop':
                             data.result.tiles.push({

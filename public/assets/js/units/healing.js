@@ -6,7 +6,7 @@ class Healing extends Unit {
         super(config);
 
         this.type = CONSTANTS.HEALING;
-        this.description = 'Area of effect heal with radius 3';
+        this.description = 'Heals all units in a 3 tile radius of target tile';
         this.health = 18;
         this.defense = 0;
         this.offense = 15;
@@ -16,6 +16,7 @@ class Healing extends Unit {
         this.block = 0;
         this.cooldown = 4;
         this.action = CONSTANTS.HEAL;
+        this.area = 3;
         
         this.currentHealth = this.health;
         this.currentCooldown = 0;
@@ -91,5 +92,120 @@ class Healing extends Unit {
         // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
         super.setTint(CONSTANTS.YELLOW_TINT);
         super.setDirection(config.direction);
+    }
+
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) { 
+        let tilesOfInterest = super.highlightTilesInActionRange(range, generatedBoard, unitsBoard);
+
+        tilesOfInterest = this.getAttachedTiles(tilesOfInterest, generatedBoard);
+
+        console.log(tilesOfInterest);
+        return tilesOfInterest;
+    }
+
+    getAttachedTiles(tilesOfInterest, generatedBoard) {
+        let questionedTile;
+        console.log(tilesOfInterest);
+
+        tilesOfInterest.forEach(tileOfInterest => {
+            const attachedTiles = [tileOfInterest];
+
+            for (let i = 0; i < this.area; i++) {
+                attachedTiles.forEach(attachedTile => {
+                    // console.log(tileOfInterest);
+
+                    // console.log(`Column ${tileOfInterest.column}  Row ${tileOfInterest.row}`)
+                    if (attachedTile.column - 1 >= 0) {
+                        questionedTile = generatedBoard.board[attachedTile.row][attachedTile.column - 1];
+
+                        // console.log(questionedTile);
+
+                        // Will have to take into account friendly units in the Play Scene
+                        // if (questionedTile.unit === null) {
+                            if (!attachedTiles.includes(questionedTile)) {
+                                // console.log(tileOfInterest.path);
+                                // tileOfInterest.path.forEach(path => {
+                                //     questionedTile.path.push(path);
+                                // });
+                                // questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: true}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                attachedTiles.push(questionedTile);
+                            // } else {
+                            //     console.log('tile included already');
+                            }
+                        // }
+                    }
+                    if (attachedTile.row + 1 < generatedBoard.mapRows) {
+                        questionedTile = generatedBoard.board[attachedTile.row + 1][attachedTile.column]
+                        // if (questionedTile.unit === null) {
+                            // if (!tilesOfInterest.includes(questionedTile)) {
+                            //     tileOfInterest.path.forEach(path => {
+                            //         questionedTile.path.push(path);
+                            //     })
+                            //     questionedTile.path.push({direction: CONSTANTS.RIGHT, tileNum: questionedTile.number, unit: true}); //CONSTANTS.RIGHT);
+                            //     tilesOfInterest.push(questionedTile);
+                            // }
+                            if (!attachedTiles.includes(questionedTile)) {
+                                // console.log(tileOfInterest.path);
+                                // tileOfInterest.path.forEach(path => {
+                                //     questionedTile.path.push(path);
+                                // });
+                                // questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: true}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                attachedTiles.push(questionedTile);
+                            // } else {
+                            //     console.log('tile included already');
+                            }
+                        // }
+                    }
+                    if (attachedTile.column + 1 < generatedBoard.mapColumns) {
+                        questionedTile = generatedBoard.board[attachedTile.row][attachedTile.column + 1]
+                        // if (questionedTile.unit === null) {
+                            // if (!tilesOfInterest.includes(questionedTile)) {
+                            //     tileOfInterest.path.forEach(path => {
+                            //         questionedTile.path.push(path);
+                            //     })
+                            //     questionedTile.path.push({direction: CONSTANTS.BOTTOM, tileNum: questionedTile.number, unit: true}); // CONSTANTS.DOWN);
+                            //     tilesOfInterest.push(questionedTile);
+                            // }
+                            if (!attachedTiles.includes(questionedTile)) {
+                                // console.log(tileOfInterest.path);
+                                // tileOfInterest.path.forEach(path => {
+                                //     questionedTile.path.push(path);
+                                // });
+                                // questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: true}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                attachedTiles.push(questionedTile);
+                            // } else {
+                            //     console.log('tile included already');
+                            }
+                        // }
+                    }
+                    if (attachedTile.row - 1 >= 0) {
+                        questionedTile = generatedBoard.board[attachedTile.row - 1][attachedTile.column]
+                        // if (questionedTile.unit === null) {
+                            // if (!tilesOfInterest.includes(questionedTile)) {
+                            //     tileOfInterest.path.forEach(path => {
+                            //         questionedTile.path.push(path);
+                            //     })
+                            //     questionedTile.path.push({direction: CONSTANTS.LEFT, tileNum: questionedTile.number, unit: true}); // CONSTANTS.LEFT);
+                            //     tilesOfInterest.push(questionedTile);
+                            // }
+                            if (!attachedTiles.includes(questionedTile)) {
+                                // console.log(tileOfInterest.path);
+                                // tileOfInterest.path.forEach(path => {
+                                //     questionedTile.path.push(path);
+                                // });
+                                // questionedTile.path.push({direction: CONSTANTS.TOP, tileNum: questionedTile.number, unit: true}); //CONSTANTS.TOP); //tile: questionedTile, 
+                                attachedTiles.push(questionedTile);
+                            // } else {
+                            //     console.log('tile included already');
+                            }
+                        // }
+                    }
+                });
+
+                tileOfInterest.attachedTiles = attachedTiles;
+            }
+        });
+
+        return tilesOfInterest;
     }
 }

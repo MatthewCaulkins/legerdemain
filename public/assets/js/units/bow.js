@@ -6,7 +6,7 @@ class Bow extends Unit {
         super(config);
 
         this.type = CONSTANTS.BOW;
-        this.description = 'Long range direct hit';
+        this.description = 'Long range and shoots over units';
         this.health = 25;
         this.defense = .05;
         this.offense = 15;
