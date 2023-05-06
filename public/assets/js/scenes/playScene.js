@@ -800,6 +800,7 @@ class PlayScene extends Phaser.Scene {
             offense: this.turnUnit.offense,
             action: this.turnUnit.action,
             unblockable: this.turnUnit.unblockable,
+            synchronous: this.turnUnit.synchronous,
             // cooldown: this.turnUnit.cooldown,
             direction: direction,
             path: path

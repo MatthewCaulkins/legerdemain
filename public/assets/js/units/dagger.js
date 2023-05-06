@@ -16,6 +16,7 @@ class Dagger extends Unit {
         this.block = .25;
         this.cooldown = 0;
         this.action = CONSTANTS.DAMAGE;
+        this.synchronous = false;
 
         this.currentHealth = this.health;
         this.currentCooldown = 0;
@@ -91,5 +92,15 @@ class Dagger extends Unit {
         // TODO: TEMPORARY UNTIL I GET UNIQUE UNITS ART - later will use this to set the player's army tint
         super.setTint(CONSTANTS.ORANGE_TINT);
         super.setDirection(config.direction);
+    }
+
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) {
+        const tilesOfInterest = super.highlightTilesInActionRange(range, generatedBoard, unitsBoard);
+
+        tilesOfInterest.forEach(tile => {
+            tile.attachedTiles.push(tile);
+        });
+
+        return tilesOfInterest;
     }
 }

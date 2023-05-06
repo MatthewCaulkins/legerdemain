@@ -69,7 +69,6 @@ class Unit extends Phaser.GameObjects.Container {
             this.currentHealth;
             this.currentCooldown;
             this.currentDirection;
-            this.unblockable = false;
             
             this.description;
             this.health;
@@ -80,6 +79,8 @@ class Unit extends Phaser.GameObjects.Container {
             this.dodge;
             this.block;
             this.cooldown;
+            this.unblockable = false;
+            this.synchronous = true;
 
 
             this.active = false;

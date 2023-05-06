@@ -92,12 +92,22 @@ class Lance extends Unit {
         super.setTint(CONSTANTS.RED_TINT);
         super.setDirection(config.direction);
     }
+    
+    highlightTilesInActionRange(range, generatedBoard, unitsBoard) {
+        const tilesOfInterest = super.highlightTilesInActionRange(range, generatedBoard, unitsBoard);
 
-    rotateCharacter() {
+        tilesOfInterest.forEach(tile => {
+            if (tile.path.length === 2) {
+                if (tile.path[0].direction === tile.path[1].direction) {
+                    const tile1 = generatedBoard.getTile(tile.path[0].tileNum);
+                    const tile2 = generatedBoard.getTile(tile.path[1].tileNum);
 
-    }
+                    tile1.attachedTiles.push(tile2);
+                    tile2.attachedTiles.push(tile1);
+                }
+            }
+        });
 
-    attack() {
-        
+        return tilesOfInterest;
     }
 }
