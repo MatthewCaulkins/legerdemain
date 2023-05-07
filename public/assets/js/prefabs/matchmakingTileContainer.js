@@ -16,7 +16,7 @@ class MatchmakingTileContainer extends Phaser.GameObjects.Container {
 
         // Add Background so it's easy to find
         const background = this.scene.make.graphics({add: false})
-            .fillStyle(0xffffff, 1)
+            .fillStyle(0xffffff, 0)
             .fillRect(0, 0, width, height);
         this.add(background);
 

@@ -10,21 +10,47 @@ class Button extends Phaser.GameObjects.Container {
         this.event = config.event;
         this.params = config.params
 
-        this.image = this.scene.add.image(0, 0, config.key);
-        this.add(this.image);
+        this.sprite = this.scene.add.sprite(0, 0, config.texture);
+        this.add(this.sprite);
 
+        this.texture = config.texture;
+        this.defaultKey = config.defaultKey;
+        this.hoverKey = config.hoverKey;
+        this.downKey = config.downKey;
 
-        if (config.text) {
-            this.text = config.text;
-            this.textConfig = config.textConfig;
-            this.textConfig.wordWrap = {width: this.image.displayWidth - 10};
+        let animeConfig = {
+            key: this.defaultKey,
+            frames: this.scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 0, first: 0 }),
+            frameRate: 1,
+            repeat: 0
+        };
+        this.scene.anims.create(animeConfig);
+        animeConfig = {
+            key: this.hoverKey,
+            frames: this.scene.anims.generateFrameNumbers(this.texture, { start: 1, end: 1, first: 1 }),
+            frameRate: 1,
+            repeat: 0
+        };
+        this.scene.anims.create(animeConfig);
+        animeConfig = {
+            key: this.downKey,
+            frames: this.scene.anims.generateFrameNumbers(this.texture, { start: 2, end: 2, first: 2 }),
+            frameRate: 1,
+            repeat: 0
+        };
+        this.scene.anims.create(animeConfig);
 
-            this.text = this.scene.add.text(0, 0, this.text, this.textConfig);
-            this.text.setOrigin(.5, .5);
-            this.add(this.text);
-        }
+        // if (config.text) {
+        //     this.text = config.text;
+        //     this.textConfig = config.textConfig;
+        //     this.textConfig.wordWrap = {width: this.sprite.displayWidth - 10};
 
-        this.setSize(this.image.displayWidth, this.image.displayHeight);
+        //     this.text = this.scene.add.text(0, 0, this.text, this.textConfig);
+        //     this.text.setOrigin(.5, .5);
+        //     this.add(this.text);
+        // }
+
+        this.setSize(this.sprite.displayWidth, this.sprite.displayHeight);
         this.scene.add.existing(this);
 
         if (config.x) {
@@ -38,15 +64,24 @@ class Button extends Phaser.GameObjects.Container {
         }
 
         if(this.event) {
-            this.image.setInteractive();
-            this.image.on(CONSTANTS.POINTER_DOWN, this.onPointerdown, this);
-            this.image.on(CONSTANTS.POINTER_OVER, this.onPointerover, this);    
-            this.image.on(CONSTANTS.POINTER_OUT, this.onPointerout, this);
+            this.sprite.setInteractive();
+            this.sprite.on(CONSTANTS.POINTER_UP, this.onPointerup, this);
+            this.sprite.on(CONSTANTS.POINTER_DOWN, this.onPointerdown, this);
+            this.sprite.on(CONSTANTS.POINTER_OVER, this.onPointerover, this);    
+            this.sprite.on(CONSTANTS.POINTER_OUT, this.onPointerout, this);
         }
+
+        this.sprite.play(this.defaultKey);
+    }
+
+    onPointerup() {
+        this.sprite.play(this.defaultKey);
     }
 
     onPointerdown() {
         if (!this.fired) {
+            this.sprite.play(this.downKey);
+            model.currentScene.sound.play(CONSTANTS.BUTTON_SOUND);
             if (this.params) {
                 emitter.emit(this.event, this.params);
             } else {
@@ -60,11 +95,13 @@ class Button extends Phaser.GameObjects.Container {
     }
 
     onPointerover() {
-        this.image.setTint(CONSTANTS.GREEN_TINT);
+        this.sprite.play(this.hoverKey);
+        // this.sprite.setTint(CONSTANTS.GREEN_TINT);
     }
 
     onPointerout() {
-        this.image.clearTint();
+        this.sprite.play(this.defaultKey);
+        // this.sprite.clearTint();
         this.fired = false;
     }
 

@@ -31,6 +31,7 @@ class ArmyArrow extends Phaser.GameObjects.Sprite {
             this.play('off');
         });
         this.on(CONSTANTS.POINTER_DOWN, () => {
+            model.currentScene.sound.play(CONSTANTS.ARROW_SOUND);
             if (direction === 'left') {
                 this.shiftArmyLeft();
             } else {

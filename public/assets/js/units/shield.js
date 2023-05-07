@@ -17,6 +17,8 @@ class Shield extends Unit {
         this.cooldown = 2;
         this.action = CONSTANTS.DAMAGE;
 
+        this.blockSound = CONSTANTS.BLOCK_SOUND1;
+
         this.currentHealth = this.health;
         this.currentCooldown = 0;
         

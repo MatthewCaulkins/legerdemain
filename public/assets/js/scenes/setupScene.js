@@ -10,6 +10,9 @@ class SetupScene extends Phaser.Scene {
     create() {
         model.currentScene = this;
 
+        this.background = this.add.image(0, 0, CONSTANTS.SETUP_SCREEN_BACKGROUND);
+        this.background.setOrigin(0, 0);
+
         // Tiles currently active
         this.boardTile = null; 
         this.selectGridTile = null;
@@ -31,17 +34,18 @@ class SetupScene extends Phaser.Scene {
         
         // Alignment grid
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
-        this.alignmentGrid.showCellIndex();
+        // this.alignmentGrid.showCellIndex();
 
         
         // The button to get back to the home page
         this.homeButton = new Button({
             scene: this, 
-            key: CONSTANTS.TILE,
-            text: 'Back',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.BACK_BUTTON,
             event: CONSTANTS.BACK_TO_HOME,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.BACK_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.BACK_BUTTON_HOVER,
+            downKey: CONSTANTS.BACK_BUTTON_DOWN,
             index: 12
         });
         emitter.once(CONSTANTS.BACK_TO_HOME, this.loadHomeScene, this);
@@ -49,11 +53,12 @@ class SetupScene extends Phaser.Scene {
         // The button to get Save out the army
         this.saveButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Save Army',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.SAVE_ARMY_BUTTON,
             event: CONSTANTS.ACCEPT_BOARD_PLACEMENT,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.SAVE_ARMY_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.SAVE_ARMY_BUTTON_HOVER,
+            downKey: CONSTANTS.SAVE_ARMY_BUTTON_DOWN,
             index: 100
         });
         emitter.on(CONSTANTS.ACCEPT_BOARD_PLACEMENT, this.acceptBoardPlacement, this);
@@ -61,22 +66,24 @@ class SetupScene extends Phaser.Scene {
         // The button to delete army
         this.clearButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Clear Army',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.CLEAR_ARMY_BUTTON,
             event: CONSTANTS.CLEAR_ARMY,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.CLEAR_ARMY_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.CLEAR_ARMY_BUTTON_HOVER,
+            downKey: CONSTANTS.CLEAR_ARMY_BUTTON_DOWN,
             index: 101
         });
         emitter.on(CONSTANTS.CLEAR_ARMY, this.clearArmy, this);
         
         this.tutorialButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Tutorial',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.TUTORIAL_BUTTON,
             event: CONSTANTS.RUN_TUTORIAL,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.TUTORIAL_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.TUTORIAL_BUTTON_HOVER,
+            downKey: CONSTANTS.TUTORIAL_BUTTON_DOWN,
             index: 13
         });
         emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
@@ -88,7 +95,7 @@ class SetupScene extends Phaser.Scene {
         this.alignmentGrid.positionItemAtIndex(79, this.counter);
 
         // this.createDetailsView();
-        this.unitStats = new UnitStats(this);
+        this.unitStats = new UnitStats({scene: this, textStyle: CONSTANTS.HUD_STYLE_DARK});
         this.alignmentGrid.positionItemAtIndex(72, this.unitStats);
 
         // stores all created phaser texts
@@ -348,6 +355,14 @@ class SetupScene extends Phaser.Scene {
         if (Object.values(game.player.tutorials).indexOf('setup') === -1) {
             this.runTutorial();
         }
+        // this.bringToTop(this.background);
+        // this.saveButton.bringToTop();
+        // this.clearButton.bringToTop();
+        // this.counter.bringToTop();
+        // this.unitStats.bringToTop();
+        
+        this.border = this.add.image(0, 0, CONSTANTS.SETUP_SCREEN_BORDER);
+        this.border.setOrigin(0, 0);
     }
 
         
@@ -357,10 +372,10 @@ class SetupScene extends Phaser.Scene {
         const underlyingInteractives = [
             this.leftArrow,
             this.rightArrow,
-            this.homeButton.image,
-            this.saveButton.image,
-            this.clearButton.image,
-            this.tutorialButton.image
+            this.homeButton.sprite,
+            this.saveButton.sprite,
+            this.clearButton.sprite,
+            this.tutorialButton.sprite
         ];
 
         console.log(this);

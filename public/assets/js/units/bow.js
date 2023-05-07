@@ -17,6 +17,8 @@ class Bow extends Unit {
         this.cooldown = 2;
         this.action = CONSTANTS.DAMAGE;
         
+        this.actionSound = CONSTANTS.BOWSTRING;
+        
         this.currentHealth = this.health;
         this.currentCooldown = 0;
         

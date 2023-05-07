@@ -121,6 +121,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
     onLeftSidePointerdown() {
         // console.log(game.player.playerId);
         if (this.player1 === null) {
+            model.currentScene.sound.play(CONSTANTS.MATCHMAKE_SELECT_SOUND);
             // TODO: Send socket event that player joined
             emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.LEFT, roomID: this.roomID});
             this.player1 = game.player;
@@ -151,6 +152,7 @@ class MatchmakingTile extends Phaser.GameObjects.Container {
 
     onRightSidePointerdown() {
         if (this.player2 === null) {
+            model.currentScene.sound.play(CONSTANTS.MATCHMAKE_SELECT_SOUND);
             // TODO: Send socket event that player joined
             emitter.emit(CONSTANTS.JOIN_ROOM, {player: game.player, side: CONSTANTS.RIGHT, roomID: this.roomID});
             this.player2 = game.player;

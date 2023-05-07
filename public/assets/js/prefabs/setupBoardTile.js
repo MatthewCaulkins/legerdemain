@@ -77,6 +77,8 @@ class SetupBoardTile extends Tile {
         // If there is no unit on this tile
         if (this.scene.selectGridTile || this.scene.unitsPlaced[this.army] > 0) {
             if (!this.unit) { 
+                
+                model.currentScene.sound.play(CONSTANTS.PUT_DOWN);
                 // If there is no unit selected - add the selected unit to this tile
                 if (!this.scene.boardTile) {// Selected === false) {
                     if (this.scene.selectGridTile) {

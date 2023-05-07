@@ -82,6 +82,10 @@ class Unit extends Phaser.GameObjects.Container {
             this.unblockable = false;
             this.synchronous = true;
 
+            this.actionSound = CONSTANTS.KNIFE2;
+            this.dodgeSound = CONSTANTS.DODGE_SOUND;
+            this.blockSound = CONSTANTS.BLOCK_SOUND2;
+
 
             this.active = false;
 
@@ -130,6 +134,10 @@ class Unit extends Phaser.GameObjects.Container {
     showHealthbar(visible) {
         this.healthBar.setVisible(visible);
     }
+    
+    runActionSound() {
+        model.currentScene.sound.play(this.actionSound);
+    }
 
     // hideHealthbar() {
     //     this.healthBar.setVisible(false);
@@ -148,6 +156,12 @@ class Unit extends Phaser.GameObjects.Container {
         console.log(direction);
         console.log(text);
 
+        if (text === 'Dodge') {
+            model.currentScene.sound.play(this.dodgeSound);
+        } else if (text === 'Block') {
+            model.currentScene.sound.play(this.blockSound);
+        }
+        
         switch (action) {
             case CONSTANTS.DAMAGE:
                 if (turn && direction) {

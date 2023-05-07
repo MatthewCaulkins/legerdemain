@@ -1,8 +1,8 @@
 class UnitStats extends Phaser.GameObjects.Container {
-    constructor(scene) {
-        super(scene, 0, 0);
+    constructor(config) {
+        super(config.scene, 0, 0);
 
-        this.sceneKey = scene.scene.key;
+        this.sceneKey = this.scene.scene.key;
 
         this._active = false;
         this.hoverUnit = null;
@@ -27,17 +27,17 @@ class UnitStats extends Phaser.GameObjects.Container {
             
         //     this.setSize(300, 180);
         // } else {
-            this.type = scene.add.text(0, 0, '', CONSTANTS.HUD_STYLE);
-            this.description = scene.add.text(0, 40, '', CONSTANTS.HUD_STYLE);
-            this.health = scene.add.text(0, 100, '', CONSTANTS.HUD_STYLE);
-            this.defense = scene.add.text(150, 100, '', CONSTANTS.HUD_STYLE);
-            this.offense = scene.add.text(0, 140, '', CONSTANTS.HUD_STYLE);
-            this.range = scene.add.text(150, 140, '', CONSTANTS.HUD_STYLE);
-            this.dodge = scene.add.text(0, 180, '', CONSTANTS.HUD_STYLE);
-            this.block = scene.add.text(150, 180, '', CONSTANTS.HUD_STYLE);
-            this.movement = scene.add.text(0, 220, '', CONSTANTS.HUD_STYLE);
-            this.cooldown = scene.add.text(150, 220, '', CONSTANTS.HUD_STYLE);
-            this.disclaimer = scene.add.text(0, 280, '', CONSTANTS.HUD_STYLE);
+            this.type = this.scene.add.text(0, 0, '', config.textStyle);
+            this.description = this.scene.add.text(0, 40, '', config.textStyle);
+            this.health = this.scene.add.text(0, 100, '', config.textStyle);
+            this.defense = this.scene.add.text(150, 100, '', config.textStyle);
+            this.offense = this.scene.add.text(0, 140, '', config.textStyle);
+            this.range = this.scene.add.text(150, 140, '', config.textStyle);
+            this.dodge = this.scene.add.text(0, 180, '', config.textStyle);
+            this.block = this.scene.add.text(150, 180, '', config.textStyle);
+            this.movement = this.scene.add.text(0, 220, '', config.textStyle);
+            this.cooldown = this.scene.add.text(150, 220, '', config.textStyle);
+            this.disclaimer = this.scene.add.text(0, 280, '', config.textStyle);
             
             this.stats = [
                 this.type, this.description, this.health, this.defense, this.offense,

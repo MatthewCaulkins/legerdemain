@@ -22,12 +22,14 @@ class TutorialOverlay extends Phaser.GameObjects.Container {
         // Add navigation button
         this.nextButton = new Button({
             scene: config.scene,
-            key: 'tile',
-            text: 'Next',
+            texture: CONSTANTS.NEXT_BUTTON,
             invalidateFired: false,
             textConfig: config.buttonTextConfig,
             event: CONSTANTS.NEXT_TUTORIAL_SCREEN, 
             params: this,
+            defaultKey: CONSTANTS.NEXT_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.NEXT_BUTTON_HOVER,
+            downKey: CONSTANTS.NEXT_BUTTON_DOWN,
             x: (gameWidth / 2) + 50,
             y: gameHeight / 2 + 130,
         });
@@ -37,12 +39,14 @@ class TutorialOverlay extends Phaser.GameObjects.Container {
 
         this.previousButton = new Button({
             scene: config.scene,
-            key: 'tile',
-            text: 'Previous',
+            texture: CONSTANTS.PREVIOUS_BUTTON,
             invalidateFired: false,
             textConfig: config.buttonTextConfig,
             event: CONSTANTS.LAST_TUTORIAL_SCREEN, 
             params: this,
+            defaultKey: CONSTANTS.PREVIOUS_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.PREVIOUS_BUTTON_HOVER,
+            downKey: CONSTANTS.PREVIOUS_BUTTON_DOWN,
             x: (gameWidth / 2) - 50,
             y: gameHeight / 2 + 130,
         });

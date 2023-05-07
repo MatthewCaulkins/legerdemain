@@ -47,6 +47,7 @@ class ScrollArrow extends Phaser.GameObjects.Sprite {
             this.play(CONSTANTS.OFF);
         });
         this.on(CONSTANTS.POINTER_DOWN, () => {
+            model.currentScene.sound.play(CONSTANTS.ARROW_SOUND);
             this.play(CONSTANTS.ON);
             if (direction === CONSTANTS.LEFT) {
                 this.shiftArmyLeft();

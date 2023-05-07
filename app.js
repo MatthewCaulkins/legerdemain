@@ -153,6 +153,12 @@ io.on('connection', async function (socket) {
         await UserModel.findOneAndUpdate({_id: playerId}, {$addToSet: {tutorials: 'home'}});
     });
 
+    socket.on('gameTutorialRun', async (data) => {
+        const playerId = data.playerId;
+
+        await UserModel.findOneAndUpdate({_id: playerId}, {$addToSet: {tutorials: 'game'}});
+    });
+
     socket.on('setupTutorialRun', async (data) => {
         const playerId = data.playerId;
 

@@ -8,6 +8,69 @@ class Constants {
         this.GRID_ORIENTATION = 0;
         this.MATCHMAKING_NAME_ORIENTATION = -1.5708;
 
+        // Screen backgrounds
+        this.HOME_SCREEN_BACKGROUND = 'homeScreenBackground';
+        this.SETUP_SCREEN_BACKGROUND = 'setupScreenBackground';
+        this.SETUP_SCREEN_BORDER = 'setupScreenBorder';
+
+        // Buttons
+        this.ARMY_SETUP_BUTTON = 'armySetupButton';
+        this.ARMY_SETUP_BUTTON_DEFAULT = 'armySetupButtonDefault';
+        this.ARMY_SETUP_BUTTON_HOVER = 'armySetupButtonHover';
+        this.ARMY_SETUP_BUTTON_DOWN = 'armySetupButtonDown';
+        this.BACK_BUTTON = 'backButton';
+        this.BACK_BUTTON_DEFAULT = 'backButtonDefault';
+        this.BACK_BUTTON_HOVER = 'backButtonHover';
+        this.BACK_BUTTON_DOWN = 'backButtonDown';
+        this.CLEAR_ARMY_BUTTON = 'clearArmyButton';
+        this.CLEAR_ARMY_BUTTON_DEFAULT = 'clearArmyButtonDefault';
+        this.CLEAR_ARMY_BUTTON_HOVER = 'clearArmyButtonHover';
+        this.CLEAR_ARMY_BUTTON_DOWN = 'clearArmyButtonDown';
+        this.QUIT_BUTTON = 'quitButton';
+        this.QUIT_BUTTON_DEFAULT = 'quitButtonDefault';
+        this.QUIT_BUTTON_HOVER = 'quitButtonHover';
+        this.QUIT_BUTTON_DOWN = 'quitButtonDown';
+        this.SAVE_ARMY_BUTTON = 'saveArmyButton';
+        this.SAVE_ARMY_BUTTON_DEFAULT = 'saveArmyButtonDefault';
+        this.SAVE_ARMY_BUTTON_HOVER = 'saveArmyButtonHover';
+        this.SAVE_ARMY_BUTTON_DOWN = 'saveArmyButtonDown';
+        this.SELECT_ARMY_BUTTON = 'selectArmyButton';
+        this.SELECT_ARMY_BUTTON_DEFAULT = 'selectArmyButtonDefault';
+        this.SELECT_ARMY_BUTTON_HOVER = 'selectArmyButtonHover';
+        this.SELECT_ARMY_BUTTON_DOWN = 'selectArmyButtonDown';
+        this.TUTORIAL_BUTTON = 'tutorialButton';
+        this.TUTORIAL_BUTTON_DEFAULT = 'tutorialButtonDefault';
+        this.TUTORIAL_BUTTON_HOVER = 'tutorialButtonHover';
+        this.TUTORIAL_BUTTON_DOWN = 'tutorialButtonDown';
+        this.NEXT_BUTTON = 'nextButton';
+        this.NEXT_BUTTON_DEFAULT = 'nextButtonDefault';
+        this.NEXT_BUTTON_HOVER = 'nextButtonHover';
+        this.NEXT_BUTTON_DOWN = 'nextButtonDown';
+        this.PREVIOUS_BUTTON = 'previousButton';
+        this.PREVIOUS_BUTTON_DEFAULT = 'previousButtonDefault';
+        this.PREVIOUS_BUTTON_HOVER = 'previousButtonHover';
+        this.PREVIOUS_BUTTON_DOWN = 'previousButtonDown';
+
+        // Sounds
+        this.FOOTSTEP = 'footstepSound';
+        this.HOME_LOOP = 'homeLoop';
+        this.GAME_MUSIC = 'gameMusic';
+        this.KNIFE2 = 'knife2';
+        this.MESMERIZE = 'mesmerize';
+        this.COMET = 'comet';
+        this.BOWSTRING = 'bowString';
+        this.HEALING = 'healing';
+        this.DODGE_SOUND = 'dodgeSound';
+        this.BLOCK_SOUND1 = 'blockSound1';
+        this.BLOCK_SOUND2 = 'blockSound2';
+        this.ARROW_SOUND = 'arrowSound';
+        this.BUTTON_SOUND = 'buttonSound';
+        this.PICK_UP = 'pickUpSound';
+        this.PUT_DOWN = 'putDownSound';
+        this.MATCHMAKE_SELECT_SOUND = 'matchmakeSelectSound';
+        this.VICTORY_SOUND = 'victorySound';
+        this.DEFEAT_SOUND = 'defeatSound';
+        
         // End game icons
         this.END_GAME_ICON = 'endGameIcon';
         this.VICTORY = 'victory';
@@ -42,6 +105,7 @@ class Constants {
         this.DARK_TEXT_STYLE = { fontFamily: 'Georgia', color: this.BLACK, fontSize: 12 };
         this.LIGHT_TEXT_STYLE = { fontFamily: 'Raleway', color: this.WHITE, fontSize: 12 };
         this.HUD_STYLE = { fontFamily: 'Oswald', color: this.WHITE, fontSize: 20, fontStyle: 'bold' };
+        this.HUD_STYLE_DARK = { fontFamily: 'Oswald', color: this.BLACK, fontSize: 20, fontStyle: 'bold' };
         
         // Scenes
         this.HOME_SCENE = 'HomeScene';

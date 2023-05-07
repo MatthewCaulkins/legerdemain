@@ -47,7 +47,7 @@ class PlayScene extends Phaser.Scene {
 
         // Setup the alignment grid for testing purposes
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
-        this.alignmentGrid.showCellIndex();
+        // this.alignmentGrid.showCellIndex();
 
         // Create the container for the board and units
         this.boardContainer = this.add.container(0, 0);
@@ -130,11 +130,12 @@ class PlayScene extends Phaser.Scene {
         // The button to get back to the home page
         this.quitButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Quit Game',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.QUIT_BUTTON,
             event: CONSTANTS.QUIT_GAME_SELECTED,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.QUIT_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.QUIT_BUTTON_HOVER,
+            downKey: CONSTANTS.QUIT_BUTTON_DOWN,
             index: 12
         });
         emitter.once(CONSTANTS.QUIT_GAME_SELECTED, this.quitGame);
@@ -142,11 +143,12 @@ class PlayScene extends Phaser.Scene {
         // The button to accept this setup
         this.acceptButton = new Button({
             scene: this, 
-            key: CONSTANTS.TILE,
-            text: 'Select Army',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.SELECT_ARMY_BUTTON,
             event: CONSTANTS.ACCEPT_ARMY,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.SELECT_ARMY_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.SELECT_ARMY_BUTTON_HOVER,
+            downKey: CONSTANTS.SELECT_ARMY_BUTTON_DOWN,
             index: acceptIndex
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
@@ -154,11 +156,12 @@ class PlayScene extends Phaser.Scene {
         // Tutorial button
         this.tutorialButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Tutorial',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.TUTORIAL_BUTTON,
             event: CONSTANTS.RUN_TUTORIAL,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.TUTORIAL_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.TUTORIAL_BUTTON_HOVER,
+            downKey: CONSTANTS.TUTORIAL_BUTTON_DOWN,
             index: 13
         });
         emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
@@ -240,9 +243,9 @@ class PlayScene extends Phaser.Scene {
     // Game tutorial
     runTutorial() {
         const underlyingInteractives = [
-            this.acceptButton.image,
-            this.quitButton.image,
-            this.tutorialButton.image,
+            this.acceptButton.sprite,
+            this.quitButton.sprite,
+            this.tutorialButton.sprite,
             this.leftArrow,
             this.rightArrow
         ];
@@ -385,7 +388,7 @@ class PlayScene extends Phaser.Scene {
         this.addActionButtons();
 
         // Add unit stats component
-        this.unitStats = new UnitStats(this);
+        this.unitStats = new UnitStats({scene: this, textStyle: CONSTANTS.HUD_STYLE});
         this.alignmentGrid.positionItemAtIndex(73, this.unitStats);
 
         if (this.playerSide === CONSTANTS.LEFT) {
@@ -667,7 +670,8 @@ class PlayScene extends Phaser.Scene {
 
         // Remove tints as the character moves
         this.currentTile.clearTint();
-
+        this.sound.play(CONSTANTS.FOOTSTEP);
+        
         
         this.tweens.add({
             targets: unit, 
@@ -684,6 +688,8 @@ class PlayScene extends Phaser.Scene {
                 const scene = unit.scene;
                 scene.currentTile.unit = null;
                 scene.targetTile.unit = unit;
+
+
                 // console.log(scene.targetTile.unit.tint.z);
                 // console.log(scene.targetTile.unit.character.z);
                 // console.log(scene.targetTile.z);
@@ -869,10 +875,12 @@ class PlayScene extends Phaser.Scene {
                     scene.tempData.actionUnit.tileNum = unit.tile.number;
 
                     // switch 
+                    actionUnit.runActionSound();
                     scene.resolveAction(scene.tempData);
                 }
             });
         } else {
+            actionUnit.runActionSound();
             this.resolveAction(data);
         }
     }
@@ -885,6 +893,10 @@ class PlayScene extends Phaser.Scene {
         const actionUnit = this.generatedBoard.getTile(data.actionUnit.tileNum).unit;
         if (!this.turnUnit) {
             this.turnUnit = actionUnit;
+        }
+
+        if (!data.actionUnit.synchronous) {
+            actionUnit.runActionSound();
         }
         
         // actionUnit.setActive(true);
@@ -1021,8 +1033,10 @@ class PlayScene extends Phaser.Scene {
 
         if (victory) {
             config.imageKey = CONSTANTS.VICTORY;
+            this.sounds.play(CONSTANTS.VICTORY_SOUND);
         } else {
             config.imageKey = CONSTANTS.DEFEAT;
+            this.sounds.play(CONSTANTS.DEFEAT_SOUND);
         }
 
         const overlay = new EndGameOverlay(config);

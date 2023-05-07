@@ -32,6 +32,7 @@ class Controller {
 
     // Pay attention to the socket for every new player
     connectSocket() {
+
         // console.log('connect to socket');
         // console.log(`id : ${controller._id}`);
         const self = this;
@@ -61,6 +62,9 @@ class Controller {
                     }
                 }
             });
+
+            this.music = model.currentScene.sound.add(CONSTANTS.HOME_LOOP);
+            this.music.play({loop: true});
 
             // Return that data is loaded
             console.log(controller.otherPlayers);
@@ -256,6 +260,11 @@ class Controller {
 
         // Start a game
         this.socket.on(CONSTANTS.START_GAME, data => {
+
+            this.music.stop();
+            this.music = model.currentScene.sound.add(CONSTANTS.GAME_MUSIC);
+            this.music.play({loop: true});
+            
             // console.log('startgame');
             // console.log(data);
             controller.gameRoom = data;

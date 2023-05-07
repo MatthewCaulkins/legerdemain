@@ -5,7 +5,24 @@ class HomeScene extends Phaser.Scene {
 
     preload() {
         // Sounds
-        
+        this.load.audio(CONSTANTS.FOOTSTEP, 'assets/sounds/Footstep.wav');
+        this.load.audio(CONSTANTS.HOME_LOOP, 'assets/sounds/Home_music_loop.wav');
+        this.load.audio(CONSTANTS.GAME_MUSIC, 'assets/sounds/Battle_melody_maybe.wav');
+        this.load.audio(CONSTANTS.KNIFE2, 'assets/sounds/Knife2.wav');
+        this.load.audio(CONSTANTS.MESMERIZE, 'assets/sounds/Control.wav');
+        this.load.audio(CONSTANTS.COMET, 'assets/sounds/Sorcery_fireball.wav');
+        this.load.audio(CONSTANTS.BOWSTRING, 'assets/sounds/Bow.wav');
+        this.load.audio(CONSTANTS.HEALING, 'assets/sounds/Healing_twinkle_baby.wav');
+        this.load.audio(CONSTANTS.DODGE_SOUND, 'assets/sounds/Dodge.mp3');
+        this.load.audio(CONSTANTS.BLOCK_SOUND1, 'assets/sounds/Block.wav');
+        this.load.audio(CONSTANTS.BLOCK_SOUND2, 'assets/sounds/Block_alternate_fast.wav');
+        this.load.audio(CONSTANTS.ARROW_SOUND, 'assets/sounds/Arrows.wav');
+        this.load.audio(CONSTANTS.BUTTON_SOUND, 'assets/sounds/Button.wav');
+        this.load.audio(CONSTANTS.PICK_UP, 'assets/sounds/Pickup.wav');
+        this.load.audio(CONSTANTS.PUT_DOWN, 'assets/sounds/Put_down.wav');
+        this.load.audio(CONSTANTS.MATCHMAKE_SELECT_SOUND, 'assets/sounds/Confirm.wav');
+        this.load.audio(CONSTANTS.VICTORY_SOUND, 'assets/sounds/Victory.wav');
+        this.load.audio(CONSTANTS.DEFEAT_SOUND, 'assets/sounds/Defeat.wav');
 
         // Overlay images
         this.load.spritesheet(CONSTANTS.END_GAME_ICON, 'assets/img/endGameIcon.png', {frameWidth: 500, frameHeight: 500, endFrame: 1});
@@ -20,10 +37,22 @@ class HomeScene extends Phaser.Scene {
         this.load.image(CONSTANTS.RIGHT_DIRECTION_BUTTON, 'assets/img/rightDirectionButton.png');
         this.load.image(CONSTANTS.BOTTOM_DIRECTION_BUTTON, 'assets/img/bottomDirectionButton.png');
         this.load.image(CONSTANTS.LEFT_DIRECTION_BUTTON, 'assets/img/leftDirectionButton.png');
+
+        // Screen backgrounds
+        this.load.image(CONSTANTS.HOME_SCREEN_BACKGROUND, 'assets/img/homeScreen.png');
+        this.load.image(CONSTANTS.SETUP_SCREEN_BACKGROUND, 'assets/img/setupScreen.png');
+        this.load.image(CONSTANTS.SETUP_SCREEN_BORDER, 'assets/img/setupScreenBorder.png');
         
-        // Image (eventually Sprite sheets) for characters
-        this.load.image(CONSTANTS.SWORD, 'assets/img/sword.png');
-        this.load.image(CONSTANTS.SWORD_TINT, 'assets/img/swordTint.png');
+        // Buttons
+        this.load.spritesheet(CONSTANTS.ARMY_SETUP_BUTTON, 'assets/img/armySetupButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.BACK_BUTTON, 'assets/img/backButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.CLEAR_ARMY_BUTTON, 'assets/img/clearArmyButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.QUIT_BUTTON, 'assets/img/quitButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.SAVE_ARMY_BUTTON, 'assets/img/saveArmyButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.SELECT_ARMY_BUTTON, 'assets/img/selectArmyButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.TUTORIAL_BUTTON, 'assets/img/tutorialButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.NEXT_BUTTON, 'assets/img/nextButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
+        this.load.spritesheet(CONSTANTS.PREVIOUS_BUTTON, 'assets/img/previousButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
 
         // Sprite sheets
             // Characters
@@ -63,11 +92,13 @@ class HomeScene extends Phaser.Scene {
         this.scene = this;
         
         this.alignmentGrid = new AlignmentGrid({rows: 11, columns: 11, scene: this});
-        this.alignmentGrid.showCellIndex();
+        // this.alignmentGrid.showCellIndex();
 
         // Add matchmaking tiles
         console.log(this);
 
+        this.background = this.add.image(0, 0, CONSTANTS.HOME_SCREEN_BACKGROUND);
+        this.background.setOrigin(0, 0);
         // Add navigation buttons
         // this.playSceneButton = new Button({
         //     scene: this, 
@@ -97,6 +128,8 @@ class HomeScene extends Phaser.Scene {
             console.log('start game triggered');
             this.startGame();
         });
+
+        // Looping music
     }
 
     // Change scenes
@@ -145,15 +178,15 @@ class HomeScene extends Phaser.Scene {
 
     // Show players
     createHUD() {
-        this.graphics = this.add.graphics();
+        // this.graphics = this.add.graphics();
         
-        this.graphics.fillStyle(0xffffff, 1);
-        this.graphics.fillRect(0, this.alignmentGrid.cellHeight * (this.alignmentGrid.rows - 2), gameWidth, gameHeight);
+        // this.graphics.fillStyle(0xffffff, 1);
+        // this.graphics.fillRect(0, this.alignmentGrid.cellHeight * (this.alignmentGrid.rows - 2), gameWidth, gameHeight);
 
-        console.log(controller);
-        const text = this.add.text(0, 0, `Welcome ${game.player.name}`, CONSTANTS.DARK_TEXT_STYLE);
+        // console.log(controller);
+        // const text = this.add.text(0, 0, `Welcome ${game.player.name}`, CONSTANTS.DARK_TEXT_STYLE);
 
-        this.alignmentGrid.positionItemAtIndex(100, text);
+        // this.alignmentGrid.positionItemAtIndex(100, text);
 
         const matcmakingContainerConfig = {
             scene: this,
@@ -166,22 +199,24 @@ class HomeScene extends Phaser.Scene {
 
         this.setupSceneButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Army Setup',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.ARMY_SETUP_BUTTON,
             event: CONSTANTS.LOAD_SETUP_SCENE,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.ARMY_SETUP_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.ARMY_SETUP_BUTTON_HOVER,
+            downKey: CONSTANTS.ARMY_SETUP_BUTTON_DOWN,
             index: 12
         });
         emitter.on(CONSTANTS.LOAD_SETUP_SCENE, this.loadSetupScene);
 
         this.tutorialButton = new Button({
             scene: this, 
-            key: 'tile',
-            text: 'Tutorial',
-            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            texture: CONSTANTS.TUTORIAL_BUTTON,
             event: CONSTANTS.RUN_TUTORIAL,
             alignmentGrid: this.alignmentGrid,
+            defaultKey: CONSTANTS.TUTORIAL_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.TUTORIAL_BUTTON_HOVER,
+            downKey: CONSTANTS.TUTORIAL_BUTTON_DOWN,
             index: 13
         });
         emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
@@ -193,8 +228,8 @@ class HomeScene extends Phaser.Scene {
 
     runTutorial() {    
         const underlyingInteractives = [
-            this.setupSceneButton.image, 
-            this.tutorialButton.image
+            this.setupSceneButton.sprite, 
+            this.tutorialButton.sprite
         ];
 
         Object.keys(controller.rooms).forEach(roomID => {
@@ -227,39 +262,5 @@ class HomeScene extends Phaser.Scene {
             alignmentGrid: this.alignmentGrid,
             endEvent: CONSTANTS.HOME_TUTORIAL_RUN
         });
-    }
-
-    // loadPlayScene(scene) {
-    //     scene.start('PlayScene');
-    // }
-
-    // loadSetupScene(scene) {
-    //     scene.start('SetupScene');
-    // }
-        // create the game Controller
-        // controller = new Controller();
-
-    //    var myText = this.scene.add.text(x, y, 'Text');
-    //    myText.setText('new text');
-    //    myText.setOrigin(.5, .5);
-
-        // Scroll code
-        // // Add scroll 
-        // this.input.on('wheel', function (pointer, gameObjects, deltaX, deltaY, deltaZ) {
-
-        //     soil.tilePositionX += deltaX * 0.5;
-        //     soil.tilePositionY += deltaY * 0.5;
-    
-        // });
-    
-        // this.add.text(10, 10, 'Scroll your mouse-wheel', { font: '16px Courier', fill: '#00ff00' });
-
-
-        // List all players not in a game
-
-    update() {
-        // if (this.matchmakingTileContainer) {
-        //     this.matchmakingTileContainer.moveContainers();
-        // }
     }
 }

@@ -17,6 +17,8 @@ class Control extends Unit {
         this.cooldown = 3;
         this.action = CONSTANTS.STOP;
         
+        this.actionSound = CONSTANTS.MESMERIZE;
+        
         this.currentHealth = this.health;
         this.currentCooldown = 0;
         

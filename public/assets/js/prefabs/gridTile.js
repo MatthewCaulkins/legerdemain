@@ -82,6 +82,9 @@ class GridTile extends Tile {
     pointerdown() {
         if (!this.scene.selectGridTile) {  // If no grid selected
             //if (this.scene.unitsPlaced[this.scene.currentArmy] < 10) { // If units less than 10
+
+                model.currentScene.sound.play(CONSTANTS.PICK_UP);
+
                 if (this.unitsBoardCounterpart) {
                     this.setTint(CONSTANTS.RED_TINT);
                     this.unitsBoardCounterpart.setTint(CONSTANTS.RED_TINT);

@@ -18,6 +18,8 @@ class Healing extends Unit {
         this.action = CONSTANTS.HEAL;
         this.area = 3;
         
+        this.actionSound = CONSTANTS.HEALING;
+
         this.currentHealth = this.health;
         this.currentCooldown = 0;
         
