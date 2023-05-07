@@ -64,9 +64,13 @@ class TutorialOverlay extends Phaser.GameObjects.Container {
         if (this.underlyingInteractives) {
             this.underlyingInteractives.forEach(interactive => {
                 if (lock) {
-                    interactive.disableInteractive();
+                    if (interactive) {
+                        interactive.disableInteractive();
+                    }
                 } else {
-                    interactive.setInteractive();
+                    if (interactive) {
+                        interactive.setInteractive();
+                    }
                 }
             });
         }

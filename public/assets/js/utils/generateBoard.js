@@ -32,6 +32,8 @@ class GenerateBoard {
             {
                 this.config.x = x;
                 this.config.y = y;
+                this.config.column = y;
+                this.config.row = x;
 
                 if (this.config.scene.scene.key === CONSTANTS.PLAY_SCENE) {
                     tile = new GameBoardTile(this.config);
@@ -79,5 +81,21 @@ class GenerateBoard {
     // Set the unit on this tile
     get mapColumns() {
         return this._mapColumns;
+    }
+
+    getAttackDirection(attackerTile, defenderTile) {
+        let attackDirection;
+
+        if (attackerTile.column > defenderTile.column) {
+            attackDirection = CONSTANTS.TOP;
+        } else if (attackerTile.row < defenderTile.row) {
+            attackDirection = CONSTANTS.RIGHT;
+        } else if (attackerTile.column < defenderTile.column) {
+            attackDirection = CONSTANTS.BOTTOM;
+        } else if (attackerTile.row > defenderTile.row) {
+            attackDirection = CONSTANTS.LEFT;
+        }
+
+        return attackDirection;
     }
 }

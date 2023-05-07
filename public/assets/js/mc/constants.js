@@ -66,6 +66,7 @@ class Constants {
         this.DISCONNECT_PLAYER = 'disconnectPlayer';
         this.GAME_LOADED = 'gameLoaded';
         this.GAME_SCREEN_REACHED = 'gameScreenReached';
+        this.GAME_TUTORIAL_RUN = 'gameTutorialRun';
         this.GET_PLAYER_DATA = 'getPlayerData';
         this.GET_ROOMS = 'getRooms';
         this.HOME_TUTORIAL_RUN = 'homeTutorialRun';

@@ -4,6 +4,9 @@ class HomeScene extends Phaser.Scene {
     }
 
     preload() {
+        // Sounds
+        
+
         // Overlay images
         this.load.spritesheet(CONSTANTS.END_GAME_ICON, 'assets/img/endGameIcon.png', {frameWidth: 500, frameHeight: 500, endFrame: 1});
 
@@ -189,9 +192,6 @@ class HomeScene extends Phaser.Scene {
     }
 
     runTutorial() {    
-        console.log('show tutorial');
-        console.log(controller);
-        console.log(this);
         const underlyingInteractives = [
             this.setupSceneButton.image, 
             this.tutorialButton.image

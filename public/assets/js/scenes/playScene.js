@@ -117,7 +117,7 @@ class PlayScene extends Phaser.Scene {
         if (this.playerArmies.length > 1) {
             this.leftArrow = new ScrollArrow(this, 'left', .5);
             this.rightArrow = new ScrollArrow(this, 'right', .5);
-
+            
             if (this.playerSide === CONSTANTS.LEFT) {
                 this.alignmentGrid.positionItemAtIndex(28, this.leftArrow);
                 this.alignmentGrid.positionItemAtIndex(32, this.rightArrow);
@@ -150,6 +150,18 @@ class PlayScene extends Phaser.Scene {
             index: acceptIndex
         });
         emitter.once(CONSTANTS.ACCEPT_ARMY, this.acceptArmy.bind(this));
+
+        // Tutorial button
+        this.tutorialButton = new Button({
+            scene: this, 
+            key: 'tile',
+            text: 'Tutorial',
+            textConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            event: CONSTANTS.RUN_TUTORIAL,
+            alignmentGrid: this.alignmentGrid,
+            index: 13
+        });
+        emitter.on(CONSTANTS.RUN_TUTORIAL, this.runTutorial, this);
 
         // Add direction buttons
         this.directions = new DirectionButtonContainer({
@@ -219,9 +231,58 @@ class PlayScene extends Phaser.Scene {
         this.alignmentGrid.positionItemAtIndex(73, this.player2Name);
         this.player2Name.x -= 65;
         this.player2Name.y += 15;
+        
+        if (Object.values(game.player.tutorials).indexOf('game') === -1) {
+            this.runTutorial();
+        }
     }
 
-    // update() {}
+    // Game tutorial
+    runTutorial() {
+        const underlyingInteractives = [
+            this.acceptButton.image,
+            this.quitButton.image,
+            this.tutorialButton.image,
+            this.leftArrow,
+            this.rightArrow
+        ];
+
+        this.tutorialOverlay = new TutorialOverlay({
+            scene: this,
+            underlyingInteractives: underlyingInteractives,
+            screens: [
+                {
+                    text: 'This is the game screen, where you engage in matches against an opponent.',
+                    imageKey: '',
+                    imageIndex: 0,
+                }, 
+                {
+                    text: 'If you have saved more than one army, you can use the arrows to select which to use.  If not, you will not see any arrows.  Hit the Select Army button to set yourself as ready to start.',
+                    imageKey: '',
+                    imageIndex: 12,
+                },
+                {
+                    text: 'You and your opponent will take turns moving one unit at a time.  On a turn, you can attack, move, change the direction your unit is facing, and end your turn.',
+                    imageKey: '',
+                    imageIndex: 34,
+                },
+                {
+                    text: 'You cannot move through units, and you can target your own units for attacks, so be careful.  The player who eliminates all of his opponents units first wins.',
+                    imageKey: '',
+                    imageIndex: 34,
+                },
+                {
+                    text: 'Each unit has unique stats and play style.  Use them all to outmanuever your opponent and claim victory',
+                    imageKey: '',
+                    imageIndex: 34,
+                }       
+            ],
+            textConfig: CONSTANTS.TUTORIAL_TEXT_STYLE,
+            buttonTextConfig: CONSTANTS.LIGHT_TEXT_STYLE,
+            alignmentGrid: this.alignmentGrid,
+            endEvent: CONSTANTS.GAME_TUTORIAL_RUN
+        });
+    }
 
 
     quitGame() {
@@ -242,6 +303,7 @@ class PlayScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.END_TURN_CONFIRMED);
         emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
         emitter.removeListener(CONSTANTS.QUIT_GAME_CONFIRMED);
+        emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
 
         controller.gameRoom = null;
 
@@ -263,6 +325,7 @@ class PlayScene extends Phaser.Scene {
         // TODO: Get both events fired to server and start game
         this.armyName.destroy();
         this.acceptButton.destroy();
+        this.tutorialButton.destroy();
 
         if (this.playerArmies.length > 1) {
             this.leftArrow.destroy();
@@ -709,7 +772,8 @@ class PlayScene extends Phaser.Scene {
                 defense: selectedToTile.unit.defense, 
                 dodge: selectedToTile.unit.dodge, 
                 block: selectedToTile.unit.block, 
-                direction: selectedToTile.unit.currentDirection
+                direction: selectedToTile.unit.currentDirection,
+                directionOfAttack: this.generatedBoard.getAttackDirection(this.turnUnit.tile, selectedToTile)
             }] : [{
                 tileNum: selectedToTile.number,
                 unit: false
@@ -726,7 +790,8 @@ class PlayScene extends Phaser.Scene {
                         defense: tile.unit.defense, 
                         dodge: tile.unit.dodge, 
                         block: tile.unit.block, 
-                        direction: tile.unit.currentDirection
+                        direction: tile.unit.currentDirection,
+                        directionOfAttack: this.generatedBoard.getAttackDirection(this.turnUnit.tile, tile)
                     });
                 } else {
                     recievingTiles.push({
@@ -843,7 +908,7 @@ class PlayScene extends Phaser.Scene {
                     console.log(actionUnit);
                     console.log(recievingUnit);
 
-                    recievingUnit.resolveAction(tile.value, tile.action, tile.turn, direction, tile.text);
+                    recievingUnit.resolveAction(tile.value, tile.action, tile.turn, tile.directionOfAttack, tile.text);
                     this.updateDetailsView(recievingUnit);
                 }
 
@@ -927,9 +992,12 @@ class PlayScene extends Phaser.Scene {
         //     }
         // }
         
+        // this.clearPaths();
         this.generatedBoard.tiles.forEach((tile) => {
             tile.attachedTiles = [];
         });
+        
+        this.turnUnit.tile.setTint(CONSTANTS.BLUE_TINT);
     }
 
     endGame(victory) {
@@ -970,6 +1038,7 @@ class PlayScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.ARMIES_SELECTED);
         emitter.removeListener(CONSTANTS.QUIT_GAME_CONFIRMED);
         emitter.removeListener(CONSTANTS.ACCEPT_GAME_OVER);
+        emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
 
         controller.gameRoom = null;
 

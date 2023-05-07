@@ -173,6 +173,17 @@ class Controller {
             controller.events.push(CONSTANTS.HOME_TUTORIAL_RUN);
         }
 
+        if (!controller.events.includes(CONSTANTS.GAME_TUTORIAL_RUN)) {
+            emitter.on(CONSTANTS.GAME_TUTORIAL_RUN, () => {
+                this.socket.emit(CONSTANTS.GAME_TUTORIAL_RUN, {playerId: game.player.playerId});
+                
+                if (!game.player.tutorials.includes('game')) {
+                    game.player.tutorials.push('game');
+                }
+            });
+            controller.events.push(CONSTANTS.GAME_TUTORIAL_RUN);
+        }
+
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
             emitter.on(CONSTANTS.JOIN_ROOM, (data) => {

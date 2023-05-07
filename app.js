@@ -372,7 +372,7 @@ io.on('connection', async function (socket) {
                     if (tile.unit) {
                         switch (action) {
                             case 'damage':
-                                const modifier = directionsModifiers[data.actionUnit.path[0].direction][tile.direction];
+                                const modifier = directionsModifiers[tile.directionOfAttack][tile.direction];
                     
                                 if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
                                     turn = true;
@@ -383,7 +383,8 @@ io.on('connection', async function (socket) {
                                         turn: turn,
                                         action: 'damage',
                                         value: value,
-                                        destroyed: false
+                                        destroyed: false,
+                                        directionOfAttack: tile.directionOfAttack
                                     });
                                 } else if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.block * modifier) * 100)) {
                                     turn = true;
@@ -395,6 +396,7 @@ io.on('connection', async function (socket) {
                                         action: 'damage',
                                         value: value,
                                         destroyed: false,
+                                        directionOfAttack: tile.directionOfAttack
                                     });
                                 } else {
                                     value = Math.round(data.actionUnit.offense * (1 - tile.defense));
@@ -421,6 +423,7 @@ io.on('connection', async function (socket) {
                                         action: 'damage',
                                         value: value,
                                         destroyed: destroyed,
+                                        directionOfAttack: tile.directionOfAttack
                                     });
                                 }
                                 break;
@@ -432,6 +435,7 @@ io.on('connection', async function (socket) {
                                     action: 'heal',
                                     value: data.actionUnit.offense,
                                     destroyed: false,
+                                    directionOfAttack: tile.directionOfAttack
                                 });
                                 break;
                             case 'stop':
@@ -442,6 +446,7 @@ io.on('connection', async function (socket) {
                                     action: 'stop',
                                     value: 2,
                                     destroyed: false,
+                                    directionOfAttack: tile.directionOfAttack
                                 });
                                 break;
                         }

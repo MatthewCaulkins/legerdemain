@@ -15,6 +15,9 @@ class GameBoardTile extends Tile {
         this.active = false;
         this.inRange = false;
         this.attachedTiles = [];
+
+        this.column = config.column;
+        this.row = config.row;
         
         // The path to get to this tile
         this.path = [];
@@ -30,10 +33,11 @@ class GameBoardTile extends Tile {
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         if (this.scene.playerTurn != this.scene.playerSide) return;
 
-        if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
 
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
+                
+                if (this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
                 if (this.unit.playerId != game.player.playerId) return;
 
                 if (this.scene.turnUnit && this.scene.turnUnitLocked) {
@@ -43,7 +47,11 @@ class GameBoardTile extends Tile {
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
-            if (this.unit && this.unit.playerId != game.player.playerId) return;
+            
+            if (this.unit) {
+                if (this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+                if (this.unit.playerId != game.player.playerId) return;
+            }
 
             if (this.scene.turnUnit) {  // there is a selected tile
                 // it's this tile
@@ -83,6 +91,12 @@ class GameBoardTile extends Tile {
                             });
                         }
                     }
+
+                    if (!this.scene.turnUnitLocked) {
+                        if (this.unit && this.unit.currentCooldown === 0) {
+                            this.setTint(CONSTANTS.GREEN_TINT);
+                        }
+                    }
                 // }
             } 
         }
@@ -108,10 +122,12 @@ class GameBoardTile extends Tile {
         if (this.scene.playerTurn != this.scene.playerSide) return;        
         if (this.scene.playerAction === CONSTANTS.MID_ACTION) return;
         
-        if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+        // if (this.unit && this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
 
         if (this.scene.playerAction === CONSTANTS.SELECTION_ACTION || this.scene.playerAction === CONSTANTS.DIRECTION_ACTION) {
             if (this.unit) {
+                
+                if (this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
                 if (this.unit.playerId != game.player.playerId) return;
                
                 if (this.scene.turnUnit && this.scene.turnUnit.tile === this) {
@@ -121,8 +137,10 @@ class GameBoardTile extends Tile {
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.MOVEMENT_ACTION) {  // Selection phase
-            if (this.unit && this.unit.playerId != game.player.playerId) return;
-            
+            if (this.unit) {
+                if (this.unit.playerId != game.player.playerId) return;
+                if (this.unit.currentCooldown > 0 && this.unit.playerId === game.player.playerId) return;
+            }
             if (this.scene.turnUnit) {  // there is a selected tile
                 // if (this.scene.turnUnit === this.unit) { // it's this tile
                 //     if (!this.scene.turnUnitLocked) {
@@ -156,7 +174,15 @@ class GameBoardTile extends Tile {
                                 if (tile.inRange) {
                                     tile.setTint(CONSTANTS.YELLOW_TINT);
                                 } else {
-                                    tile.clearTint();
+                                    if (tile.unit && tile.unit === this.scene.turnUnit) {
+                                        if (this.scene.turnUnitLocked) {
+                                            tile.setTint(CONSTANTS.BLUE_TINT);
+                                        } else {
+                                            tile.setTint(CONSTANTS.RED_TINT);
+                                        }
+                                    } else {
+                                        tile.clearTint();
+                                    }
                                 }
                             });
                         }
