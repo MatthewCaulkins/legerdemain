@@ -75,6 +75,13 @@ const directionsModifiers = {
         }
 };
 
+const directionOpposites = {
+    'top': 'bottom',
+    'right': 'left',
+    'bottom': 'top',
+    'left': 'right'
+};
+
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
@@ -345,85 +352,111 @@ io.on('connection', async function (socket) {
         
         if (data.recievingTiles) {
             const action = data.actionUnit.action;
+            let lastTile = null;
+            let value;
 
             data.recievingTiles.forEach(tile => {
+                let turn = false;
                 if (tile.unit) {
-                    switch (action) {
-                        case 'damage':
-                            const modifier = directionsModifiers[data.actionUnit.path[0].direction][tile.direction];
-                
-                            if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
+                    // for dagger, let the unit turn before executing the second action
+                    if (lastTile && lastTile.tileNum === tile.tileNum) {
+                        tile.direction = directionOpposites[data.actionUnit.direction];
+                        if (tile.currentHealth - value <= 0) {
+                            tile.unit = null;
+                        } else {
+                            tile.currentHealth -= value;
+                        }
+                    }
+
+                    // Test if the unit died on the daggers first assault
+                    if (tile.unit) {
+                        switch (action) {
+                            case 'damage':
+                                const modifier = directionsModifiers[data.actionUnit.path[0].direction][tile.direction];
+                    
+                                if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
+                                    turn = true;
+                                    value = 0;
+                                    data.result.tiles.push({
+                                        tileNum: tile.tileNum,
+                                        text: 'Dodge',
+                                        turn: turn,
+                                        action: 'damage',
+                                        value: value,
+                                        destroyed: false
+                                    });
+                                } else if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.block * modifier) * 100)) {
+                                    turn = true;
+                                    value = 0;
+                                    data.result.tiles.push({
+                                        tileNum: tile.tileNum,
+                                        text: 'Block',
+                                        turn: turn,
+                                        action: 'damage',
+                                        value: value,
+                                        destroyed: false,
+                                    });
+                                } else {
+                                    value = Math.round(data.actionUnit.offense * (1 - tile.defense));
+                                    destroyed = false;
+                                    if (tile.currentHealth - value <= 0) {
+                                        value = tile.currentHealth;
+                                        destroyed = true;
+                                        
+                                        // TODO: save game victory or lose
+                                        rooms[data.roomID].player1 = null;
+                                        rooms[data.roomID].player1Army = null;
+                                        rooms[data.roomID].player2 = null;
+                                        rooms[data.roomID].player2Army = null;
+
+                                        // TODO: leave the room
+                                        io.in(data.roomID).emit('gameOverLeaveRoom', {roomID: data.roomID});
+                                        
+                                        io.emit('updateRooms', rooms);
+                                    };
+                                    data.result.tiles.push({
+                                        tileNum: tile.tileNum,
+                                        text: '-' + value,
+                                        turn: turn,
+                                        action: 'damage',
+                                        value: value,
+                                        destroyed: destroyed,
+                                    });
+                                }
+                                break;
+                            case 'heal':
                                 data.result.tiles.push({
                                     tileNum: tile.tileNum,
-                                    text: 'Dodge',
-                                    turn: true,
-                                    action: 'damage',
-                                    value: 0,
-                                    destroyed: false
-                                });
-                            } else if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.block * modifier) * 100)) {
-                                data.result.tiles.push({
-                                    tileNum: tile.tileNum,
-                                    text: 'Block',
-                                    turn: true,
-                                    action: 'damage',
-                                    value: 0,
+                                    text: '+' + data.actionUnit.offense,
+                                    turn: false,
+                                    action: 'heal',
+                                    value: data.actionUnit.offense,
                                     destroyed: false,
                                 });
-                            } else {
-                                let value = Math.round(data.actionUnit.offense * (1 - tile.defense));
-                                destroyed = false;
-                                if (tile.currentHealth - value <= 0) {
-                                    value = tile.currentHealth;
-                                    destroyed = true;
-                                    
-                                    // TODO: save game victory or lose
-                                    rooms[data.roomID].player1 = null;
-                                    rooms[data.roomID].player1Army = null;
-                                    rooms[data.roomID].player2 = null;
-                                    rooms[data.roomID].player2Army = null;
-
-                                    // TODO: leave the room
-                                    io.in(data.roomID).emit('gameOverLeaveRoom', {roomID: data.roomID});
-                                    
-                                    io.emit('updateRooms', rooms);
-                                };
+                                break;
+                            case 'stop':
                                 data.result.tiles.push({
                                     tileNum: tile.tileNum,
-                                    text: '-' + value,
+                                    text: '+2 cooldown',
                                     turn: false,
-                                    action: 'damage',
-                                    value: value,
-                                    destroyed: destroyed,
+                                    action: 'stop',
+                                    value: 2,
+                                    destroyed: false,
                                 });
-                            }
-                            break;
-                        case 'heal':
-                            data.result.tiles.push({
-                                tileNum: tile.tileNum,
-                                text: '+' + data.actionUnit.offense,
-                                turn: false,
-                                action: 'heal',
-                                value: data.actionUnit.offense,
-                                destroyed: false,
-                            });
-                            break;
-                        case 'stop':
-                            data.result.tiles.push({
-                                tileNum: tile.tileNum,
-                                text: '+2 cooldown',
-                                turn: false,
-                                action: 'stop',
-                                value: 2,
-                                destroyed: false,
-                            });
-                            break;
+                                break;
+                        }
+                    } else {
+                        data.result.tiles.push({
+                            tileNum: tile.tileNum,
+                        });
                     }
                 } else {
                     data.result.tiles.push({
                         tileNum: tile.tileNum,
                     });
                 }
+                
+                lastTile = tile;
             });
         }
 

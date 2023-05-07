@@ -173,7 +173,6 @@ class Unit extends Phaser.GameObjects.Container {
                 this.character.setTint(CONSTANTS.BLACK_TINT);
                 break;
         }
-
     }
 
     setCooldown(both = false) {

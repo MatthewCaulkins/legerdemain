@@ -83,13 +83,12 @@ class UnitStats extends Phaser.GameObjects.Container {
             this.block.text = `${CONSTANTS.BLOCK}: ${100 * unit.block}%`;
             this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.currentCooldown}`;
 
-            this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1]*`;
-
             this.description.text = `${unit.description}`;
             this.disclaimer.text = '*When using attack and move'
             
             if (this.sceneKey === CONSTANTS.SETUP_SCENE) {
                 this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
+                this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1]*`;
             }
         }
 
