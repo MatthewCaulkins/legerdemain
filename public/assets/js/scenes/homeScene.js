@@ -31,7 +31,7 @@ class HomeScene extends Phaser.Scene {
         this.load.image(CONSTANTS.TILE, 'assets/img/tile.png');
         this.load.image(CONSTANTS.MATCHMAKING_TILE, 'assets/img/board.png');
 
-        // Action buttons
+        // Direction buttons
         this.load.image(CONSTANTS.ACTION_BUTTON_CONTAINER, 'assets/img/actionButtonContainer.png');
         this.load.image(CONSTANTS.TOP_DIRECTION_BUTTON, 'assets/img/topDirectionButton.png');
         this.load.image(CONSTANTS.RIGHT_DIRECTION_BUTTON, 'assets/img/rightDirectionButton.png');
@@ -41,9 +41,11 @@ class HomeScene extends Phaser.Scene {
         // Screen backgrounds
         this.load.image(CONSTANTS.HOME_SCREEN_BACKGROUND, 'assets/img/homeScreen.png');
         this.load.image(CONSTANTS.SETUP_SCREEN_BACKGROUND, 'assets/img/setupScreen.png');
+        this.load.image(CONSTANTS.GAME_SCREEN_BACKGROUND, 'assets/img/gameScreen.png');
         this.load.image(CONSTANTS.SETUP_SCREEN_BORDER, 'assets/img/setupScreenBorder.png');
         
         // Buttons
+        this.load.spritesheet(CONSTANTS.ACCEPT_BUTTON, 'assets/img/acceptButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
         this.load.spritesheet(CONSTANTS.ARMY_SETUP_BUTTON, 'assets/img/armySetupButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
         this.load.spritesheet(CONSTANTS.BACK_BUTTON, 'assets/img/backButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
         this.load.spritesheet(CONSTANTS.CLEAR_ARMY_BUTTON, 'assets/img/clearArmyButton.png', {frameWidth: 75, frameHeight: 75, endFrame: 2});
@@ -60,12 +62,13 @@ class HomeScene extends Phaser.Scene {
         this.load.spritesheet(CONSTANTS.LANCE_TINT, 'assets/img/lanceTint.png', {frameWidth: 150, frameHeight: 150, endFrame: 3});
 
             // Scene Assets
+        this.load.image(CONSTANTS.CURRENT_PLAYER_CONTAINER, 'assets/img/currentPlayerContainer.png');
         this.load.spritesheet(CONSTANTS.ARROW, 'assets/img/scrollArrow.png', {frameWidth: 50, frameHeight: 99, endFrame: 2});
         this.load.spritesheet(CONSTANTS.ORB, 'assets/img/orbs.png', {frameWidth: 33, frameHeight: 32, endFrame: 2});
-        this.load.spritesheet(CONSTANTS.ACTION_BUTTON, 'assets/img/attackButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
-        this.load.spritesheet(CONSTANTS.MOVE_BUTTON, 'assets/img/moveButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
-        this.load.spritesheet(CONSTANTS.DIRECTION_BUTTON, 'assets/img/directionButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
-        this.load.spritesheet(CONSTANTS.WAIT_BUTTON, 'assets/img/waitButton.png', {frameWidth: 100, frameHeight: 100, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.ACTION_BUTTON, 'assets/img/attackButton.png', {frameWidth: 105, frameHeight: 130, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.MOVE_BUTTON, 'assets/img/moveButton.png', {frameWidth: 105, frameHeight: 130, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.DIRECTION_BUTTON, 'assets/img/directionButton.png', {frameWidth: 105, frameHeight: 130, endFrame: 3});
+        this.load.spritesheet(CONSTANTS.WAIT_BUTTON, 'assets/img/waitButton.png', {frameWidth: 105, frameHeight: 130, endFrame: 3});
         
         // this.AXE = 'axe';
         // this.AXE_TINT = 'axeTint';
@@ -223,7 +226,6 @@ class HomeScene extends Phaser.Scene {
 
         // TODO: only do this automatically if not saved that it is done
         emitter.on(CONSTANTS.MATCHMAKING_TILES_CREATED, this.runTutorial, this);
-        emitter.on(CONSTANTS.RUN_HOME_TUTORIAL, this.runTutorial, this);
     }
 
     runTutorial() {    

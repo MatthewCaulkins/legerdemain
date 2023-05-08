@@ -51,16 +51,18 @@ class EndGameOverlay extends Phaser.GameObjects.Container {
         // Add accept button
         this.acceptButton = new Button({
             scene: this.scene,
-            key: config.buttonKey,
-            text: config.buttonText,
-            textConfig: config.buttonTextConfig,
+            texture: CONSTANTS.ACCEPT_BUTTON,
             event: config.buttonEvent, 
+            defaultKey: CONSTANTS.ACCEPT_BUTTON_DEFAULT,
+            hoverKey: CONSTANTS.ACCEPT_BUTTON_HOVER,
+            downKey: CONSTANTS.ACCEPT_BUTTON_DOWN,
             x: gameWidth / 2,
             y: gameHeight / 2 + this.sprite.displayHeight / 2,
         });
 
         this.add(this.acceptButton);
         this.acceptButton.setVisible(false);
+        this.scene.sound.play(config.soundKey);
     }
 
     addButton() {

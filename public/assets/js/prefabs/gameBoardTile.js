@@ -309,6 +309,8 @@ class GameBoardTile extends Tile {
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.ACTION_ACTION) {
+            if (this.unit && this.unit.playerId != game.player.playerId) return;
+            
             if (this.scene.turnUnit) { // tile from selected
                 if (this.scene.turnUnit === this.unit) { // this unit; remove the selection
                     if (!this.scene.turnUnitLocked) {

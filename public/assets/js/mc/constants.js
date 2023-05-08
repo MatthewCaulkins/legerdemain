@@ -11,9 +11,14 @@ class Constants {
         // Screen backgrounds
         this.HOME_SCREEN_BACKGROUND = 'homeScreenBackground';
         this.SETUP_SCREEN_BACKGROUND = 'setupScreenBackground';
+        this.GAME_SCREEN_BACKGROUND = 'gameScreenBackground';
         this.SETUP_SCREEN_BORDER = 'setupScreenBorder';
 
         // Buttons
+        this.ACCEPT_BUTTON = 'acceptButton';
+        this.ACCEPT_BUTTON_DEFAULT = 'acceptButtonDefault';
+        this.ACCEPT_BUTTON_HOVER = 'acceptButtonHover';
+        this.ACCEPT_BUTTON_DOWN = 'acceptButtonDown';
         this.ARMY_SETUP_BUTTON = 'armySetupButton';
         this.ARMY_SETUP_BUTTON_DEFAULT = 'armySetupButtonDefault';
         this.ARMY_SETUP_BUTTON_HOVER = 'armySetupButtonHover';
@@ -120,6 +125,7 @@ class Constants {
         this.ARMY_SAVED = 'armySaved';
         this.ARMIES_SELECTED = 'armiesSelected';
         this.BACK_TO_HOME = 'backToHome';
+        this.CHECK_DEFAULT_ARMY = 'checkDefaultArmy';
         this.CLEAR_ARMY = 'clearArmy';
         this.CLEAR_PLAYER_FROM_ROOMS = 'clearPlayerFromRooms';
         this.CREATE_HUD = 'createHUD';
@@ -219,6 +225,7 @@ class Constants {
         this.TILE = 'tile';
         this.ORB = 'orb';
         this.ARROW = 'arrow';
+        this.CURRENT_PLAYER_CONTAINER = 'currentPlayerContainer';
         this.ACTION_BUTTON_CONTAINER = 'actionButtonContainer';
         this.MATCHMAKING_TILE = 'matchmakingTile';
         this.ACTION_BUTTON = 'actionButton';

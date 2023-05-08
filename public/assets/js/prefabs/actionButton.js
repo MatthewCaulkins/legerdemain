@@ -44,9 +44,9 @@ class ActionButton extends Phaser.GameObjects.Container {
         this.sprite = config.scene.add.sprite(0, 0, config.key);
         this.add(this.sprite);
 
-        this.text = config.scene.add.text(0, 55, config.text, config.textConfig);
-        this.text.setOrigin(.5, .5);
-        this.add(this.text);
+        // this.text = config.scene.add.text(0, 55, config.text, config.textConfig);
+        // this.text.setOrigin(.5, .5);
+        // this.add(this.text);
 
         
         // this.setSize( ,);

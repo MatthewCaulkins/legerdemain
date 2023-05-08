@@ -10,7 +10,7 @@ class Bow extends Unit {
         this.health = 25;
         this.defense = .05;
         this.offense = 15;
-        this.range = 5;
+        this.range = 6;
         this.movement = 3;
         this.dodge = .2;
         this.block = .1;

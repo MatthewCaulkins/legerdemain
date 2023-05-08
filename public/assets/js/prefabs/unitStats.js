@@ -28,6 +28,7 @@ class UnitStats extends Phaser.GameObjects.Container {
         //     this.setSize(300, 180);
         // } else {
             this.type = this.scene.add.text(0, 0, '', config.textStyle);
+            this.player = this.scene.add.text(100, 0, '', config.textStyle);
             this.description = this.scene.add.text(0, 40, '', config.textStyle);
             this.health = this.scene.add.text(0, 100, '', config.textStyle);
             this.defense = this.scene.add.text(150, 100, '', config.textStyle);
@@ -40,7 +41,7 @@ class UnitStats extends Phaser.GameObjects.Container {
             this.disclaimer = this.scene.add.text(0, 280, '', config.textStyle);
             
             this.stats = [
-                this.type, this.description, this.health, this.defense, this.offense,
+                this.type, this.player, this.description, this.health, this.defense, this.offense,
                 this.range, this.movement, this.dodge, this.block, this.cooldown, this.disclaimer
             ];
             
@@ -89,6 +90,11 @@ class UnitStats extends Phaser.GameObjects.Container {
             if (this.sceneKey === CONSTANTS.SETUP_SCENE) {
                 this.health.text = `${CONSTANTS.HEALTH}: ${unit.health}`;
                 this.cooldown.text = `${CONSTANTS.COOLDOWN}: ${unit.cooldown} [+1]*`;
+            }
+
+            if (this.sceneKey === CONSTANTS.PLAY_SCENE) {
+                const playerName = controller.gameRoom.player1.playerId === unit.playerId ? controller.gameRoom.player1.name : controller.gameRoom.player2.name;
+                this.player.text = `- ${playerName}`;
             }
         }
 

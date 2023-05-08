@@ -138,7 +138,8 @@ io.on('connection', async function (socket) {
                     tutorials: data.tutorials
                 };
                 players[socket.id] = currentPlayer;
-        
+
+                socket.emit('checkDefaultArmy', {playerId: currentPlayer.playerId});
                 socket.emit('currentPlayers', [players, currentPlayer]);
         
                 // update all other players of the new player  - sends to all sockets
@@ -164,28 +165,6 @@ io.on('connection', async function (socket) {
 
         await UserModel.findOneAndUpdate({_id: playerId}, {$addToSet: {tutorials: 'setup'}});
     });
-    // });
-    // // Gather our player data and then respond that the game can load
-    // socket.on('playerData', (data) => {
-        
-        // screen = 'introScreen';
-
-        // console.log('load the game scene');
-        // socket.emit('playerDataCollected');
-    // });
-
-    // if (screen === 'introScreen') {
-        // console.log('connect To Game');
-
-        // const otherPlayers = socket.sockets;
-
-        // send players object to new player  - only to this new socket, array of all players and then this player
-    // socket.emit('currentPlayers', players);
-
-    //     // update all other players of the new player  - sends to all sockets
-    // socket.broadcast.emit('newPlayer', currentPlayer);
-    // }
-
     
     // Set the screen to Game Screen so if they disconnect now it will run the rest of the destroy code
     socket.on('gameScreenReached', async (playerId) => {
@@ -254,18 +233,6 @@ io.on('connection', async function (socket) {
 
         // TODO: If both slots are full start a game
         if (rooms[data.roomID].player1 != null && rooms[data.roomID].player2 != null) {
-            
-            // Trigger a new game for the other player
-            // if (rooms[data.roomID].player1.socketId === socket.id) {
-            //     console.log('send to player2');
-            //     io.to(rooms[data.roomID].player2.socketId).emit('joinRoomOtherPlayer', data);
-            // } else if (rooms[data.roomID].player2.socketId === socket.id) {
-            //     console.log('send to player1');
-            //     io.to(rooms[data.roomID].player1.socketId).emit('joinRoomOtherPlayer', data);
-            // }
-            
-            // Trigger a game for this player
-            // socket.join(data.roomID);
             const roomData = rooms[data.roomID];
             io.in(data.roomID).emit('startGame', roomData);
         }
@@ -273,9 +240,6 @@ io.on('connection', async function (socket) {
 
     // Both armies are ready to fight
     socket.on('selectedArmy', (data) => {
-        // console.log('selectedArmy');
-        // console.log(data);
-
         if (data.player === 'left') {
             rooms[data.roomID].player1Army = data.army;
         } else  if (data.player === 'right') {
@@ -332,8 +296,6 @@ io.on('connection', async function (socket) {
     socket.on('moveUnit', (data) => {
 
         // TODO: save to the database
-
-
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
         io.in(data.roomID).emit('moveUnitConfirmed', data);
@@ -342,16 +304,6 @@ io.on('connection', async function (socket) {
 
     // Unit action
     socket.on('unitAction', (data) => {
-
-        console.log('Unit Action data');
-        console.log(data);
-        // TODO: Parse out all actions
-        console.log('action unit');
-        console.log(data.actionUnit);
-        console.log('recieving unit');
-        console.log(data.recievingTiles);
-        console.log(directionsModifiers);
-
         data.result = {
             tiles: []
         };
@@ -378,7 +330,7 @@ io.on('connection', async function (socket) {
                     if (tile.unit) {
                         switch (action) {
                             case 'damage':
-                                const modifier = directionsModifiers[tile.directionOfAttack][tile.direction];
+                                const modifier = tile.directionOfAttack ? directionsModifiers[tile.directionOfAttack][tile.direction] : 1; 
                     
                                 if (!data.actionUnit.unblockable && (Math.random() * 100) < ((tile.dodge * modifier) * 100)) {
                                     turn = true;
@@ -466,22 +418,9 @@ io.on('connection', async function (socket) {
                         tileNum: tile.tileNum,
                     });
                 }
-                
                 lastTile = tile;
             });
         }
-
-        // data.actionUnit.offense
-        // data.actionUnit.direction
-        // data.recievingUnit.direction
-
-        // data.recievingUnit.dodge
-
-        // data.recievingUnit.block
-        
-        // data.recievingUnit.defense
-        // TODO: save to the database
-
 
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
@@ -491,19 +430,12 @@ io.on('connection', async function (socket) {
         // socket.emit('moveUnitConfirmed', data);
     });
         
-    // Game ended, leave the room
-    socket.on('gameOverLeaveRoom', data => {
-        socket.leave(data.roomID);
-    });
 
     // Change a units direction 
     socket.on('changeDirection', (data) => {
-
         console.log('change direction');
         console.log(data);
         // TODO: save to the database
-
-
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
         io.in(data.roomID).emit('changeDirectionConfirmed', data);
@@ -512,30 +444,30 @@ io.on('connection', async function (socket) {
 
     // End turn 
     socket.on('endTurn', (data) => {
-
         console.log('end turn');
         console.log(data);
         // TODO: save to the database
-
         // Broadcast and emit the event
         // socket.to('room').broadcast.emit('moveUnitConfirmed', data);
         io.in(data.roomID).emit('endTurnConfirmed', data);
         // socket.emit('moveUnitConfirmed', data);
     });
 
+    // Game ended, leave the room
+    socket.on('gameOverLeaveRoom', data => {
+        socket.leave(data.roomID);
+    });
+
     socket.on('quitGame', (data) => {
         console.log('quit game');
         console.log(data);
 
-        
         rooms[data.roomID].player1 = null;
         rooms[data.roomID].player1Army = null;
         rooms[data.roomID].player2 = null;
         rooms[data.roomID].player2Army = null;
 
         // TODO: save the lose to the database
-
-
         io.in(data.roomID).emit('quitGameConfirmed');
         socket.leave(data.roomID);
         // io.emit('listRooms', rooms);
@@ -562,6 +494,38 @@ io.on('connection', async function (socket) {
         socket.emit('armySaved');
     });
 
+    // Create default army
+    socket.on('checkDefaultArmy', async (data) => {
+        console.log('check default army');
+        const playerId = data.playerId;
+        const armyId = 0;
+
+        await ArmyModel.findOne({playerId, armyId})
+            .then(async (result) => {
+                if (!result) {
+                    const name = 'Default';
+                    const units = [
+                        {unit: 'bow', tileNum: 0},
+                        {unit: 'control', tileNum: 2},
+                        {unit: 'sorcery', tileNum: 6},
+                        {unit: 'healing', tileNum: 16},
+                        {unit: 'axe', tileNum: 17},
+                        {unit: 'dagger', tileNum: 18},
+                        {unit: 'lance', tileNum: 24},
+                        {unit: 'shield', tileNum: 35},
+                        {unit: 'sword', tileNum: 37},
+                        {unit: 'shield', tileNum: 39}
+                    ]
+                    await ArmyModel.create({units, name, playerId, armyId});
+                }
+
+                await ArmyModel.find({playerId})
+                    .then(async (result) => {
+                        socket.emit('playerArmies', result);
+                });
+
+        })
+    });
 
     // Delete an army
     socket.on('deleteArmy', async (data) => {
@@ -606,7 +570,6 @@ io.on('connection', async function (socket) {
            // socket.emit('quitGame', {roomID: roomID});
             // socket.to(roomID).emit('quitGame', {roomID: roomID});
         }
-
         
         // io.emit('listRooms', rooms);
         io.emit('updateRooms', rooms);
@@ -625,18 +588,3 @@ io.on('connection', async function (socket) {
 server.listen(3000, function() {
     console.log(`Listening on ${server.address().port}`);
 });
-
-// import { MongoClient } from 'mongodb'
-
-// let client = new MongoClient("mongodb+srv://doadmin:7Xjan048zt1293gO@dbaas-db-4024796-ea5a6b4b.mongo.ondigitalocean.com/admin?replicaSet=dbaas-db-4024796&tls=true&authSource=admin", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// });
-
-// client.connect().then((client) => {
-//     const db = client.db('test');
-
-//     db.collection('test').insertOne({ message: "Hello from Digital Ocean!"}).then(() => {
-//         process.exit();
-//     });
-// });

@@ -71,6 +71,15 @@ class Controller {
             this.socket.emit(CONSTANTS.GAME_SCREEN_REACHED, game.player.playerId);
         });
 
+        // Check for default army
+        if (!controller.events.includes(CONSTANTS.CHECK_DEFAULT_ARMY)) {
+            emitter.on(CONSTANTS.CHECK_DEFAULT_ARMY, () => {
+                this.socket.emit(CONSTANTS.CHECK_DEFAULT_ARMY, {playerId: game.player.playerId});
+            });
+            
+            controller.events.push(CONSTANTS.CHECK_DEFAULT_ARMY);
+        };
+
         // Get players armies
         this.socket.on(CONSTANTS.PLAYER_ARMIES, armies => {
             // Object.keys(armies).forEach(army => {
@@ -99,10 +108,6 @@ class Controller {
 
         // Add a new room
         this.socket.on(CONSTANTS.CREATE_NEW_ROOM, data => {
-            // console.log('New Room Created');
-
-            // controller.rooms[data.roomID] = data;
-            // console.log(controller.rooms);
             emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data);
         });
 
@@ -120,32 +125,13 @@ class Controller {
 
         // List the rooms when coming to the home screen
         this.socket.on(CONSTANTS.LIST_ROOMS, (data) => {
-            // console.log(controller.rooms);
             Object.keys(controller.rooms).forEach(room => {
                 controller.rooms[room].destroy();
             });
-            // console.log(controller.rooms);
 
-            // Reset rooms
             controller.rooms = {};
-            // console.log(controller.rooms);
-
-            // console.log('list rooms data:');
-            // console.log(data);
-
-                    // await Object.keys(data).forEach(room => {
-                    //     // console.log(data[room]);
-                    //     emitter.emit(CONSTANTS.CREATE_NEW_ROOM, data[room]);
-                    // });
 
             emitter.emit(CONSTANTS.CREATE_ROOMS, data);
-
-            // emitter.emit(CONSTANTS.MATCHMAKING_TILES_CREATED);
-
-            // Get the new room reference after units have been added
-            // if (controller.currentRoom) {
-            //     controller.currentRoom = controller.rooms[controller.currentRoom.roomID];
-            // }
         });
 
         this.socket.on(CONSTANTS.UPDATE_ROOMS, (data) => {
@@ -191,35 +177,6 @@ class Controller {
         // Have player join a room
         if (!controller.events.includes(CONSTANTS.JOIN_ROOM)) {
             emitter.on(CONSTANTS.JOIN_ROOM, (data) => {
-                // console.log('player joins');
-                // console.log(data);
-
-                // Remove the player from other rooms
-                // if (controller.currentRoom != null) {
-                //     console.log(controller.currentRoom);
-                //     console.log(controller.currentRoom.player1);
-                //     let side;
-                //     if (controller.currentRoom.player1.playerId === game.player.playerId){
-                //         side = CONSTANTS.LEFT;
-                //     } else if (controller.currentRoom.player2.playerId === game.player.playerId) {
-                //         side = CONSTANTS.RIGHT;
-                //     }
-                //     const leaveData = {
-                //         player: game.player, side: side, roomID: controller.currentRoom.roomID
-                //     };
-                //     emitter.emit(CONSTANTS.LEAVE_ROOM, leaveData);
-                // }
-
-                // if (data.side === CONSTANTS.LEFT) {
-                //     controller.rooms[data.roomID].player1 = data.player;
-                // } else if (data.side === CONSTANTS.RIGHT) {
-                //     controller.rooms[data.roomID].player2 = data.player;
-                // }
-
-                // console.log(controller.rooms);
-                // controller.currentRoom = controller.rooms[data.roomID];
-                // console.log(controller.currentRoom);
-                // game.player.armies[data.armyId] = data;
                 this.socket.emit(CONSTANTS.JOIN_ROOM, data);
             });
 
@@ -238,20 +195,6 @@ class Controller {
         // Have a player leave a room
         if (!controller.events.includes(CONSTANTS.LEAVE_ROOM)) {
             emitter.on(CONSTANTS.LEAVE_ROOM, (data) => {
-                // console.log('player leaves');
-                // console.log(data.player);
-                // console.log(data.side);
-                // console.log(data.roomID);
-
-                // if (data.side === CONSTANTS.LEFT) {
-                //     controller.rooms[data.roomID].player1 = null;
-                // } else if (data.side === CONSTANTS.RIGHT) {
-                //     controller.rooms[data.roomID].player2 = null;
-                // }
-
-                // console.log(controller.rooms)
-                // // game.player.armies[data.armyId] = data;
-                // controller.currentRoom = null;
                 this.socket.emit(CONSTANTS.LEAVE_ROOM, data);
             });
 
@@ -260,13 +203,10 @@ class Controller {
 
         // Start a game
         this.socket.on(CONSTANTS.START_GAME, data => {
-
             this.music.stop();
             this.music = model.currentScene.sound.add(CONSTANTS.GAME_MUSIC);
             this.music.play({loop: true});
             
-            // console.log('startgame');
-            // console.log(data);
             controller.gameRoom = data;
             console.log('game room');
             console.log(controller.gameRoom);
@@ -285,9 +225,7 @@ class Controller {
         this.socket.on(CONSTANTS.ARMIES_SELECTED, data => {
             console.log('armies selected');
             console.log(data);
-            // controller.gameRoom = data;
             controller.gameRoom = data;
-            // console.log(controller);
             emitter.emit(CONSTANTS.ARMIES_SELECTED);
         });
         
@@ -388,10 +326,6 @@ class Controller {
 
         // Disconnect a player and delete their ID
         this.socket.on(CONSTANTS.DISCONNECT_PLAYER, (socketId) => {
-            // console.log('Player disconnected');
-            // console.log(socketId);
-            // console.log(controller.otherPlayers);
-
             if (controller.gameRoom) {
                 if (controller.gameRoom.player1.playerId === game.player.playerId) {
                     if (controller.gameRoom.player2.socketId === socketId) {
@@ -403,18 +337,12 @@ class Controller {
                     }
                 }
             }
-
-            
-
             delete controller.otherPlayers[socketId];
         });
 
         this.socket.on('disconnect', () => {
             console.log('disconnect');
-
-            console.log(window);
-
-            window.location.replace('/'); //index.html
+            window.location.replace('/');
         });
     }
 }
