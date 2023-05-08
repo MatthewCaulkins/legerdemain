@@ -850,10 +850,12 @@ class PlayScene extends Phaser.Scene {
             config.soundKey = CONSTANTS.DEFEAT_SOUND;
         }
 
-        EndGameOverlay(config);
+        new EndGameOverlay(config);
     }
 
     leaveGame() {
+        emitter.emit(CONSTANTS.START_HOME_MUSIC);
+
         emitter.removeListener(CONSTANTS.ACCEPT_ARMY);
         emitter.removeListener(CONSTANTS.QUIT_GAME_SELECTED);
         emitter.removeListener(CONSTANTS.MOVE_UNIT_CONFIRMED);

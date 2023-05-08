@@ -204,6 +204,7 @@ class Controller {
         // Start a game
         this.socket.on(CONSTANTS.START_GAME, data => {
             this.music.stop();
+            this.music = null;
             this.music = model.currentScene.sound.add(CONSTANTS.GAME_MUSIC);
             this.music.play({loop: true});
             
@@ -298,7 +299,20 @@ class Controller {
         this.socket.on(CONSTANTS.QUIT_GAME_CONFIRMED, () => {
             console.log('confirm quit game');
             emitter.emit(CONSTANTS.QUIT_GAME_CONFIRMED);
+
+            emitter.emit(CONSTANTS.START_HOME_MUSIC);
         });
+
+        if (!controller.events.includes(CONSTANTS.START_HOME_MUSIC)) {
+            emitter.on(CONSTANTS.START_HOME_MUSIC, (data) => {
+                this.music.stop();
+                this.music = null;
+                this.music = model.currentScene.sound.add(CONSTANTS.HOME_LOOP);
+                this.music.play({loop: true});
+            });
+
+            controller.events.push(CONSTANTS.START_HOME_MUSIC);
+        };
 
         // Return when army is saved
         this.socket.on(CONSTANTS.ARMY_SAVED, () => {

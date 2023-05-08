@@ -159,6 +159,7 @@ class Constants {
         this.SELECTED_ARMY = 'selectedArmy';
         this.SETUP_TUTORIAL_RUN = 'setupTutorialRun';
         this.START_GAME = 'startGame';
+        this.START_HOME_MUSIC = 'startHomeMusic';
         this.TOGGLE_INPUT = 'toggleInput';
         this.UPDATE_ROOMS = 'updateRooms';
 

@@ -93,8 +93,12 @@ class GameBoardTile extends Tile {
                     }
 
                     if (!this.scene.turnUnitLocked) {
-                        if (this.unit && this.unit.currentCooldown === 0) {
-                            this.setTint(CONSTANTS.GREEN_TINT);
+                        if (this.unit) {
+                            if (this.unit.playerId != game.player.playerId) return;
+                            
+                            if (this.unit.currentCooldown === 0) {
+                                this.setTint(CONSTANTS.GREEN_TINT);
+                            }
                         }
                     }
                 // }
@@ -309,8 +313,6 @@ class GameBoardTile extends Tile {
                 }
             }
         } else if (this.scene.playerAction === CONSTANTS.ACTION_ACTION) {
-            if (this.unit && this.unit.playerId != game.player.playerId) return;
-            
             if (this.scene.turnUnit) { // tile from selected
                 if (this.scene.turnUnit === this.unit) { // this unit; remove the selection
                     if (!this.scene.turnUnitLocked) {
@@ -356,6 +358,8 @@ class GameBoardTile extends Tile {
             } else {
                 // no unit selected
                 if (this.unit) { // this tile has a unit; set it to selected from tile
+                    if (this.unit.playerId != game.player.playerId) return;
+
                     this.scene.selectedFromTile = this;
                     this.scene.turnUnit = this.unit;
                     this.scene.positionDirections(this.scene.turnUnit);

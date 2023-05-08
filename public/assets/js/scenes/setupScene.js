@@ -605,6 +605,8 @@ class SetupScene extends Phaser.Scene {
     }
 
     loadHomeScene() {
+        emitter.emit(CONSTANTS.CHECK_DEFAULT_ARMY);
+        
         emitter.removeListener(CONSTANTS.NEED_NAME_NOTICE);
         emitter.removeListener(CONSTANTS.NEED_UNITS_NOTICE);
         emitter.removeListener(CONSTANTS.ARMY_DELETED_NOTICE);
@@ -614,7 +616,6 @@ class SetupScene extends Phaser.Scene {
         emitter.removeListener(CONSTANTS.BACK_TO_HOME);
         emitter.removeListener(CONSTANTS.RUN_TUTORIAL);
 
-        emitter.emit(CONSTANTS.CHECK_DEFAULT_ARMY);
 
         this.clearButton.remove();
         this.saveButton.remove();
